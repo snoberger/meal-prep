@@ -22,4 +22,5 @@ CS506 Project Repository
     - make sure you're in the correct region
 
 ## Deploying
-  We will be handling deployments for the spike as needed, the command is serverless deploy. Make sure you know who might be effected by a deployment before you run it
+  We will be handling deployments for the spike as needed, the command is ```serverless deploy```  
+  Make sure you know who might be effected by a deployment before you run it
