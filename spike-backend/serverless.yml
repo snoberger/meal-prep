@@ -4,20 +4,32 @@ package:
   individually: true
 plugins:
   - serverless-functions-base-path
-  - serverless-bundle # Package our functions with Webpack
   - serverless-offline
+  - serverless-dynamodb-local
+  - serverless-bundle # Package our functions with Webpack
   - serverless-dotenv-plugin # Load .env as environment variables
 custom:
-    functionsBasePath: src
+    functionsBasePath: src/handlers
+    tableNames:
+      authTable: 'auth'
+    endpoints:
+      dynamodb-url: 'http://localhost:8000'
+    dynamodb:
+      start:
+        migrate: true
+      stages:
+        - dev
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: prod
+  stage: dev
   region: us-east-1
   # These environment variables are made available to our functions
   # under process.env.
   environment:
     authTable: auth
+    CONFIG_AUTH_TABLE: ${self:custom.tableNames.authTable}
+    CONFIG_DYNAMODB_ENDPOINT: ${self:custom.endpoints.dynamodb-url}
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
   iamRoleStatements:
@@ -31,6 +43,21 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
+resources:
+  Resources: 
+    authTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: auth
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 functions:
 # Defines an HTTP API endpoint that calls the main function in create.js
 # - path: url path is /notes

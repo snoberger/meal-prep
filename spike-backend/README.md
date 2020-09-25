@@ -6,8 +6,15 @@
 
 ### Setup
 Run ```npm install```
+run ```serverless install dynamodb```
 
 ### Usage
+
+_hosting all of the lambdas_
+
+```serverless offline start```
+
+_Running one function_
 
 To run a function on your local
 

@@ -12,7 +12,7 @@ export default function Login() {
     const password = "";
     const done = false;
     const handleSubmit = () => {
-        const url = "https://wcf4atd78l.execute-api.us-east-1.amazonaws.com/default/spike-backend-prod-create"
+        const url = "http://localhost:3000/{apiVersion}/functions/spike-backend-dev-create/invocations?user=test"
         const body = {
             user: username,
             pass: password

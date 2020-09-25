@@ -17,10 +17,12 @@
     "prettier": "2.1.2",
     "serverless-bundle": "2.0.0",
     "serverless-dotenv-plugin": "^2.1.1",
-    "serverless-offline": "^5.3.3"
+    "serverless-offline": "^5.12.1"
   },
   "dependencies": {
+    "serverless-dynamodb-local": "0.2.30",
     "serverless-functions-base-path": "^1.0.32",
+    "serverless-http": "^2.6.0",
     "uuid": "^7.0.3"
   }
 }
