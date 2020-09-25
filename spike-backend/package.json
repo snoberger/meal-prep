@@ -20,6 +20,7 @@
     "serverless-offline": "^5.3.3"
   },
   "dependencies": {
+    "serverless-functions-base-path": "^1.0.32",
     "uuid": "^7.0.3"
   }
 }

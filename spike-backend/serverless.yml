@@ -3,9 +3,12 @@ service: spike-backend
 package:
   individually: true
 plugins:
+  - serverless-functions-base-path
   - serverless-bundle # Package our functions with Webpack
   - serverless-offline
   - serverless-dotenv-plugin # Load .env as environment variables
+custom:
+    functionsBasePath: src
 provider:
   name: aws
   runtime: nodejs12.x
