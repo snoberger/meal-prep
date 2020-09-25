@@ -1,0 +1,17 @@
+.login {
+    width: 20%;
+    display: inline-block;
+    height: 200px;
+    margin-top: 10%;
+    padding-top: 30px;
+}
+
+.input {
+    width: 85%;
+    margin: 0% 10% 0% 10% !important;
+}
+
+.submit {
+    float: right;
+    margin: 8% 8% 0% 0% !important;
+}
