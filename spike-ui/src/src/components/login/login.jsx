@@ -5,12 +5,14 @@ import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import Link from "@material-ui/core/Link";
 
 import "./login.css";
+
 export default function Login() {
     const username ="";
     const password = "";
-    const done = false;
+    let done = false;
     const handleSubmit = () => {
         const url = "http://localhost:3000/{apiVersion}/functions/spike-backend-dev-create/invocations?user=test"
         const body = {
@@ -35,6 +37,7 @@ export default function Login() {
                         Submit
                     </Button>
                 </CardContent>
+                <Link className="new-account" href="#">New Account</Link>
             </Card>
         </div>
     )
