@@ -4,6 +4,9 @@
 - [Install the Serverless Framework](https://serverless.com/framework/docs/providers/aws/guide/installation/)
 - [Configure your AWS CLI](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
 
+### Setup
+Run ```npm install```
+
 ### Usage
 
 To run a function on your local
