@@ -14,6 +14,10 @@ To run a function on your local
 ``` bash
 $ serverless invoke local --function hello
 ```
+or 
+``` bash
+$ serverless invoke local --function hello --path jsonfilewithdata
+```
 
 To simulate API Gateway locally using [serverless-offline](https://github.com/dherault/serverless-offline)
 
