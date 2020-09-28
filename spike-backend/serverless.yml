@@ -14,6 +14,8 @@ custom:
       authTable: 'auth'
     endpoints:
       dynamodb-url: 'http://localhost:8080'
+    serverless-offline:
+      port: 3001
     dynamodb:
       start:
         migrate: true
