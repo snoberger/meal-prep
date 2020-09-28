@@ -21,8 +21,19 @@ export default function Login() {
         setValues({ ...values, [prop]: event.target.value });
     };
 
-    const handleSubmit = () => {
-        history.push("/home")
+    const handleSubmit = async () => {
+        const url = "http://localhost:3000/{apiVersion}/functions/spike-backend-dev-authenticate/invocations"
+        const body = {
+            user: values.username,
+            pass: values.password,
+        }
+        let response = await axios.post(url, body);
+        let success = response.data.body === 'true';
+        if(success) {
+            history.push("/home");
+        } else {
+            alert("Invalid login.");
+        }
     }
     return (
         <div>

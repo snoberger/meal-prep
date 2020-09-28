@@ -61,3 +61,11 @@ functions:
         method: post
         cors: true
         authorizer: aws_iam
+  authenticate:
+    handler: authenticate.main
+    events:
+        - http:
+          path: authenticateUser
+          method: post
+          cors: true
+          authorizer: aws_iam
