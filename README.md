@@ -18,9 +18,7 @@ CS506 Project Repository
   3. add the function to the serverless.yml file
     
 ## Creating new tables
-  1. ask Tyler to make you an AWS account
-  2. go to dynamodb service and create an on-demand table  
-    - make sure you're in the correct region
+  1. Add a new table to the db-tables.yml
 
 ## Deploying
   We will be handling deployments for the spike as needed, the command is ```serverless deploy```  

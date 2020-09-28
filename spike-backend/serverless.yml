@@ -45,20 +45,7 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
 resources:
-  Resources: 
-    authTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: auth
-        AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: userId
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+  Resources: ${file(./db-tables.yml)}
 functions:
 # Defines an HTTP API endpoint that calls the main function in create.js
 # - path: url path is /notes
