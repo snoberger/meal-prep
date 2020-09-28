@@ -1,4 +1,4 @@
-import { Card, Typography, TextField, InputLabel, OutlinedInput, InputAdornment, FormControl, IconButton, Button, Box} from "@material-ui/core";
+import { Card, Typography, TextField, InputLabel, OutlinedInput, InputAdornment, FormControl, IconButton, Button, Box, Link} from "@material-ui/core";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from "react";
@@ -89,8 +89,9 @@ export default function Signup() {
                                 labelWidth={80}
                             />
                     </FormControl><br/>
-                    <Box className="submit">
-                        <Button type="submit" form="signup-form" variant="contained" color="primary">
+                    <Box className="submit-box">
+                        <Link className="login-link" href="/">Have an account? Login here.</Link>
+                        <Button className="submit-button" type="submit" form="signup-form" variant="contained" color="primary">
                         Sign Up
                         </Button>
                     </Box>
