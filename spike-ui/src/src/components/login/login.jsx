@@ -31,10 +31,10 @@ export default function Login() {
                     <Typography gutterBottom variant="h5" component="h2">
                         Login
                     </Typography>
-                    <TextField onInput={handleChange("username")} className="input" placeholder="user" value={values.username} label="username" />
-                    <TextField onInput={handleChange("password")} className="input" placeholder="password"  value={values.password} label="password" />
+                    <TextField onInput={handleChange("username")} className="input" placeholder="Username" value={values.username} label="Username" />
+                    <TextField onInput={handleChange("password")} className="input" placeholder="Password" type="password" value={values.password} label="Password" />
                     <Button className="submit" variant="contained" color="primary" onClick={handleSubmit}>
-                        Submit
+                        Login
                     </Button>
                 </CardContent>
                 <Link className="new-account" href="/signup">New Account</Link>
