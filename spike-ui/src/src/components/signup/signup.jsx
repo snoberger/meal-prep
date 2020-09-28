@@ -2,6 +2,7 @@ import { Card, Typography, TextField, InputLabel, OutlinedInput, InputAdornment,
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from "react";
+import axios from 'axios';
 import { useState }   from "react";
 
 import "./signup.css";
@@ -33,6 +34,19 @@ export default function Signup() {
       const handleSubmit = (event) => {
         event.preventDefault();
         //Validate
+        const url = "http://localhost:3000/{apiVersion}/functions/spike-backend-dev-create/invocations"
+        const body = {
+            user: values.username,
+            pass: values.password,
+            email: values.email
+        }
+        let done = false;
+        axios.post(url, body)
+            .then(() => {
+                done = true;
+                console.log(done);
+            })
+
         console.log( 'Email:', values.email, 'Username: ', values.username, 'Password:', values.password); 
       }
 

@@ -14,6 +14,7 @@ export const main = handler(async (event, context) => {
       userId: uuid.v1(),
       user: data.user,
       pass: data.pass,
+      email: data.email,
       createTs: Date.now(),
       updateTs: Date.now()
     }

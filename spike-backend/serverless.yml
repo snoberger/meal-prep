@@ -13,11 +13,11 @@ custom:
     tableNames:
       authTable: 'auth'
     endpoints:
-      dynamodb-url: 'http://localhost:8001'
+      dynamodb-url: 'http://localhost:8080'
     dynamodb:
       start:
         migrate: true
-        port: 8001
+        port: 8080
       stages:
         - dev
 provider:
