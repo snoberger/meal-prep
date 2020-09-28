@@ -6,7 +6,7 @@
 
 ### Setup
 Run ```npm install```
-run ```serverless install dynamodb```
+run ```serverless dynamodb install```
 
 ### Usage
 
