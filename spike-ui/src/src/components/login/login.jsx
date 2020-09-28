@@ -22,7 +22,7 @@ export default function Login() {
     };
 
     const handleSubmit = async () => {
-        const url = "http://localhost:3000/{apiVersion}/functions/spike-backend-dev-authenticate/invocations"
+        const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-authenticate/invocations"
         const body = {
             user: values.username,
             pass: values.password,

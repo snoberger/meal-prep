@@ -14,7 +14,7 @@ export default function handler(lambda) {
             .then(([statusCode, body]) => ({
             statusCode,
             headers: {
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": "localhost:3001, localhost:3000",
             "Access-Control-Allow-Credentials": true,
             },
             body: JSON.stringify(body),

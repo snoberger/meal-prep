@@ -34,7 +34,7 @@ export default function Signup() {
       const handleSubmit = (event) => {
         event.preventDefault();
         //Validate
-        const url = "http://localhost:3000/{apiVersion}/functions/spike-backend-dev-create/invocations"
+        const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-create/invocations"
         const body = {
             user: values.username,
             pass: values.password,
