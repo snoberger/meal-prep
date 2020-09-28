@@ -2,7 +2,7 @@ import { Card, Typography, TextField, InputLabel, OutlinedInput, InputAdornment,
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from "react";
-import useState  from "react";
+import { useState }   from "react";
 
 import "./signup.css";
 
