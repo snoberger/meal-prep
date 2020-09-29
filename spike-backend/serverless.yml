@@ -12,6 +12,7 @@ custom:
     functionsBasePath: src/handlers
     tableNames:
       authTable: 'auth'
+      hiveTable: 'hive'
     endpoints:
       dynamodb-url: 'http://localhost:8080'
     serverless-offline:
@@ -31,7 +32,9 @@ provider:
   # under process.env.
   environment:
     authTable: auth
+    hiveTable: hive
     CONFIG_AUTH_TABLE: ${self:custom.tableNames.authTable}
+    CONFIG_HIVE_TABLE: ${self:custom.tableNames.hiveTable}
     CONFIG_DYNAMODB_ENDPOINT: ${self:custom.endpoints.dynamodb-url}
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -47,7 +50,8 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
 resources:
-  Resources: ${file(./db-tables.yml)}
+  Resources: 
+    ${file(./db-tables.yml)}
 functions:
 # Defines an HTTP API endpoint that calls the main function in create.js
 # - path: url path is /notes
