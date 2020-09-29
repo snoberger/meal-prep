@@ -74,7 +74,7 @@ export default function Signup() {
         <div>
             <Card className="signup">
                 <Typography gutterBottom variant="h5" component="h2"> Create Account </Typography>
-                <form noValidate  id="signup-form" onSubmit={handleSubmit} autoComplete="off">
+                <form noValidate id="signup-form" onSubmit={handleSubmit} autoComplete="off">
                     <TextField required className="textbox"
                                         id="email" 
                                         value={values.email} 
