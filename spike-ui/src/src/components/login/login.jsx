@@ -28,6 +28,7 @@ export default function Login() {
             pass: values.password,
         }
         let response = await axios.post(url, body);
+        console.log(response);
         let success = response.data.body === 'true';
         if(success) {
             history.push("/home");

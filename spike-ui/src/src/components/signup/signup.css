@@ -1,7 +1,7 @@
 .signup {
     width: 50%;
     display: inline-block;
-    height: 450px;
+    height: 530px;
     margin-top: 10%;
     padding-top: 30px;
 }
@@ -13,7 +13,7 @@
 }
 
 .submit-box {
-    margin: 8% 0% 0% 0% !important;
+    margin: 5% 0% 0% 0% !important;
     width: 100%;    
 }
 
@@ -26,4 +26,5 @@
     float: right;
     margin: 4% 8% 0% 0% !important;
 }
+
 

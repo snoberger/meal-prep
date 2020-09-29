@@ -1,4 +1,5 @@
 import { Card, Typography, TextField, InputLabel, OutlinedInput, InputAdornment, FormControl, IconButton, Button, Box, Link} from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from "react";
@@ -13,8 +14,10 @@ export default function Signup() {
         email: '',
         username: '',
         password: '',
+        address: '',
         showPassword: false
       });
+      const history = useHistory();
 
       
 
@@ -31,8 +34,11 @@ export default function Signup() {
       };
 
 
-      const handleSubmit = (event) => {
+      const handleSubmit = async (event) => {
         event.preventDefault();
+        if(validateRequiredInfo()) {
+            return;
+        }
         //Validate
         const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-create/invocations"
         const body = {
@@ -40,14 +46,28 @@ export default function Signup() {
             pass: values.password,
             email: values.email
         }
-        let done = false;
-        axios.post(url, body)
-            .then(() => {
-                done = true;
-                console.log(done);
-            })
 
-        console.log( 'Email:', values.email, 'Username: ', values.username, 'Password:', values.password); 
+        let response = await axios.post(url, body);
+        history.push("/"); //TODO verify account was created?
+        
+        
+      }
+
+      const validateRequiredInfo = () => {
+          let errorMesssage = "Missing Fields:";
+          let errorFound = false;
+          const requiredFields = ['email','username','password'];
+          requiredFields.forEach(element => {
+              if(!values[element] || values[element] === '') {
+                    console.log(element);
+                    errorMesssage = errorMesssage + " " + element; //Update this to show errors on the input
+                    errorFound = true;
+              }
+          });
+          if(errorFound) {
+            alert(errorMesssage);
+          }
+          return errorFound;
       }
 
     return (
@@ -88,7 +108,13 @@ export default function Signup() {
                                 }
                                 labelWidth={80}
                             />
-                    </FormControl><br/>
+                    </FormControl>
+                    <TextField  className="textbox"
+                                id="Address" 
+                                value={values.address} 
+                                onInput={handleChange("address")} 
+                                label="Address" 
+                                variant="outlined" /><br/>
                     <Box className="submit-box">
                         <Link className="login-link" href="/">Have an account? Login here.</Link>
                         <Button className="submit-button" type="submit" form="signup-form" variant="contained" color="primary">
