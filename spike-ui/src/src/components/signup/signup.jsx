@@ -47,7 +47,7 @@ export default function Signup() {
             email: values.email
         }
 
-        let response = await axios.post(url, body);
+        await axios.post(url, body);
         history.push("/"); //TODO verify account was created?
         
         
