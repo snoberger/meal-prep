@@ -63,15 +63,43 @@ functions:
     handler: create.main
     events:
       - http:
-        path: createUser
-        method: post
-        cors: true
-        authorizer: aws_iam
+          path: createUser
+          method: post
+          cors: true
+          authorizer: aws_iam
   authenticate:
     handler: authenticate.main
     events:
         - http:
-          path: authenticateUser
+            path: authenticateUser
+            method: post
+            cors: true
+            authorizer: aws_iam
+  createHive:
+    handler: hive.create
+    events:
+      - http:
+          path: hive
           method: post
           cors: true
           authorizer: aws_iam
+  getUsersHives:
+    handler: hive.getUsersHives
+    events:
+      - http:
+          path: hive/{userId}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  getSpecifiedHive:
+    handler: hive.getSpecifiedHive
+    events:
+      - http:
+          path: hive/{userId}/{hiveId}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  
+          
+    
+        
