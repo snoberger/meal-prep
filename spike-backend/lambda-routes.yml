@@ -1,0 +1,57 @@
+create:
+    handler: create.main
+    events:
+    - http:
+        path: createUser
+        method: post
+        cors: true
+        authorizer: aws_iam
+authenticate:
+    handler: authenticate.main
+    events:
+        - http:
+            path: authenticateUser
+            method: post
+            cors: true
+            authorizer: aws_iam
+createHive:
+    handler: hive.create
+    events:
+      - http:
+          path: hive
+          method: post
+          cors: true
+          authorizer: aws_iam
+getUsersHives:
+    handler: hive.getUsersHives
+    events:
+      - http:
+          path: hive/{userId}
+          method: get
+          cors: true
+          authorizer: aws_iam
+getSpecifiedHive:
+    handler: hive.getSpecifiedHive
+    events:
+      - http:
+          path: hive/{userId}/{hiveId}
+          method: get
+          cors: true
+          authorizer: aws_iam
+updateHive:
+    handler: hive.updateHive
+    events:
+      - http:
+          path: hive
+          method: patch
+          cors: true
+          authorize: aws_iam
+deleteHive:
+    handler: hive.deleteHive
+    events:
+      - http:
+          path: hive
+          method: delete
+          cors: true
+          authorize: aws_iam
+
