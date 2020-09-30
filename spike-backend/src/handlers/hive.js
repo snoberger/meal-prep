@@ -5,7 +5,6 @@ import dynamoDb from "../libs/dynamodb-lib";
 export const create = handler(async (event, context) => {
   let data = JSON.parse(event.body);
 
-  console.log(data);
   const params = {
     TableName: 'hive',
     Item: {

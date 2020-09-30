@@ -12,7 +12,7 @@ export default class NavBar extends React.Component<{}, {}>{
 
     }
     onLogout = () => {
-
+        localStorage.removeItem("auth")
     }
     render() {
         return (
@@ -27,7 +27,7 @@ export default class NavBar extends React.Component<{}, {}>{
                         Profile
                     </div>
                 </Link>
-                <Link className="button" to={AppScreens.LOGIN} style={{ textDecoration: 'none' }}>
+                <Link className="button" onClick={this.onLogout} to={AppScreens.LOGIN} style={{ textDecoration: 'none' }}>
                     <div>
                         Logout
                     </div>

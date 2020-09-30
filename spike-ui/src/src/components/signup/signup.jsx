@@ -40,7 +40,7 @@ export default function Signup() {
             return;
         }
         //Validate
-        const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-create/invocations"
+        const url = "http://localhost:3001/createUser"
         const body = {
             user: values.username,
             pass: values.password,
@@ -49,8 +49,6 @@ export default function Signup() {
 
         await axios.post(url, body);
         history.push("/"); //TODO verify account was created?
-        
-        
       }
 
       const validateRequiredInfo = () => {
@@ -59,7 +57,6 @@ export default function Signup() {
           const requiredFields = ['email','username','password'];
           requiredFields.forEach(element => {
               if(!values[element] || values[element] === '') {
-                    console.log(element);
                     errorMesssage = errorMesssage + " " + element; //Update this to show errors on the input
                     errorFound = true;
               }

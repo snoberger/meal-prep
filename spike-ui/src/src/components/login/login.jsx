@@ -22,15 +22,14 @@ export default function Login() {
     };
 
     const handleSubmit = async () => {
-        const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-authenticate/invocations"
+        const url = "http://localhost:3001/authenticateUser"
         const body = {
             user: values.username,
             pass: values.password,
         }
         let response = await axios.post(url, body);
-        console.log(response);
-        let success = response.data.body === 'true';
-        if(success) {
+        if(response.data) {
+            localStorage.setItem('auth', response.data);
             history.push("/home");
         } else {
             alert("Invalid login.");

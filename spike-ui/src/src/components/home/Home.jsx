@@ -44,7 +44,6 @@ export default function Home() {
     ]
     let hiveViews = []
     for (let hive of hives) {
-        console.log(hive)
         hiveViews.push(
             <Accordion style={{ "background-color": "#dcdcdc" }} key={hive.name}>
                 <AccordionSummary>
@@ -59,7 +58,6 @@ export default function Home() {
                 <Hive hiveData={hive}></Hive>
             </Accordion>)
     }
-    console.log(hiveViews)
     return (
         <div>
             <NavBar />
