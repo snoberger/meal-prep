@@ -1,2 +1,3 @@
 node_modules/
 spike-backend/package-lock.json
+spike-ui/src/package-lock.json
