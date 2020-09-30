@@ -1,5 +1,4 @@
 import React from 'react';
-import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { AppScreens } from '../../App';
 import './styles.css';

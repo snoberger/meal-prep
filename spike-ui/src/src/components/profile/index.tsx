@@ -29,7 +29,7 @@ export default class Profile extends React.Component<ProfileProps, {}>{
                 <NavBar />
                 <div style={{flex: 1}}>
                     <div onClick={this.imagePress}>
-                        <img style={{
+                        <img alt="" style={{
                             height: 'auto',
                             aspectRatio: 'initial',
                             width: '10vw', 
