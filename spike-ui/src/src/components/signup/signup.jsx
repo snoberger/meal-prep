@@ -5,6 +5,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from "react";
 import axios from 'axios';
 import { useState }   from "react";
+import { User } from '../../libs/util.ts';
 
 import "./signup.css";
 
@@ -40,14 +41,12 @@ export default function Signup() {
             return;
         }
         //Validate
-        const url = "http://localhost:3001/createUser"
-        const body = {
+        const user = {
             user: values.username,
             pass: values.password,
             email: values.email
         }
-
-        await axios.post(url, body);
+        await User.create(user);
         history.push("/"); //TODO verify account was created?
       }
 

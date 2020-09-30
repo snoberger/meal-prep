@@ -1,8 +1,8 @@
-create:
+createUser:
     handler: create.main
     events:
     - http:
-        path: createUser
+        path: api/user
         method: post
         cors: true
         authorizer: aws_iam
@@ -10,7 +10,7 @@ authenticate:
     handler: authenticate.main
     events:
         - http:
-            path: authenticateUser
+            path: api/auth
             method: post
             cors: true
             authorizer: aws_iam
@@ -18,7 +18,7 @@ createHive:
     handler: hive.create
     events:
       - http:
-          path: hive
+          path: api/hive
           method: post
           cors: true
           authorizer: aws_iam
@@ -26,7 +26,7 @@ getUsersHives:
     handler: hive.getUsersHives
     events:
       - http:
-          path: hive/{userId}
+          path: api/hive/{userId}
           method: get
           cors: true
           authorizer: aws_iam
@@ -34,7 +34,7 @@ getSpecifiedHive:
     handler: hive.getSpecifiedHive
     events:
       - http:
-          path: hive/{userId}/{hiveId}
+          path: api/hive/{userId}/{hiveId}
           method: get
           cors: true
           authorizer: aws_iam
@@ -42,7 +42,7 @@ updateHive:
     handler: hive.updateHive
     events:
       - http:
-          path: hive
+          path: api/hive
           method: patch
           cors: true
           authorize: aws_iam
@@ -50,7 +50,7 @@ deleteHive:
     handler: hive.deleteHive
     events:
       - http:
-          path: hive
+          path: api/hive
           method: delete
           cors: true
           authorize: aws_iam
