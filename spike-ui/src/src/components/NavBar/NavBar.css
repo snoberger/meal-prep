@@ -9,5 +9,7 @@
 
 .active-button {
     border-bottom: 2px ridge white !important;
-    border-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+
 }
