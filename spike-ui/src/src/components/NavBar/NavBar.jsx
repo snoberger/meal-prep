@@ -26,7 +26,7 @@ export default function NavBar() {
         <AppBar position="static">
             <Toolbar>
             <Typography variant="h6" className="title">
-                Pre-Prep Meal Prep
+                Badger Hive Management System
             </Typography>
                 <Button component={NavLink} to={AppScreens.HOME} activeClassName="active-button" onClick={onHome} className="menu-button" color="inherit">
                     Home
