@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "../NavBar";
+import NavBar from "../NavBar/NavBar";
 import Grid from '@material-ui/core/Grid';
 import Accordion from '@material-ui/core/Accordion';
 import IconButton from '@material-ui/core/IconButton';

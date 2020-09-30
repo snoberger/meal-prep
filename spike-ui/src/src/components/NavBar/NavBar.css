@@ -1,0 +1,13 @@
+.menu-button {
+    flex-grow: 1;
+    max-height: 100% !important;
+}
+.title {
+    flex-grow: 50;
+    text-align: left;
+}
+
+.active-button {
+    border-bottom: 2px ridge white !important;
+    border-radius: 0px !important;
+}
