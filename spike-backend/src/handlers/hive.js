@@ -24,7 +24,7 @@ export const create = handler(async (event, context) => {
     }
   };
   await dynamoDb.put(params);
-  return params.Item;
+  return {statusCode: 201, body: params.Item};
 });
 
 export const getUsersHives = handler(async (event, context) => {
@@ -39,8 +39,8 @@ export const getUsersHives = handler(async (event, context) => {
             ':userId': userId
         }
     };
-    return dynamoDb.query(params);
-
+    let data = await dynamoDb.query(params);
+    return {statusCode: 200, body: data};
 });
 
 function getSpecifiedHiveHelper(userId, hiveId) {
@@ -62,7 +62,8 @@ function getSpecifiedHiveHelper(userId, hiveId) {
 export const getSpecifiedHive = handler(async (event, context) => {
     let userId = event.pathParameters.userId;
     let hiveId = event.pathParameters.hiveId;
-    return getSpecifiedHiveHelper(userId, hiveId);
+    // TODO: check if id(s) exists => 200 else => 404 (Not Found)
+    return {statusCode: 200, body: await getSpecifiedHiveHelper(userId, hiveId)};
 });
 
 export const updateHive = handler(async (event, context) => {
@@ -106,7 +107,9 @@ export const updateHive = handler(async (event, context) => {
     // that API. i.e. Not all changes were reflected in the most recent item due to races? in the
     // database. - ctfloyd
     await Promise.all(updatePromises);
-    return await getSpecifiedHiveHelper(userId, hiveId);
+
+    // TODO: 404 if couldn't find hive
+    return {statusCode: 200, body: await getSpecifiedHiveHelper(userId, hiveId)};
 });
 
 export const deleteHive = handler(async (event, context) => {
@@ -121,6 +124,7 @@ export const deleteHive = handler(async (event, context) => {
             'userId': userId
         },
         ReturnValues: 'ALL_OLD'
-    }
-    return await dynamodbLib.delete(params);
+    };
+    // TODO: 404 if id not found
+    return {statusCode: 200, body: await dynamodbLib.delete(params)};
 });

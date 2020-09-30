@@ -17,10 +17,10 @@ export const main = handler(async (event, context) => {
   try {
     userId = (await dynamoDb.query(lookupUserByNameParams)).Items[0].userId;
     if(!userId) {
-      return false;
+      return {statusCode: 200, body: false};
     }
   } catch(e) {
-    return false;
+    return {statusCode: 200, body: false};
   }
   const lookupUserPasswordParams = {
       TableName: 'auth',
@@ -32,8 +32,8 @@ export const main = handler(async (event, context) => {
 
   let password = (await dynamoDb.get(lookupUserPasswordParams)).Item.pass;
   if(password == data.pass) {
-      return userId;
+      return {statusCode: 200, body: userId};
   } else {
-      return false;
+      return {statusCode: 200, body: false};
   }
 });
