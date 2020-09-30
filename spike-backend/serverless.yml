@@ -99,7 +99,19 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
-  
-          
-    
-        
+  updateHive:
+    handler: hive.updateHive
+    events:
+      - http:
+          path: hive
+          method: patch
+          cors: true
+          authorize: aws_iam
+  deleteHive:
+    handler: hive.deleteHive
+    events:
+      - http:
+          path: hive
+          method: delete
+          cors: true
+          authorize: aws_iam
