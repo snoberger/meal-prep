@@ -49,10 +49,14 @@ export default function Home() {
     };
 
     const handleClose = (hive) => {
-        let temp = hives.slice();
-        temp.push(hive)
-        console.log(temp)
-        setHives(temp)
+        console.log(hive)
+        if(hive.name){
+            let temp = hives.slice();
+            temp.push(hive)
+            console.log(temp)
+            setHives(temp)
+        }
+        
         setOpen(false);
     };
     for (let hive of hives) {
