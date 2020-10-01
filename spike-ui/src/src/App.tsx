@@ -14,8 +14,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/profile/profileWrapper";
 
 export enum AppScreens {
-  PUBLIC= '/',
-  HOME = '/home',
+  COMMUNITY= '/community',
+  HOME = '/',
   LOGIN = '/login',
   SIGNUP = '/signup',
   PROFILE = '/profile'
@@ -35,14 +35,12 @@ const app = (
         <Route path={AppScreens.SIGNUP}>
           <Signup></Signup>
         </Route>
-        <PrivateRoute path={AppScreens.HOME} component={Home}/>
+        <PrivateRoute path={AppScreens.COMMUNITY} component={Public}/>
         <PrivateRoute path={AppScreens.PROFILE} component={Profile}/>
         <Route path={AppScreens.LOGIN}>
           <Login></Login>
         </Route>
-        <Route path={AppScreens.PUBLIC}>
-          <Public></Public>
-        </Route>
+        <PrivateRoute path={AppScreens.HOME} component={Home}/>
       </Switch>
     </div>
   </ThemeProvider>
