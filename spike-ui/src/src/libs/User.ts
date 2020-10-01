@@ -21,6 +21,7 @@ export interface AuthenticateResponse {
     statusText: string
 }
 
+
 export interface UserItemResult extends UserItem {
     userId: string,
     updateTs: string,
@@ -45,4 +46,8 @@ export const create = async (user: UserItem): Promise<UserResponse> => {
 
 export const authenticate = async(user: AuthenticateItem): Promise<string|false> => {
     return await axios.post(AUTH_ENDPOINT, user);
+}
+
+export const getuser = async(userId: string): Promise<any> => {
+    return await axios.get(`${USER_ENDPOINT}/${userId}`);
 }
