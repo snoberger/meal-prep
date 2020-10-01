@@ -1,12 +1,15 @@
 import { Box, Button, Grid, TextField } from '@material-ui/core';
 import React, { ChangeEvent } from 'react';
+import { useHistory } from 'react-router-dom';
+import { AppScreens } from '../../App';
 import { getuser } from '../../libs/User';
 import { User } from '../../libs/util';
 import NavBar from '../NavBar/NavBar';
+import './profile.css';
 
 
 export interface ProfileProps {
-
+    history: History
 }
 export interface UserForm {
     user: string,
@@ -20,7 +23,6 @@ export default class Profile extends React.Component<ProfileProps, {
     userId: string;
     values: UserForm;
 }>{
-
     constructor(props: ProfileProps) {
         super(props);
 
@@ -46,15 +48,15 @@ export default class Profile extends React.Component<ProfileProps, {
                 user: user.user || '',
                 email: user.email || '',
                 address: user.address || ''
-            }, 
+            },
             userId: user.userId,
-            ...user.image && user.image !== 'none' ? {image: user.image} : undefined
+            ...user.image && user.image !== 'none' ? { image: user.image } : undefined
         })
     }
 
     handleChangeUser = (event: any) => {
         this.setState({
-            values:{
+            values: {
                 ...this.state.values,
                 user: event.target.value
             }
@@ -63,7 +65,7 @@ export default class Profile extends React.Component<ProfileProps, {
 
     handleChangeEmail = (event: any) => {
         this.setState({
-            values:{
+            values: {
                 ...this.state.values,
                 email: event.target.value
             }
@@ -71,7 +73,7 @@ export default class Profile extends React.Component<ProfileProps, {
     };
     handleChangeAddress = (event: any) => {
         this.setState({
-            values:{
+            values: {
                 ...this.state.values,
                 address: event.target.value
             }
@@ -87,6 +89,17 @@ export default class Profile extends React.Component<ProfileProps, {
             image: this.state.image
         }).catch(() => {
             alert("Image too large!");
+        })
+    }
+    handleDelete = async (event: any) => {
+        event.preventDefault();
+        await User.deleteUser(this.state.userId).then(() => {
+            localStorage.removeItem("auth");
+            // @ts-ignore
+            this.props.history.push(AppScreens.LOGIN);
+        }).catch((error) => {
+            console.log(error)
+            alert("Failed to delete user")
         })
     }
     handleFile(event: ChangeEvent<HTMLInputElement>) {
@@ -155,6 +168,9 @@ export default class Profile extends React.Component<ProfileProps, {
                                 <Box className="submit-add">
                                     <Button className="submit-button" type="submit" form="add-form" variant="contained" color="primary">
                                         Submit
+                                    </Button>
+                                    <Button className="submit-button" onClick={this.handleDelete} variant="contained" color="secondary">
+                                        Delete User
                                     </Button>
                                 </Box>
                             </form>

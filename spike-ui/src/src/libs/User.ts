@@ -64,5 +64,5 @@ export const updateUser = async( userId: string, user: UserUpdate): Promise<any>
 }
 
 export const deleteUser = async(userId: string): Promise<any> => {
-    return await axios.patch(`${USER_ENDPOINT}/${userId}`);
+    return await axios.delete(`${USER_ENDPOINT}/${userId}`);
 }
