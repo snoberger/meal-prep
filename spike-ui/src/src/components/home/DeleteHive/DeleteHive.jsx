@@ -11,13 +11,17 @@ export default function DeleteHive(props) {
         setOpen(true);
     };
 
-    const handleClose = async () => {
+    const handleDelete = async () => {
         let filtered = props.allHives.filter(hive => hive.id !== props.hive.id)
         let userId = localStorage.getItem('auth');
         await Hive.deleteHive(userId, props.hive.id);
         setOpen(false);
         props.setHives(filtered);
     };
+
+    const handleClose = () => {
+        setOpen(false);
+    }
 
     return (
         <div>
@@ -34,7 +38,7 @@ export default function DeleteHive(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleDelete} color="primary">
                         Yes
                     </Button>
                     <Button onClick={handleClose} color="primary">
