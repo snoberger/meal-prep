@@ -10,7 +10,9 @@ export const create = handler(async (event, context) => {
       Item: {
         userId: uuid.v1(),
         user: data.user,
+        image: 'none',
         pass: data.pass,
+        address: data.address,
         email: data.email,
         createTs: Date.now(),
         updateTs: Date.now()
@@ -33,7 +35,7 @@ export const getUser = handler(async (event, context) => {
         }
     };
     let data = await dynamoDb.query(params);
-    return {statusCode: 200, body: data};
+    return {statusCode: 200, body: data.Items[0]};
 });
 
 export const updateUser = handler(async (event, context) => {

@@ -1,5 +1,7 @@
-import { Grid, TextField } from '@material-ui/core';
+import { Box, Button, Grid, TextField } from '@material-ui/core';
 import React, { ChangeEvent } from 'react';
+import { getuser } from '../../libs/User';
+import { User } from '../../libs/util';
 import NavBar from '../NavBar/NavBar';
 
 
@@ -7,14 +9,15 @@ export interface ProfileProps {
 
 }
 export interface UserForm {
-    username: string,
-    password: string,
-    email: string
+    user: string,
+    email: string,
+    address: string
 }
 const emptyProfilePicture = require('../../assets/emptyProfilePicture.png')
 export default class Profile extends React.Component<ProfileProps, {
-    image: any;
+    image?: any;
     loading: boolean;
+    userId: string;
     values: UserForm;
 }>{
 
@@ -24,70 +27,68 @@ export default class Profile extends React.Component<ProfileProps, {
         this.state = {
             image: emptyProfilePicture,
             loading: false,
+            userId: '',
             values: {
-                username: '',
-                password: '',
+                user: '',
+                address: '',
                 email: ''
             }
         }
     }
     componentDidMount() {
-
+        this.loadUser();
     }
-    handleEmailChange = () => {
 
+    loadUser = async () => {
+        const user = await (await getuser(localStorage.getItem('auth') || '')).data
+        this.setState({
+            values: {
+                user: user.user || '',
+                email: user.email || '',
+                address: user.address || ''
+            }, 
+            userId: user.userId,
+            ...user.image && user.image !== 'none' ? {image: user.image} : undefined
+        })
     }
-    imagePress = () => {
-        // this.handleFile()
+
+    handleChangeUser = (event: any) => {
+        this.setState({
+            values:{
+                ...this.state.values,
+                user: event.target.value
+            }
+        })
+    };
+
+    handleChangeEmail = (event: any) => {
+        this.setState({
+            values:{
+                ...this.state.values,
+                email: event.target.value
+            }
+        })
+    };
+    handleChangeAddress = (event: any) => {
+        this.setState({
+            values:{
+                ...this.state.values,
+                address: event.target.value
+            }
+        })
+    };
+
+    handleSubmit = async (event: any) => {
+        event.preventDefault();
+
+        await User.updateUser(
+            this.state.userId, {
+            ...this.state.values,
+            image: this.state.image
+        }).catch(() => {
+            alert("Image too large!");
+        })
     }
-    // handleChange = (prop) => (event) => {
-    //     this.setState({
-
-    //     })
-    //     setValues({ ...values, [prop]: event.target.value });
-    //   };
-    
-    //    handleClickShowPassword = () => {
-    //     setValues({ ...values, showPassword: !values.showPassword });
-    //   };
-    
-    //    handleMouseDownPassword = (event) => {
-    //     event.preventDefault();
-    //   };
-
-
-    //    handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     if(validateRequiredInfo()) {
-    //         return;
-    //     }
-    //     //Validate
-    //     const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-create/invocations"
-    //     const body = {
-    //         user: values.username,
-    //         pass: values.password,
-    //         email: values.email
-    //     }
-
-    //     await axios.post(url, body);
-    //     history.push("/"); //TODO verify account was created?
-        
-        
-    //   }
-    //   handleChange = (prop) => (event) => {
-    //     setValues({ ...values, [prop]: event.target.value });
-    // };
-
-    // handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     props.handleClose();
-    //     // const user = {
-    //     //     user: values.username,
-    //     //     pass: values.password,
-    //     //     email: values.email
-    //     // }
-    //     // await Hive.create(user);
-    // } 
     handleFile(event: ChangeEvent<HTMLInputElement>) {
         const { target } = event;
         const { files } = target;
@@ -111,8 +112,8 @@ export default class Profile extends React.Component<ProfileProps, {
         return (
             <div>
                 <NavBar />
-                <div style={{ flex: 1 }}>
-                    <div onClick={this.imagePress}>
+                <div style={{ flex: 1, marginTop: 10 }}>
+                    <div>
                         <img style={{
                             height: '10vw',
                             width: '10vw',
@@ -131,33 +132,33 @@ export default class Profile extends React.Component<ProfileProps, {
                                 onChange={this.handleFile.bind(this)}
                             />
                         </div>
-                        <Grid container className="add">
-                {/* <form noValidate id="add-form" onSubmit={handleSubmit} autoComplete="off">
-                    <TextField required className="textbox"
-                                        id="email" 
-                                        value={values.email} 
-                                        onInput={handleChange("email")} 
-                                        label="Email Address" 
-                                        variant="outlined" />
-                    <TextField required className="textbox" 
-                                        id="username" 
-                                        value={values.username} 
-                                        onInput={handleChange("username")} 
-                                        label="Username" 
-                                        variant="outlined" />
-                    <TextField  className="textbox"
-                                id="Address" 
-                                value={values.address} 
-                                onInput={handleChange("address")} 
-                                label="Address" 
-                                variant="outlined" /><br/>
-                    <Box className="submit-add">
-                        <Button className="submit-button" type="submit" form="add-form" variant="contained" color="primary">
-                        Submit
-                        </Button>
-                    </Box>
-                </form> */}
-            </Grid>
+                        <Grid container justify="center">
+                            <form noValidate id="add-form" onSubmit={this.handleSubmit} autoComplete="off">
+                                <TextField required className="textbox"
+                                    id="email"
+                                    value={this.state.values.email}
+                                    onInput={this.handleChangeEmail}
+                                    label="Email Address"
+                                    variant="outlined" />
+                                <TextField required className="textbox"
+                                    id="username"
+                                    value={this.state.values.user}
+                                    onInput={this.handleChangeUser}
+                                    label="Username"
+                                    variant="outlined" />
+                                <TextField className="textbox"
+                                    id="Address"
+                                    value={this.state.values.address}
+                                    onInput={this.handleChangeAddress}
+                                    label="Address"
+                                    variant="outlined" /><br />
+                                <Box className="submit-add">
+                                    <Button className="submit-button" type="submit" form="add-form" variant="contained" color="primary">
+                                        Submit
+                                    </Button>
+                                </Box>
+                            </form>
+                        </Grid>
                     </div>
                 </div>
             </div>

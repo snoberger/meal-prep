@@ -27,6 +27,7 @@ export default function Login() {
         }
         let response = await User.authenticate(user);
         if(response.data) {
+            console.log(response.data)
             localStorage.setItem('auth', response.data);
             history.push("/home");
         } else {
