@@ -43,7 +43,8 @@ export default function Signup() {
         const user = {
             user: values.username,
             pass: values.password,
-            email: values.email
+            email: values.email,
+            address: values.address
         }
         await User.create(user);
         history.push("/"); //TODO verify account was created?

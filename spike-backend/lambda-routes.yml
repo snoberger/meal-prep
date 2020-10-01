@@ -1,17 +1,41 @@
 createUser:
-    handler: create.main
+    handler: user.create
     events:
-    - http:
-        path: api/user
-        method: post
-        cors: true
-        authorizer: aws_iam
+        - http:
+            path: api/user
+            method: post
+            cors: true
+            authorizer: aws_iam
 authenticate:
     handler: authenticate.main
     events:
         - http:
             path: api/auth
             method: post
+            cors: true
+            authorizer: aws_iam
+getuser:
+    handler: user.getUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: get
+            cors: true
+            authorizer: aws_iam
+updateUser:
+    handler: user.updateUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: patch
+            cors: true
+            authorizer: aws_iam
+deleteUser:
+    handler: user.deleteUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: delete
             cors: true
             authorizer: aws_iam
 createHive:

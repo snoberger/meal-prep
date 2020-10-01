@@ -1,0 +1,17 @@
+.textbox {
+    width: 70%;
+    display:inline-block;
+    margin-top: 30px !important;
+}
+
+.submit-box {
+    margin: 5% 0% 0% 0% !important;
+    width: 100%;    
+}
+
+.submit-button {
+    float: right;
+    margin: 4% 8% 0% 0% !important;
+}
+
+

@@ -9,7 +9,7 @@ import blue from '@material-ui/core/colors/blue';
 import amber from '@material-ui/core/colors/amber';
 
 import PrivateRoute from "./components/PrivateRoute";
-import Profile from "./components/profile";
+import Profile from "./components/profile/profileWrapper";
 
 export enum AppScreens {
   HOME = '/home',
