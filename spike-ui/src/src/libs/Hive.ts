@@ -10,6 +10,8 @@ export interface HiveItem {
     inventoryEqipment?: string,
     losses?: string,
     gains?: string,
+    viewable?: boolean
+    name?: string
 }
 
 export interface HiveItemResult extends HiveItem {
@@ -19,9 +21,15 @@ export interface HiveItemResult extends HiveItem {
     createTs: string
 }
 
+export interface DBHiveResponse {
+    Items: HiveItemResult[],
+    Count: number,
+    ScannedCount: number
+}
+
 export interface HiveResponse {
     config: {},
-    data: HiveItemResult | HiveItemResult[],
+    data: DBHiveResponse
     headers: {},
     request: XMLHttpRequest,
     status: number,

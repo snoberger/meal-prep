@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
-import { Typography, Button, Box, TextField, Card, Dialog, Slider, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import { Typography, Button, Box, TextField, Card, Dialog, Slider, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel } from "@material-ui/core";
 import { Hive } from '../../../libs/util.ts';
 import './AddHive.css';
 import EquipmentSelect from "./EquipmentSelect";
@@ -23,6 +23,7 @@ const AddHive = React.forwardRef((props, ref) => {
         inventoryEquipment: [],
         losses: '',
         gains: '',
+        viewable: false
       });
 
     const handleChange = (prop) => (event, value) => {
@@ -47,8 +48,10 @@ const AddHive = React.forwardRef((props, ref) => {
             inventoryEquipment: values.inventoryEquipment,
             losses: values.losses,
             gains: values.gains,
+            viewable: values.viewable,
             id: null
         }
+        console.log(hive);
         let response = await Hive.create(localStorage.getItem('auth'), hive);
         hive.id = response.data.hiveId;
         props.handleClose(hive);
@@ -109,7 +112,7 @@ const AddHive = React.forwardRef((props, ref) => {
                                             label="Gains" 
                                             variant="outlined" />
                         <FormControl variant="outlined" className="modal-select" >
-                            <InputLabel >InventoryEquipment</InputLabel>
+                            <InputLabel >Inventory Equipment</InputLabel>
                             <EquipmentSelect equipment={values.inventoryEquipment} equipmentChoices={InventoryEquipmentTypes} type="inventoryEquipment" handleChange={handleChange}/>
                         </FormControl>
                         <FormControl variant="outlined" className="modal-select" >
@@ -131,6 +134,13 @@ const AddHive = React.forwardRef((props, ref) => {
                                         Fail
                                     </MenuItem>
                             </Select>
+                        </FormControl>
+                        <FormControl required>
+                            <FormControlLabel 
+                                control={<Checkbox onChange={handleChange('viewable')} />} label="Viewable to Public"
+                                labelPlacement="start"
+                                className="viewable-checkbox"
+                            />
                         </FormControl>
                         <Box className="submit-add">
                             <Button className="submit-button" type="submit" form="add-form" variant="contained" color="primary">

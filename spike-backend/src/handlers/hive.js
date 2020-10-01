@@ -19,6 +19,7 @@ export const create = handler(async (event, context) => {
       inventoryEquipment: data.inventoryEquipment || null,
       losses: data.losses || null,
       gains: data.gains || null,
+      viewable: data.viewable || null,
       createTs: Date.now(),
       updateTs: Date.now()
     }
