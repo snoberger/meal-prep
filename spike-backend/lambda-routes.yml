@@ -74,7 +74,7 @@ deleteHive:
     handler: hive.deleteHive
     events:
       - http:
-          path: api/hive
+          path: api/hive/{userId}/{hiveId}
           method: delete
           cors: true
           authorize: aws_iam

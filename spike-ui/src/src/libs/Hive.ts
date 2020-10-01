@@ -47,5 +47,5 @@ export const updateHive = async (userId: string, hiveId: string, hive: HiveItem)
 }
 
 export const deleteHive = async (userId: string, hiveId: string): Promise<HiveResponse> => {
-    return await axios.delete(HIVE_ENDPOINT, {data: {'userId': userId, 'hiveId': hiveId}});
+    return await axios.delete(`${HIVE_ENDPOINT}/${userId}/${hiveId}`);
 }

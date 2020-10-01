@@ -37,8 +37,6 @@ const AddHive = React.forwardRef((props, ref) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(values)
-        
         const hive = {
             name: values.name,
             inspectionResults: values.inspectionResults,
@@ -49,8 +47,10 @@ const AddHive = React.forwardRef((props, ref) => {
             inventoryEquipment: values.inventoryEquipment,
             losses: values.losses,
             gains: values.gains,
+            id: null
         }
-        await Hive.create(localStorage.getItem('auth'), hive);
+        let response = await Hive.create(localStorage.getItem('auth'), hive);
+        hive.id = response.data.hiveId;
         props.handleClose(hive);
     } 
     return (

@@ -3,8 +3,9 @@ import NavBar from "../NavBar/NavBar";
 import {Grid, Accordion, IconButton, AccordionActions, AccordionSummary} from '@material-ui/core';
 import Create from '@material-ui/icons/Create';
 import { Typography } from "@material-ui/core";
-import Hive from "./Hive"
-import AddHive from "./AddHive/AddHive"
+import Hive from "./Hive";
+import AddHive from "./AddHive/AddHive";
+import DeleteHive from "./DeleteHive/DeleteHive";
 
 import { Add } from "@material-ui/icons";
 export default function Home() {
@@ -18,7 +19,8 @@ export default function Home() {
             losses: "0",
             gains: "swole",
             inventoryEquipment: ["netting"],
-            hiveEquipment: ["box"]
+            hiveEquipment: ["box"],
+            id: 1
         },
         {
             name: "Someones",
@@ -28,7 +30,8 @@ export default function Home() {
             losses: "0",
             gains: "moderate",
             inventoryEquipment: ["netting"],
-            hiveEquipment: [""]
+            hiveEquipment: [""],
+            id: 2
         },
         {
             name: "No ones",
@@ -38,7 +41,8 @@ export default function Home() {
             losses: "1,000,000",
             gains: "none",
             inventoryEquipment: [""],
-            hiveEquipment: ["box"]
+            hiveEquipment: ["box"],
+            id: 3
         }
     ]);
     let hiveViews = []
@@ -61,18 +65,19 @@ export default function Home() {
     };
     for (let hive of hives) {
         hiveViews.push(
-            <Accordion style={{ backgroundColor: "#dcdcdc" }} key={hive.name}>
+            <Accordion style={{ backgroundColor: "#dcdcdc" }} key={hive.id}>
                 <AccordionSummary>
                     <Typography variant="h5"> {hive.name}</Typography>
-
                 </AccordionSummary>
                 <AccordionActions>
                     <IconButton color="primary" size="small" component="span">
                         <Create />
                     </IconButton>
+                    <DeleteHive hive={hive} setHives={setHives} allHives={hives}/>
                 </AccordionActions>
                 <Hive hiveData={hive}></Hive>
-            </Accordion>)
+            </Accordion>
+        )
     }
     return (
         <div>

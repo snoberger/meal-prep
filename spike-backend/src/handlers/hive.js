@@ -113,10 +113,8 @@ export const updateHive = handler(async (event, context) => {
 });
 
 export const deleteHive = handler(async (event, context) => {
-    let data = JSON.parse(event.body);
-    let userId = data.userId;
-    let hiveId = data.hiveId;
-
+    let userId = event.pathParameters.userId;
+    let hiveId = event.pathParameters.hiveId;
     const params = {
         TableName: 'hive',
         Key: {

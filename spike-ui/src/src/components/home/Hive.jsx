@@ -8,14 +8,25 @@ import Chip from '@material-ui/core/Chip';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 export default function Home(props) {
+    const hash = (string) => {
+        let hash = 0, i, chr;
+        for (i = 0; i < string.length; i++) {
+            chr   = string.charCodeAt(i);
+            hash  = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+    }
+
     let inventoryEquipment = []
     for(let item of props.hiveData.inventoryEquipment){
-        inventoryEquipment.push(<Chip label={item} />)
+        inventoryEquipment.push(<Chip label={item} key={hash(item)}/>)
     }
     let hiveEquipment = []
     for(let item of props.hiveData.hiveEquipment){
-        hiveEquipment.push(<Chip label={item} />)
+        hiveEquipment.push(<Chip label={item} key={hash(item)}/>)
     }
+
     return (
         <AccordionDetails>
             <Grid container spacing={1}>
