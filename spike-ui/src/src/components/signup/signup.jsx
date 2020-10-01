@@ -3,8 +3,8 @@ import { useHistory } from "react-router-dom";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import React from "react";
-import axios from 'axios';
 import { useState }   from "react";
+import { User } from '../../libs/util.ts';
 
 import "./signup.css";
 
@@ -40,17 +40,13 @@ export default function Signup() {
             return;
         }
         //Validate
-        const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-create/invocations"
-        const body = {
+        const user = {
             user: values.username,
             pass: values.password,
             email: values.email
         }
-
-        await axios.post(url, body);
+        await User.create(user);
         history.push("/"); //TODO verify account was created?
-        
-        
       }
 
       const validateRequiredInfo = () => {
@@ -59,7 +55,6 @@ export default function Signup() {
           const requiredFields = ['email','username','password'];
           requiredFields.forEach(element => {
               if(!values[element] || values[element] === '') {
-                    console.log(element);
                     errorMesssage = errorMesssage + " " + element; //Update this to show errors on the input
                     errorFound = true;
               }

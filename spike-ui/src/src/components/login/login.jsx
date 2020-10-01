@@ -1,13 +1,12 @@
 import React, {useState} from "react";
 import { useHistory } from "react-router-dom";
-import axios from 'axios';
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Link from "@material-ui/core/Link";
-
+import { User } from '../../libs/util';
 import "./login.css";
 
 export default function Login() {
@@ -22,15 +21,13 @@ export default function Login() {
     };
 
     const handleSubmit = async () => {
-        const url = "http://localhost:3001/{apiVersion}/functions/spike-backend-dev-authenticate/invocations"
-        const body = {
+        const user = {
             user: values.username,
             pass: values.password,
         }
-        let response = await axios.post(url, body);
-        console.log(response);
-        let success = response.data.body === 'true';
-        if(success) {
+        let response = await User.authenticate(user);
+        if(response.data) {
+            localStorage.setItem('auth', response.data);
             history.push("/home");
         } else {
             alert("Invalid login.");

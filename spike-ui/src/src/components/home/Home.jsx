@@ -1,14 +1,17 @@
-import React from "react";
-import Card from '@material-ui/core/Card';
-import NavBar from "../NavBar";
+import React, {useState} from "react";
+import NavBar from "../NavBar/NavBar";
 import Grid from '@material-ui/core/Grid';
 import Accordion from '@material-ui/core/Accordion';
 import IconButton from '@material-ui/core/IconButton';
 import AccordionActions from '@material-ui/core/AccordionActions';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Create from '@material-ui/icons/Create';
-import { Typography } from "@material-ui/core";
+import { Modal, Typography } from "@material-ui/core";
 import Hive from "./Hive"
+import AddHive from "./AddHive/AddHive"
+import './Home.css';
+
+import { Add } from "@material-ui/icons";
 export default function Home() {
     const hives = [
         {
@@ -43,10 +46,18 @@ export default function Home() {
         }
     ]
     let hiveViews = []
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
     for (let hive of hives) {
-        console.log(hive)
         hiveViews.push(
-            <Accordion style={{ "background-color": "#dcdcdc" }} key={hive.name}>
+            <Accordion style={{ backgroundColor: "#dcdcdc" }} key={hive.name}>
                 <AccordionSummary>
                     <Typography variant="h5"> {hive.name}</Typography>
 
@@ -59,15 +70,31 @@ export default function Home() {
                 <Hive hiveData={hive}></Hive>
             </Accordion>)
     }
-    console.log(hiveViews)
     return (
         <div>
             <NavBar />
-            <Grid style={{ "margin-top": "5em" }} container justify="center" xs={12}>
+            <Grid style={{ marginTop: "5em" }} container justify="center" >
                 <Grid item >
                     {hiveViews}
                 </Grid>
+                <Grid>
+                    <IconButton color="primary" onClick={handleOpen} component="span">
+                        <Add />
+                    </IconButton>
+                </Grid>
             </Grid>
+            <Modal
+                style= {{
+                    marginTop: '5%',
+                    marginBottom: '5%',
+                }}
+                children={AddHive}
+                className="add-modal"
+                open={open}
+                onClose={handleClose}
+            >
+                <AddHive handleClose={handleClose} />
+            </Modal>
         </div>
     )
 }

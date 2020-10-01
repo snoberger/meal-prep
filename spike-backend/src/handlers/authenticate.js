@@ -1,12 +1,7 @@
 import handler from "../libs/handler-lib";
 import dynamoDb from "../libs/dynamodb-lib";
 export const main = handler(async (event, context) => {
-  let data;
-  if (event.isOffline) {
-    data = event;
-  } else {
-    data = JSON.parse(event);
-  }
+  let data = JSON.parse(event.body);
   const lookupUserByNameParams = {
     TableName: 'auth',
     IndexName: 'userToId',
@@ -18,11 +13,15 @@ export const main = handler(async (event, context) => {
         ':userPlaceholder': data.user
     }
   };
-  let userId = (await dynamoDb.query(lookupUserByNameParams)).Items[0].userId;
-  if(!userId) {
-    return false;
+  let userId;
+  try {
+    userId = (await dynamoDb.query(lookupUserByNameParams)).Items[0].userId;
+    if(!userId) {
+      return {statusCode: 200, body: false};
+    }
+  } catch(e) {
+    return {statusCode: 200, body: false};
   }
-
   const lookupUserPasswordParams = {
       TableName: 'auth',
       Key: {
@@ -33,8 +32,8 @@ export const main = handler(async (event, context) => {
 
   let password = (await dynamoDb.get(lookupUserPasswordParams)).Item.pass;
   if(password == data.pass) {
-      return true;
+      return {statusCode: 200, body: userId};
   } else {
-      return false;
+      return {statusCode: 200, body: false};
   }
 });

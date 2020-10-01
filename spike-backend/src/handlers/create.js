@@ -2,12 +2,7 @@ import * as uuid from "uuid";
 import handler from "../libs/handler-lib";
 import dynamoDb from "../libs/dynamodb-lib";
 export const main = handler(async (event, context) => {
-  let data;
-  if (event.isOffline) {
-    data = event;
-  } else {
-    data = JSON.parse(event);
-  }
+  let data = JSON.parse(event.body);
   const params = {
     TableName: 'auth',
     Item: {
@@ -20,5 +15,5 @@ export const main = handler(async (event, context) => {
     }
   };
   await dynamoDb.put(params);
-  return params.Item;
+  return {statusCode: 201, body: params.Item};
 });
