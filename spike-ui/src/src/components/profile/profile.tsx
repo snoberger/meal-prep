@@ -88,7 +88,7 @@ export default class Profile extends React.Component<ProfileProps, {
             ...this.state.values,
             image: this.state.image
         }).catch(() => {
-            alert("Image too large!");
+            alert("Image too large, upload an image less than 400KB");
         })
     }
     handleDelete = async (event: any) => {
