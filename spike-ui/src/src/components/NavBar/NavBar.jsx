@@ -14,6 +14,9 @@ export default function NavBar() {
     const onHome = () => {
         history.push(AppScreens.HOME);
     }
+    const onPublic = () => {
+        history.push(AppScreens.PUBLIC);
+    }
     const onProfile = () => {
     }
     const onLogout = () => {
@@ -28,6 +31,9 @@ export default function NavBar() {
             <Typography variant="h6" className="title">
                 Badger Hive Management System
             </Typography>
+                <Button exact component={NavLink} to={AppScreens.PUBLIC} activeClassName="active-button" onClick={onPublic} className="menu-button" color="inherit">
+                    Community
+                </Button>
                 <Button component={NavLink} to={AppScreens.HOME} activeClassName="active-button" onClick={onHome} className="menu-button" color="inherit">
                     Home
                 </Button>

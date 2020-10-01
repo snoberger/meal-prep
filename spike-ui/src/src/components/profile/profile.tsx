@@ -1,6 +1,5 @@
 import { Box, Button, Grid, TextField } from '@material-ui/core';
 import React, { ChangeEvent } from 'react';
-import { useHistory } from 'react-router-dom';
 import { AppScreens } from '../../App';
 import { getuser } from '../../libs/User';
 import { User } from '../../libs/util';
@@ -134,7 +133,7 @@ export default class Profile extends React.Component<ProfileProps, {
                             border: '1px solid black',
                             objectFit: 'cover',
                             borderWidth: 1
-                        }} src={this.state.image}>
+                        }} src={this.state.image} alt="profile-pic">
                         </img>
                         <div>
                             <input

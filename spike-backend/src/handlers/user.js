@@ -35,7 +35,17 @@ export const getUser = handler(async (event, context) => {
         }
     };
     let data = await dynamoDb.query(params);
+    console.log(data.Items[0]);
     return {statusCode: 200, body: data.Items[0]};
+});
+
+export const getAllUsers = handler(async (event, context) => {
+    const params = {
+        TableName: 'auth',
+        AttributesToGet: ["userId", "user"]
+    };
+    let data = await dynamoDb.scan(params);
+    return {statusCode: 200, body: data.Items};
 });
 
 export const updateUser = handler(async (event, context) => {

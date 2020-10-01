@@ -22,6 +22,14 @@ getuser:
             method: get
             cors: true
             authorizer: aws_iam
+getAllUsers:
+    handler: user.getAllUsers
+    events:
+        - http:
+            path: api/user
+            method: get
+            cors: true
+            authorizer: aws_iam
 updateUser:
     handler: user.updateUser
     events:

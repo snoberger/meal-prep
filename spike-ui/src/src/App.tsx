@@ -2,6 +2,8 @@ import React from "react";
 import Login from "./components/login/login";
 import Signup from "./components/signup/signup";
 import Home from "./components/home/Home";
+import Public from "./components/Public/PublicWrapper";
+
 import { Switch, Route } from "react-router-dom";
 import "./App.css";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -12,8 +14,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/profile/profileWrapper";
 
 export enum AppScreens {
+  PUBLIC= '/',
   HOME = '/home',
-  LOGIN = '/',
+  LOGIN = '/login',
   SIGNUP = '/signup',
   PROFILE = '/profile'
 }
@@ -36,6 +39,9 @@ const app = (
         <PrivateRoute path={AppScreens.PROFILE} component={Profile}/>
         <Route path={AppScreens.LOGIN}>
           <Login></Login>
+        </Route>
+        <Route path={AppScreens.PUBLIC}>
+          <Public></Public>
         </Route>
       </Switch>
     </div>

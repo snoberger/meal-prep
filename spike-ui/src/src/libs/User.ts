@@ -8,6 +8,11 @@ export interface UserItem {
     email: string,
     image?: string
 }
+export interface SimpleUser {
+    user: string,
+    userId: string,
+}
+
 export interface UserUpdate {
     user?: string,
     image?: string,
@@ -57,6 +62,10 @@ export const authenticate = async(user: AuthenticateItem): Promise<string|false>
 
 export const getuser = async(userId: string): Promise<{data: UserItemResult}> => {
     return await axios.get(`${USER_ENDPOINT}/${userId}`);
+}
+
+export const getAllUsers = async(): Promise<{data: Array<SimpleUser>}> => {
+    return await axios.get(`${USER_ENDPOINT}/`);
 }
 
 export const updateUser = async( userId: string, user: UserUpdate): Promise<any> => {
