@@ -6,10 +6,9 @@ import IconButton from '@material-ui/core/IconButton';
 import AccordionActions from '@material-ui/core/AccordionActions';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Create from '@material-ui/icons/Create';
-import { Modal, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import Hive from "./Hive"
 import AddHive from "./AddHive/AddHive"
-import './Home.css';
 
 import { Add } from "@material-ui/icons";
 export default function Home() {
@@ -83,18 +82,7 @@ export default function Home() {
                     </IconButton>
                 </Grid>
             </Grid>
-            <Modal
-                style= {{
-                    marginTop: '5%',
-                    marginBottom: '5%',
-                }}
-                children={AddHive}
-                className="add-modal"
-                open={open}
-                onClose={handleClose}
-            >
-                <AddHive handleClose={handleClose} />
-            </Modal>
+            <AddHive className="add-modal" open={open} handleOpen={handleOpen} handleClose={handleClose}/>
         </div>
     )
 }

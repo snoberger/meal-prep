@@ -6,8 +6,12 @@
     padding: 10px;
 }
 
+.overflow-card::-webkit-scrollbar {
+    display: none;
+}
 .overflow-card {
-    overflow-y: scroll;
+    overflow-y: scroll !important;
+    scrollbar-width: none;
     padding-bottom: 20px;
     max-width: 670px
 }
