@@ -16,12 +16,45 @@
     max-width: 670px
 }
 
-.textbox {
+.danger{
+    color: red !important;
+}
+
+.modal-textbox-full {
     width: 94%;
     margin-left: 3% !important; 
     margin-right: 3% !important;
     display:inline-block;
     margin-top: 3% !important;
+}
+
+.modal-textbox-half {
+    width: 44%;
+    margin-left: 3% !important; 
+    margin-right: 3% !important;
+    display:inline-block;
+    margin-top: 3% !important;
+}
+
+.modal-select{
+    width: 94%;
+    margin-left: 3% !important; 
+    margin-right: 3% !important;
+    display:inline-block;
+    margin-top: 3% !important;
+}
+
+.name-field {
+    width: 58% !important;
+}
+.health {
+    width: 30% !important;
+}
+
+.slider {
+    width: 90%;
+    margin: 3% 0% 2% 5% !important; 
+    display:inline-block;
 }
 
 .MuiFormControl-root {

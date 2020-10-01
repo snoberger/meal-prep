@@ -5,12 +5,12 @@ import dynamodbLib from "../libs/dynamodb-lib";
 
 export const create = handler(async (event, context) => {
   let data = JSON.parse(event.body);
-
   const params = {
     TableName: 'hive',
     Item: {
       userId: data.userId,
       hiveId: uuid.v1(),
+      name: data.name,
       inspectionResults: data.inspectionResults || null,
       health: data.health || null,
       honeyStores: data.honeyStores || null,

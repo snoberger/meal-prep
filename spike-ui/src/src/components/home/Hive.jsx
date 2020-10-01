@@ -8,13 +8,13 @@ import Chip from '@material-ui/core/Chip';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 export default function Home(props) {
-    let inventoryEq = []
-    for(let item of props.hiveData.inventoryEq){
-        inventoryEq.push(<Chip label={item} />)
+    let inventoryEquipment = []
+    for(let item of props.hiveData.inventoryEquipment){
+        inventoryEquipment.push(<Chip label={item} />)
     }
-    let hiveEq = []
-    for(let item of props.hiveData.inventoryEq){
-        hiveEq.push(<Chip label={item} />)
+    let hiveEquipment = []
+    for(let item of props.hiveData.hiveEquipment){
+        hiveEquipment.push(<Chip label={item} />)
     }
     return (
         <AccordionDetails>
@@ -23,7 +23,7 @@ export default function Home(props) {
                     <Typography>Honey: <span style={{color: "yellow"}}>{props.hiveData.honey}</span></Typography>
                 </Grid>
                 <Grid item>
-                    <Typography>Queen Production:{props.hiveData.qProduction}</Typography>
+                    <Typography>Queen Production:{props.hiveData.queenProduction}</Typography>
                 </Grid>
                 <Grid item>
                     <Typography>Health:{props.hiveData.health}</Typography>
@@ -39,7 +39,7 @@ export default function Home(props) {
                         <Card>
                             <CardContent>
                                 <Typography>Hive Equipment</Typography>
-                                {hiveEq}
+                                {hiveEquipment}
                             </CardContent>
                         </Card>
                     </Grid>
@@ -47,7 +47,7 @@ export default function Home(props) {
                         <Card>
                         <CardContent>
                             <Typography>Inventory</Typography>
-                            {inventoryEq}
+                            {inventoryEquipment}
                         </CardContent>  
                         </Card>
                     </Grid>

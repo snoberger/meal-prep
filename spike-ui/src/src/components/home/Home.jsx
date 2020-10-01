@@ -1,10 +1,6 @@
 import React, {useState} from "react";
 import NavBar from "../NavBar/NavBar";
-import Grid from '@material-ui/core/Grid';
-import Accordion from '@material-ui/core/Accordion';
-import IconButton from '@material-ui/core/IconButton';
-import AccordionActions from '@material-ui/core/AccordionActions';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
+import {Grid, Accordion, IconButton, AccordionActions, AccordionSummary} from '@material-ui/core';
 import Create from '@material-ui/icons/Create';
 import { Typography } from "@material-ui/core";
 import Hive from "./Hive"
@@ -12,38 +8,39 @@ import AddHive from "./AddHive/AddHive"
 
 import { Add } from "@material-ui/icons";
 export default function Home() {
-    const hives = [
+    
+    const [hives, setHives] = useState([
         {
             name: "Mine",
-            honey: "100%",
-            qProduction: "10",
+            honeyStores: "100%",
+            queenProduction: "10",
             health: "100hp",
             losses: "0",
             gains: "swole",
-            inventoryEq: ["netting"],
-            hiveEq: ["box"]
+            inventoryEquipment: ["netting"],
+            hiveEquipment: ["box"]
         },
         {
             name: "Someones",
             honey: "72%",
-            qProduction: "3",
+            queenProduction: "3",
             health: "100hp",
             losses: "0",
             gains: "moderate",
-            inventoryEq: ["netting"],
-            hiveEq: [""]
+            inventoryEquipment: ["netting"],
+            hiveEquipment: [""]
         },
         {
             name: "No ones",
             honey: "0%",
-            qProduction: "1",
+            queenProduction: "1",
             health: "10hp",
             losses: "1,000,000",
             gains: "none",
-            inventoryEq: [""],
-            hiveEq: ["box"]
+            inventoryEquipment: [""],
+            hiveEquipment: ["box"]
         }
-    ]
+    ]);
     let hiveViews = []
     const [open, setOpen] = useState(false);
 
@@ -51,7 +48,11 @@ export default function Home() {
         setOpen(true);
     };
 
-    const handleClose = () => {
+    const handleClose = (hive) => {
+        let temp = hives.slice();
+        temp.push(hive)
+        console.log(temp)
+        setHives(temp)
         setOpen(false);
     };
     for (let hive of hives) {
@@ -72,15 +73,15 @@ export default function Home() {
     return (
         <div>
             <NavBar />
-            <Grid style={{ marginTop: "5em" }} container justify="center" >
-                <Grid item >
-                    {hiveViews}
-                </Grid>
+            <Grid style={{ marginTop: "5em"}} container justify="center" >
                 <Grid>
+                    {hiveViews}
+                </Grid >
+                <Grid style={{width: '100%'}}>
                     <IconButton color="primary" onClick={handleOpen} component="span">
                         <Add />
                     </IconButton>
-                </Grid>
+                </Grid >
             </Grid>
             <AddHive className="add-modal" open={open} handleOpen={handleOpen} handleClose={handleClose}/>
         </div>
