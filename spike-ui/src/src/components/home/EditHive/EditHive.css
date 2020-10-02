@@ -1,0 +1,80 @@
+.add {
+    display: inline-block;
+}
+
+.add-bar {
+}
+
+.overflow-card::-webkit-scrollbar {
+    display: none;
+}
+.overflow-card {
+    overflow-y: scroll !important;
+    scrollbar-width: none;
+    padding-bottom: 20px;
+    max-width: 670px
+}
+
+.danger{
+    color: red !important;
+}
+
+.modal-textbox-full {
+    width: 94%;
+    margin-left: 3% !important; 
+    margin-right: 3% !important;
+    display:inline-block;
+    margin-top: 3% !important;
+}
+
+.modal-textbox-half {
+    width: 44%;
+    margin-left: 3% !important; 
+    margin-right: 3% !important;
+    display:inline-block;
+    margin-top: 3% !important;
+}
+
+.modal-select{
+    width: 94%;
+    margin-left: 3% !important; 
+    margin-right: 3% !important;
+    display:inline-block;
+    margin-top: 3% !important;
+}
+
+.name-field {
+    width: 58% !important;
+}
+.health {
+    width: 30% !important;
+}
+
+.slider {
+    width: 90%;
+    margin: 3% 0% 2% 5% !important; 
+    display:inline-block;
+}
+
+.MuiFormControl-root {
+    margin-left: 12px;
+}
+
+.submit-box {
+    margin: 2% 2% 0% 0% !important;
+    width: 100%;    
+}
+
+.login-link {
+    float: left;
+    margin: 5% 0% 0% 8% !important;
+}
+
+.submit-button {
+    float: right;
+    margin: 4% 8% 0% 0% !important;
+}
+
+.viewable-checkbox {
+    margin-top: 15%;
+}

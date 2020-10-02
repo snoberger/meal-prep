@@ -8,18 +8,23 @@ import AddHive from "./AddHive/AddHive";
 import DeleteHive from "./DeleteHive/DeleteHive";
 import {getUsersHives} from "../../libs/Hive";
 import { Add } from "@material-ui/icons";
+import EditHive from "./EditHive/EditHive"
 
 export default function Home() {
     
     const [hives, setHives] = useState([]);
     const [open, setOpen] = useState(false);
+    const [currentHive, setCurrentHive] = useState();
     let hasLoaded = useRef(false);
 
     const handleOpen = () => {
         setOpen(true);
     };
 
-
+    const editClick = (hive)=>() => {
+        setCurrentHive(hive)
+        console.log("hello", hive, currentHive)
+    }
     const makeHive = (hive) => {
         return (
             <React.Fragment key={hive.hiveId}>
@@ -28,8 +33,9 @@ export default function Home() {
                         <Typography variant="h5">{hive.name}</Typography>
                     </AccordionSummary>                    
                     <AccordionActions>
-                        <IconButton color="primary" size="small" component="span">
+                        <IconButton color="primary" size="small" component="span" onClick={editClick(hive)}>
                             <Create/>
+                            
                         </IconButton>
                         <DeleteHive hive={hive} setHives={setHives} allHives={hives}/>
                     </AccordionActions>
@@ -63,7 +69,7 @@ export default function Home() {
             hasLoaded.current = true;
         });
     }, [hasLoaded]);
-
+    
     return (
         <div>
             <NavBar />
@@ -78,6 +84,9 @@ export default function Home() {
                 </Grid >
             </Grid>
             <AddHive className="add-modal" open={open} handleOpen={handleOpen} handleClose={handleClose}/>
+            <EditHive hive={currentHive} handleOpen={handleOpen} handleClose={()=>{
+                setCurrentHive(undefined)
+            }} /> 
         </div>
     )
 }

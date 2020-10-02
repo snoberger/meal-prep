@@ -74,7 +74,7 @@ updateHive:
     handler: hive.updateHive
     events:
       - http:
-          path: api/hive
+          path: api/hive/{userId}/{hiveId}
           method: patch
           cors: true
           authorize: aws_iam

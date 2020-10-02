@@ -51,7 +51,8 @@ export const getSpecifiedHive = async (userId: string, hiveId: string): Promise<
 }
 
 export const updateHive = async (userId: string, hiveId: string, hive: HiveItem): Promise<HiveResponse> => {
-    return await axios.patch(HIVE_ENDPOINT, {'userId': userId, 'hiveId': hiveId, 'values': hive});
+    console.log(hive,hiveId,userId, 'shit', {...hive})
+    return await axios.patch(`${HIVE_ENDPOINT}/${userId}/${hiveId}`, {...hive});
 }
 
 export const deleteHive = async (userId: string, hiveId: string): Promise<HiveResponse> => {

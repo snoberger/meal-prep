@@ -5,7 +5,6 @@ import dynamodbLib from "../libs/dynamodb-lib";
 
 export const create = handler(async (event, context) => {
   let data = JSON.parse(event.body);
-  console.log(data)
   const params = {
     TableName: 'hive',
     Item: {
@@ -71,14 +70,14 @@ export const getSpecifiedHive = handler(async (event, context) => {
 
 export const updateHive = handler(async (event, context) => {
     let data = JSON.parse(event.body);
-    let userId = data.userId;
-    let hiveId = data.hiveId;
-
+    let userId = event.pathParameters.userId;
+    let hiveId = event.pathParameters.hiveId;
+    console.log(data)
     // let mapping =  {
     //     'attribute1': 'updatedvalue1',
     //     'attribute2': 'updatedvalue2'
     // }
-    let mapping = data.values;
+    let mapping = data;
 
     let params = (attributeName, attributeValue) => ({
         TableName: 'hive',
