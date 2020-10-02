@@ -12,6 +12,7 @@ export const create = handler(async (event, context) => {
       userId: data.userId,
       hiveId: uuid.v1(),
       name: data.name,
+      image: data.image || 'none',
       inspectionResults: data.inspectionResults || null,
       health: data.health || null,
       honeyStores: data.honeyStores || null,

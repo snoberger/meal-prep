@@ -11,27 +11,40 @@ export default function Home(props) {
     const hash = (string) => {
         let hash = 0, i, chr;
         for (i = 0; i < string.length; i++) {
-            chr   = string.charCodeAt(i);
-            hash  = ((hash << 5) - hash) + chr;
+            chr = string.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
             hash |= 0; // Convert to 32bit integer
         }
         return hash;
     }
 
     let inventoryEquipment = []
-    for(let item of props.hiveData.inventoryEquipment){
-        inventoryEquipment.push(<Chip label={item} key={hash(item)}/>)
+    for (let item of props.hiveData.inventoryEquipment) {
+        inventoryEquipment.push(<Chip label={item} key={hash(item)} />)
     }
     let hiveEquipment = []
-    for(let item of props.hiveData.hiveEquipment){
-        hiveEquipment.push(<Chip label={item} key={hash(item)}/>)
+    for (let item of props.hiveData.hiveEquipment) {
+        hiveEquipment.push(<Chip label={item} key={hash(item)} />)
     }
 
     return (
         <AccordionDetails>
             <Grid container spacing={1}>
+                {props.hiveData.image !== 'none' ? <Grid item>
+                    <img style={{
+                        height: '10vw',
+                        width: '10vw',
+                        borderRadius: 25,
+                        border: '1px solid black',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        borderWidth: 1
+                    }} src={props.hiveData.image} >
+                    </img>
+                </Grid>
+                    : null}
                 <Grid item>
-                    <Typography>Honey: <span style={{color: "#ffd54f"}}>{props.hiveData.honeyStores}%</span></Typography>
+                    <Typography>Honey: <span style={{ color: "#ffd54f" }}>{props.hiveData.honeyStores}%</span></Typography>
                 </Grid>
                 <Grid item>
                     <Typography>Queen Production: {props.hiveData.queenProduction}</Typography>
@@ -62,7 +75,7 @@ export default function Home(props) {
                             <CardContent>
                                 <Typography>Inventory</Typography>
                                 {inventoryEquipment}
-                            </CardContent>  
+                            </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
