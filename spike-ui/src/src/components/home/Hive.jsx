@@ -20,16 +20,16 @@ export default function Home(props) {
 
     let inventoryEquipment = []
     for (let item of props.hiveData.inventoryEquipment) {
-        inventoryEquipment.push(<Chip label={item} key={hash(item)} />)
+        inventoryEquipment.push(<Chip color="secondary" label={item} key={hash(item)} />)
     }
     let hiveEquipment = []
     for (let item of props.hiveData.hiveEquipment) {
-        hiveEquipment.push(<Chip label={item} key={hash(item)} />)
+        hiveEquipment.push(<Chip color="secondary" label={item} key={hash(item)} />)
     }
 
     return (
         <AccordionDetails>
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
                 {props.hiveData.image !== 'none' ? <Grid item>
                     <img style={{
                         height: '10vw',
@@ -43,42 +43,37 @@ export default function Home(props) {
                     </img>
                 </Grid>
                     : null}
-                <Grid item>
-                    <Typography>Honey: <span style={{ color: "#ffd54f" }}>{props.hiveData.honeyStores}%</span></Typography>
-                </Grid>
-                <Grid item>
-                    <Typography>Queen Production: {props.hiveData.queenProduction}</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography>Health: {props.hiveData.health}hp</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography>Losses: {props.hiveData.losses}</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography>Gains: {props.hiveData.gains}</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography>Results: {props.hiveData.inspectionResults} </Typography>
-                </Grid>
-                <Grid container spacing={8}>
+                <Grid item container sm spacing={3}>
                     <Grid item>
-                        <Card >
-                            <CardContent>
-                                <Typography>Hive Equipment</Typography>
-                                {hiveEquipment}
-                            </CardContent>
-                        </Card>
+                        <Typography>Honey: <span style={{ color: "#e6af00" }}>{props.hiveData.honeyStores}%</span></Typography>
                     </Grid>
                     <Grid item>
-                        <Card>
-                            <CardContent>
-                                <Typography>Inventory</Typography>
-                                {inventoryEquipment}
-                            </CardContent>
-                        </Card>
+                        <Typography>Queen Production: {props.hiveData.queenProduction}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Health: {props.hiveData.health}hp</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Losses: {props.hiveData.losses}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Gains: {props.hiveData.gains}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Results: {props.hiveData.inspectionResults} </Typography>
+                    </Grid>
+                    <Grid item container spacing={8}>
+                        <Grid item>
+                            <Typography>Hive Equipment</Typography>
+                            {hiveEquipment}
+                        </Grid>
+                        <Grid item>
+                            <Typography>Inventory</Typography>
+                            {inventoryEquipment}
+                        </Grid>
                     </Grid>
                 </Grid>
+                
 
             </Grid>
         </AccordionDetails>
