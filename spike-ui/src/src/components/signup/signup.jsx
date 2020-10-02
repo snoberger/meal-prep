@@ -47,7 +47,7 @@ export default function Signup() {
             address: values.address
         }
         await User.create(user);
-        history.push("/"); //TODO verify account was created?
+        history.push("/login"); //TODO verify account was created?
       }
 
       const validateRequiredInfo = () => {
