@@ -35,7 +35,6 @@ export const getUser = handler(async (event, context) => {
         }
     };
     let data = await dynamoDb.query(params);
-    console.log(data.Items[0]);
     return {statusCode: 200, body: data.Items[0]};
 });
 
