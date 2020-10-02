@@ -84,7 +84,7 @@ export default function Home() {
                 </Grid >
             </Grid>
             <AddHive className="add-modal" open={open} handleOpen={handleOpen} handleClose={handleClose}/>
-            <EditHive hive={currentHive} handleOpen={handleOpen} handleClose={()=>{
+            <EditHive hive={currentHive} handleClose={()=>{
                 setCurrentHive(undefined)
             }} /> 
         </div>

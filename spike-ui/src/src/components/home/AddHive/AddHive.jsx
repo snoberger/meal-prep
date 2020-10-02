@@ -68,7 +68,6 @@ const AddHive = React.forwardRef((props, ref) => {
             hiveId: null,
             image: values.image
         }
-        console.log("JASON", values.image, '\nHELLO', hive.image)
         try {
             let response = await Hive.create(localStorage.getItem('auth'), hive)
             hive.hiveId = response.data.hiveId;
