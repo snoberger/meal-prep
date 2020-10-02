@@ -72,7 +72,6 @@ export const updateHive = handler(async (event, context) => {
     let data = JSON.parse(event.body);
     let userId = event.pathParameters.userId;
     let hiveId = event.pathParameters.hiveId;
-    console.log(data)
     // let mapping =  {
     //     'attribute1': 'updatedvalue1',
     //     'attribute2': 'updatedvalue2'
