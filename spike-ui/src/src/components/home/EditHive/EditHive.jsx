@@ -192,9 +192,9 @@ const EditHive = React.forwardRef((props, ref) => {
                                 onChange={handleFile}
                             />
                         </FormControl>
-                        <Box className="save-edit">
-                            <Button className="save-button" type="save" form="edit-form" variant="contained" color="primary">
-                                Save
+                        <Box className="save-add">
+                            <Button className="submit-button" type="save" form="edit-form" variant="contained" color="primary">
+                                Save changes
                             </Button>
                         </Box>
                     </form>

@@ -185,7 +185,7 @@ const AddHive = React.forwardRef((props, ref) => {
                         </FormControl>
                         <Box className="submit-add">
                             <Button className="submit-button" type="submit" form="add-form" variant="contained" color="primary">
-                                Submit
+                                Save changes
                             </Button>
                         </Box>
                     </form>
