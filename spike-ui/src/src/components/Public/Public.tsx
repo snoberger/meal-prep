@@ -14,17 +14,17 @@ export interface User {
     user: string
 }
 export default class Public extends React.Component<PublicProps, {
-    userId: string
+    user: string
     users: Array<User>
-    profile: any;
+    userId: string;
 }>{
     constructor(props: PublicProps) {
         super(props);
 
         this.state = {
-            userId: '',
+            user: '',
             users: [],
-            profile: <div></div>
+            userId: '',
         }
     }
     
@@ -45,8 +45,8 @@ export default class Public extends React.Component<PublicProps, {
         if(user) {
             this.setState({
                 ...this.state,
-                userId: value,
-                profile: <PublicProfile userId={user.userId}/>
+                user: value,
+                userId: user.userId
             }) 
         }
     };
@@ -76,7 +76,7 @@ export default class Public extends React.Component<PublicProps, {
                     />
                 </Grid>
                 <Grid container className="profile-container" justify="center"> 
-                    {this.state.profile}
+                    {(this.state.userId ? <PublicProfile  key={this.state.userId} userId={this.state.userId}/> : <div></div>)}
                 </Grid>
             </Grid>
         </div>)
