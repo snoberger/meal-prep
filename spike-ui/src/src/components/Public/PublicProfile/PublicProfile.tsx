@@ -22,7 +22,7 @@ export default class PublicProfile extends React.Component<PublicProfileProps, {
             viewHives: []
         }
     }
-    
+
     componentDidMount() {
         this.loadUser();
         this.loadHives();
@@ -59,7 +59,7 @@ export default class PublicProfile extends React.Component<PublicProfileProps, {
     render () {
         return (
             <div>
-                <Grid style={{ marginTop: "5em"}} container justify="center" >
+                <Grid style={{ marginTop: "5em", maxWidth: "600px", marginBottom:"2em"}} container justify="center" >
                     <Card>
                         <CardActionArea>
                             <CardMedia
@@ -78,7 +78,7 @@ export default class PublicProfile extends React.Component<PublicProfileProps, {
                         </CardActionArea>
                     </Card>
                 </Grid>
-                <Grid>
+                <Grid style={{maxWidth: "600px"}}>
                     {this.state.viewHives.length ? this.state.viewHives : <span>No hives found.</span>}
                 </Grid>
             </div>

@@ -1,9 +1,14 @@
 .search-box {
     width:50%;
+    max-width: 900px;
 }
 .prompt {
     width:60%;
 }
 .search-container {
-    width: 1000%;
+    width: 100%;
+}
+
+.profile-container {
+    margin: 0% 5% 0% 5%;
 }
