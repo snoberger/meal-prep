@@ -49,11 +49,10 @@ const AddHive = React.forwardRef((props, ref) => {
             losses: values.losses,
             gains: values.gains,
             viewable: values.viewable,
-            id: null
+            hiveId: null
         }
-        console.log(hive);
         let response = await Hive.create(localStorage.getItem('auth'), hive);
-        hive.id = response.data.hiveId;
+        hive.hiveId = response.data.hiveId;
         props.handleClose(hive);
     } 
     return (

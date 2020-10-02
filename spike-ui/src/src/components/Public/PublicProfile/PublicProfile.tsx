@@ -1,7 +1,7 @@
 import React from "react";
 import { getuser } from '../../../libs/User';
 import {Grid, Card, CardActionArea, CardMedia, Typography, CardContent, Accordion, AccordionSummary} from '@material-ui/core';
-import { getUsersHives, HiveItem } from '../../../libs/Hive';
+import { getUsersHives } from '../../../libs/Hive';
 import Hive from '../../home/Hive';
 
 export interface PublicProfileProps {
@@ -30,7 +30,6 @@ export default class PublicProfile extends React.Component<PublicProfileProps, {
 
     async loadUser () {
         const user = await (await getuser(this.state.userId)).data;
-        console.log(user);
         this.setState({
             ...this.state,
             userData: user,
@@ -41,17 +40,16 @@ export default class PublicProfile extends React.Component<PublicProfileProps, {
     async loadHives() {
         let userHives = (await getUsersHives(this.state.userId)).data.Items;
         let viewHives = userHives.filter(hive => hive.viewable);
-        let showHives = viewHives.map(hive => <>
-                                              <Accordion style={{ backgroundColor: "#dcdcdc" }} key={hive.hiveId}>
+        let showHives = viewHives.map(hive => <React.Fragment key={hive.hiveId}>
+                                              <Accordion style={{ backgroundColor: "#dcdcdc" }}>
                                               <AccordionSummary>
                                                 <Typography variant="h5">{hive.name}</Typography>
                                               </AccordionSummary>
                                               <Hive hiveData={hive}></Hive>
                                               </Accordion>
-                                              </>
+                                              </React.Fragment>
         );
 
-        console.log(showHives);
         this.setState({
             ...this.state,
             'viewHives': showHives

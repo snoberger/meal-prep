@@ -12,9 +12,10 @@ export default function DeleteHive(props) {
     };
 
     const handleDelete = async () => {
-        let filtered = props.allHives.filter(hive => hive.id !== props.hive.id)
+        let copy = props.allHives.slice();
+        let filtered = copy.filter(hive => hive.hiveId !== props.hive.hiveId)
         let userId = localStorage.getItem('auth');
-        await Hive.deleteHive(userId, props.hive.id);
+        await Hive.deleteHive(userId, props.hive.hiveId);
         setOpen(false);
         props.setHives(filtered);
     };
