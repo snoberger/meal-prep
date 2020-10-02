@@ -1,8 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from "react";
 import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 
 import Chip from '@material-ui/core/Chip';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -39,7 +37,7 @@ export default function Home(props) {
                         objectFit: 'cover',
                         objectPosition: 'center',
                         borderWidth: 1
-                    }} src={props.hiveData.image} >
+                    }} src={props.hiveData.image} alt='Hive' >
                     </img>
                 </Grid>
                     : null}

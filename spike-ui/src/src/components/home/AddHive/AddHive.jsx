@@ -172,7 +172,7 @@ const AddHive = React.forwardRef((props, ref) => {
                                 objectFit: 'cover',
                                 objectPosition: 'center',
                                 borderWidth: 1
-                            }} src={values.image} alt={`Hive Picture
+                            }} src={values.image} alt={`Hive
                             (optional)`} >
                             </img>
                             <input
