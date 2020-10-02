@@ -8,6 +8,7 @@ import AddHive from "./AddHive/AddHive";
 import DeleteHive from "./DeleteHive/DeleteHive";
 
 import { Add } from "@material-ui/icons";
+import { updateHive } from "../../libs/Hive";
 export default function Home() {
     
     const [hives, setHives] = useState([
@@ -18,28 +19,31 @@ export default function Home() {
             health: "100hp",
             losses: "0",
             gains: "swole",
+            inspectionResults: "Pass",
             inventoryEquipment: ["netting"],
             hiveEquipment: ["box"],
             id: 1
         },
         {
             name: "Someones",
-            honey: "72%",
+            honeyStores: "72%",
             queenProduction: "3",
             health: "100hp",
             losses: "0",
             gains: "moderate",
+            inspectionResults: "Pass",
             inventoryEquipment: ["netting"],
             hiveEquipment: [""],
             id: 2
         },
         {
             name: "No ones",
-            honey: "0%",
+            honeyStores: "0%",
             queenProduction: "1",
             health: "10hp",
             losses: "1,000,000",
             gains: "none",
+            inspectionResults: "Fail",
             inventoryEquipment: [""],
             hiveEquipment: ["box"],
             id: 3
@@ -63,15 +67,16 @@ export default function Home() {
         
         setOpen(false);
     };
+ 
     for (let hive of hives) {
         hiveViews.push(
-            <Accordion style={{ backgroundColor: "#dcdcdc" }} key={hive.id}>
+            <Accordion style={{ backgroundColor: "#dbdbdb"}} key={hive.id} >
                 <AccordionSummary>
                     <Typography variant="h5"> {hive.name}</Typography>
                 </AccordionSummary>
                 <AccordionActions>
                     <IconButton color="primary" size="small" component="span">
-                        <Create />
+                        <updateHive> </updateHive>
                     </IconButton>
                     <DeleteHive hive={hive} setHives={setHives} allHives={hives}/>
                 </AccordionActions>

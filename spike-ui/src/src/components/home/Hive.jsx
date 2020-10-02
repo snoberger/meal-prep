@@ -31,23 +31,26 @@ export default function Home(props) {
         <AccordionDetails>
             <Grid container spacing={1}>
                 <Grid item>
-                    <Typography>Honey: <span style={{color: "yellow"}}>{props.hiveData.honey}</span></Typography>
+                    <Typography>Honey: <span style={{color: "#ffd54f"}}>{props.hiveData.honeyStores}%</span></Typography>
                 </Grid>
                 <Grid item>
-                    <Typography>Queen Production:{props.hiveData.queenProduction}</Typography>
+                    <Typography>Queen Production: {props.hiveData.queenProduction}</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography>Health:{props.hiveData.health}</Typography>
+                    <Typography>Health: {props.hiveData.health}hp</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography>losses:{props.hiveData.losses}</Typography>
+                    <Typography>Losses: {props.hiveData.losses}</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography>gains:{props.hiveData.gains}</Typography>
+                    <Typography>Gains: {props.hiveData.gains}</Typography>
                 </Grid>
-                <Grid container spacing={3}>
+                <Grid item>
+                    <Typography>Results: {props.hiveData.inspectionResults} </Typography>
+                </Grid>
+                <Grid container spacing={8}>
                     <Grid item>
-                        <Card>
+                        <Card >
                             <CardContent>
                                 <Typography>Hive Equipment</Typography>
                                 {hiveEquipment}
@@ -56,10 +59,10 @@ export default function Home(props) {
                     </Grid>
                     <Grid item>
                         <Card>
-                        <CardContent>
-                            <Typography>Inventory</Typography>
-                            {inventoryEquipment}
-                        </CardContent>  
+                            <CardContent>
+                                <Typography>Inventory</Typography>
+                                {inventoryEquipment}
+                            </CardContent>  
                         </Card>
                     </Grid>
                 </Grid>
