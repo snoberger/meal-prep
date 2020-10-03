@@ -8,16 +8,23 @@ import AddHive from "./AddHive/AddHive";
 import DeleteHive from "./DeleteHive/DeleteHive";
 import {getUsersHives} from "../../libs/Hive";
 import { Add } from "@material-ui/icons";
+import EditHive from "./EditHive/EditHive"
 
 export default function Home() {
     
     const [hives, setHives] = useState([]);
     const [open, setOpen] = useState(false);
+    const [currentHive, setCurrentHive] = useState();
     let hasLoaded = useRef(false);
 
     const handleOpen = () => {
         setOpen(true);
     };
+
+    const editClick = (hive) => () => {
+        setCurrentHive(hive)
+        console.log("hello", hive, currentHive)
+    }
 
 
     const makeHive = (hive) => {
@@ -31,8 +38,8 @@ export default function Home() {
                     <Hive hiveData={hive}></Hive>
                     <Divider />
                     <AccordionActions>
-                        <IconButton color="primary" size="small" component="span">
-                            <Create/>
+                    <IconButton color="primary" size="small" component="span" onClick={editClick(hive)}>
+                            <Create />
                         </IconButton>
                         <DeleteHive hive={hive} setHives={setHives} allHives={hives}/>
                     </AccordionActions>
@@ -79,6 +86,19 @@ export default function Home() {
                     </IconButton>
                 </Grid >
             </Grid>
+            <EditHive hive={currentHive} handleClose={() => {
+                setCurrentHive(undefined)
+
+                const loadHives = async () => {
+                    let userId = localStorage.getItem('auth');
+                    let userHives = (await getUsersHives(userId)).data.Items;
+                    return userHives;
+                }
+                loadHives().then(d => {
+                    setHives(d);
+                    hasLoaded.current = true;
+                });
+            }} />
             <AddHive className="add-modal" open={open} handleOpen={handleOpen} handleClose={handleClose}/>
         </div>
     )
