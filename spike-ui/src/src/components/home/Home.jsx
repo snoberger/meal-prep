@@ -23,7 +23,7 @@ export default function Home() {
     const makeHive = (hive) => {
         return (
             <React.Fragment key={hive.hiveId}>
-                <Accordion style={{ backgroundColor: "#eaeaea", margin: '30px' }}>
+                <Accordion style={{ backgroundColor: "#eaeaea", margin: ' 10px 30px 0px 30px' }}>
                     <AccordionSummary>
                         <Typography variant="h5">{hive.name}</Typography>
                         

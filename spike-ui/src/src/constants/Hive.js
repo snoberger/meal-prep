@@ -1,2 +1,2 @@
-export const InventoryEquipmentTypes =['InvE', 'InvE2']
-export const HiveEquipmentTypes = ['hiveE', 'hiveE2']
+export const InventoryEquipmentTypes =['Netting', 'Smoker', 'Hive Tool', 'Heater', 'Polen Trap']
+export const HiveEquipmentTypes = ['Hive stand', 'Bottom board', 'Hive bodies', 'Frame', 'Comb', 'Excluder']

@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 import React from "react";
 import Grid from '@material-ui/core/Grid';
 
@@ -18,11 +18,11 @@ export default function Home(props) {
 
     let inventoryEquipment = []
     for (let item of props.hiveData.inventoryEquipment) {
-        inventoryEquipment.push(<Chip color="secondary" label={item} key={hash(item)} />)
+        inventoryEquipment.push(<Grid item><Chip color="secondary" label={item} key={hash(item)} /></Grid>)
     }
     let hiveEquipment = []
     for (let item of props.hiveData.hiveEquipment) {
-        hiveEquipment.push(<Chip color="secondary" label={item} key={hash(item)} />)
+        hiveEquipment.push(<Grid item><Chip color="secondary" label={item} key={hash(item)} /></Grid>)
     }
 
     return (
@@ -60,19 +60,26 @@ export default function Home(props) {
                     <Grid item>
                         <Typography>Results: {props.hiveData.inspectionResults} </Typography>
                     </Grid>
-                    <Grid item container spacing={8}>
-                        <Grid item>
-                            <Typography>Hive Equipment</Typography>
-                            {hiveEquipment}
-                        </Grid>
-                        <Grid item>
+                    <Grid item container style={{marginLeft:"5px"}} direction="row">
+                        <Grid item direction="row" container> 
+                            <div style={{width:"40%", paddingRight: "1%"}}>
+                            <Typography >Hive Equipment</Typography>
+                            <Divider/>
+                            </div>
+                            <div style={{width:"40%"}}>
                             <Typography>Inventory</Typography>
+                            <Divider/>
+                            </div>
+                        </Grid>
+                        <Grid item style={{width:"40%", margin: "2% 3% 1% 0%"}} container spacing={1}>
+                             {hiveEquipment}
+                        </Grid>
+                        
+                        <Grid item container style={{width:"40%", marginTop:"2%"}} spacing={1}>
                             {inventoryEquipment}
                         </Grid>
                     </Grid>
                 </Grid>
-                
-
             </Grid>
         </AccordionDetails>
     )
