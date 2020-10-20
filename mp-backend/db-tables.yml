@@ -1,0 +1,13 @@
+authTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: auth
+    AttributeDefinitions:
+      - AttributeName: userId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: userId
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1

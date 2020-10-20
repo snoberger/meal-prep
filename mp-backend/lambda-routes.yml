@@ -1,0 +1,8 @@
+createUser:
+    handler: auth.createUser
+    events:
+        - http:
+            path: api/user
+            method: post
+            cors: true
+            authorizer: aws_iam
