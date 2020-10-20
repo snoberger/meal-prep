@@ -1,3 +1,5 @@
 node_modules/
 spike-backend/package-lock.json
 spike-ui/src/package-lock.json
+mp-backend/package-lock.json
+mp-ui/src/package-lock.json
