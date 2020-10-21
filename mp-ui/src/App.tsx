@@ -1,8 +1,6 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { Button, useTheme } from '@material-ui/core';
-
+import React from "react";
+import "./App.css";
+import { Button, useTheme } from "@material-ui/core";
 
 function App() {
   const theme = useTheme();
@@ -14,10 +12,13 @@ function App() {
           --secondary-color: ${theme.palette.secondary.main};
         }`}
       </style>
-      <Button className="Button" type="submit" variant="contained" color="primary" >
-        <text className="Button-text">
-          Hello World
-          </text>
+      <Button
+        className="Button"
+        type="submit"
+        variant="contained"
+        color="primary"
+      >
+        <text className="Button-text">Hello World</text>
       </Button>
     </div>
   );
