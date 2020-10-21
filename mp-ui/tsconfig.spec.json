@@ -1,9 +1,10 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "types": ["jest", "node"]
-    },
+    "extends": "./tsconfig.json",
     "exclude": [
-        "node_modules"
-    ]
-}
+        "src"
+    ],
+    "compilerOptions": {
+      "isolatedModules": false,
+    }
+  }
+  
