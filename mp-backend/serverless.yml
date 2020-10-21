@@ -4,9 +4,9 @@ package:
   individually: true
 plugins:
   - serverless-functions-base-path
+  - serverless-plugin-typescript
   - serverless-offline
   - serverless-dynamodb-local
-  - serverless-bundle # Package our functions with Webpack
   - serverless-dotenv-plugin # Load .env as environment variables
 custom:
     functionsBasePath: src/handlers
