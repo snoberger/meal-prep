@@ -5,6 +5,7 @@ const config: Config.InitialOptions = {
   verbose: true,
   testMatch: ['**/*.test.ts'],
   testPathIgnorePatterns: ["/node_modules/"],
+  coveragePathIgnorePatterns: ["__tests__"],
   coverageThreshold: {
       "global": {
           branches: 100,
