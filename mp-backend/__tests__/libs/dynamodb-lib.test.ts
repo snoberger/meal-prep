@@ -4,6 +4,7 @@ jest.mock('aws-sdk/clients/dynamodb', ()=> {
     return {
         DocumentClient: class DocumentClient {
             constructor() {
+                return
             }
             get = () => {
                 return {promise: mockPromise}
@@ -67,14 +68,15 @@ describe('non-local calls', ()=>{
         process.env = OLD_ENV; // restore old env
     });
 
-    beforeAll(() => {
+    beforeAll(async () => {
         process.env.IS_OFFLINE = 'true';
         jest.resetModules()
-        import('../../src/libs/dynamodb-lib')
+        await import('../../src/libs/dynamodb-lib')
         jest.mock('aws-sdk/clients/dynamodb', ()=> {
             return {
                 DocumentClient: class DocumentClient {
                     constructor() {
+                        return
                     }
                     get = () => {
                         return {promise: mockPromise}

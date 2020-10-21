@@ -9,7 +9,7 @@ test('a user is saved correctly', async() => {
     const event = {
         body: `{"userId":"test", "userpass":"testpass"}`
     }
-    let result = await createUser(createEvent(event), Context(), ()=>{}) 
+    const result = await createUser(createEvent(event), Context(), ()=>{return}) 
     expect(result ? result.statusCode: false).toBe(201)
     expect(dynamoDb.put).toHaveBeenCalledWith({
         Item: expect.objectContaining({
@@ -23,7 +23,7 @@ test('a user is saved correctly', async() => {
 test('request is declined if body not present', async() => {
     const event = {
     }
-    let result = await createUser(createEvent(event), Context(), ()=>{}) 
+    const result = await createUser(createEvent(event), Context(), ()=>{return}) 
     expect(result ? result.statusCode: false).toBe(404)
 });
 
@@ -31,6 +31,6 @@ test('request is declined if body does not contain required fields', async() => 
     const event = {
         body: `{"wrong": "field"}`
     }
-    let result = await createUser(createEvent(event), Context(), ()=>{}) 
+    const result = await createUser(createEvent(event), Context(), ()=>{return}) 
     expect(result ? result.statusCode: false).toBe(404)
 });
