@@ -4,9 +4,9 @@
     "description": "A Node.js starter for Serverless Framework with ES6 and TypeScript support",
     "main": "handler.js",
     "scripts": {
-        "test": "serverless-bundle test",
         "start": "serverless offline start",
-        "lint": "eslint . --ext .ts; exit 0"
+        "lint": "eslint . --ext .ts; exit 0",
+        "test": "jest --coverage"
     },
     "author": "",
     "license": "MIT",
@@ -18,16 +18,24 @@
         "@types/aws-lambda": "^8.10.64",
         "@typescript-eslint/eslint-plugin": "^4.5.0",
         "@typescript-eslint/parser": "^4.5.0",
-        "aws-sdk": "^2.760.0",
         "eslint": "^7.11.0",
+        "@types/jest": "^26.0.15",
+        "aws-sdk": "^2.760.0",
+        "jest": "^26.6.0",
         "prettier": "2.1.2",
         "serverless-bundle": "2.0.0",
         "serverless-dotenv-plugin": "^2.1.1",
         "serverless-offline": "^5.12.1",
         "serverless-plugin-typescript": "^1.1.9",
+        "ts-jest": "^26.4.1",
         "typescript": "^4.0.3"
     },
     "dependencies": {
+        "@babel/core": "^7.12.3",
+        "@babel/preset-env": "^7.12.1",
+        "@babel/preset-typescript": "^7.12.1",
+        "babel-jest": "^26.6.0",
+        "node": "^14.14.0",
         "serverless-dynamodb-local": "0.2.30",
         "serverless-functions-base-path": "^1.0.32",
         "serverless-http": "^2.6.0",
