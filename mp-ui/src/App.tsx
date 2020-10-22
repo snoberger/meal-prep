@@ -18,7 +18,7 @@ function App() {
         variant="contained"
         color="primary"
       >
-        <text className="Button-text">Hello World</text>
+       <svg> <text className="Button-text">Hello World</text></svg>
       </Button>
     </div>
   );
