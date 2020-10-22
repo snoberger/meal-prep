@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - dev
+defaults:
+  run:
+    working-directory: ./mp-backend
 
 jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./mp-backend
     strategy:
       matrix:
         node-version: [12.x]
