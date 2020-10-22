@@ -1,4 +1,4 @@
-service: spike-backend
+service: mp-backend
 # Create an optimized package for our functions
 package:
   individually: true
@@ -8,6 +8,7 @@ plugins:
   - serverless-offline
   - serverless-dynamodb-local
   - serverless-dotenv-plugin # Load .env as environment variables
+  - serverless-plugin-webpack
 custom:
     functionsBasePath: src/handlers
     tableNames:
