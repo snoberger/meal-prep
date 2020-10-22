@@ -3,11 +3,16 @@
     "version": "2.2.0",
     "description": "A Node.js starter for Serverless Framework with ES6 and TypeScript support",
     "main": "handler.js",
+    "lint-staged": {
+        "*.ts": ["eslint --fix", "jest --findRelatedTests"]
+    },
     "scripts": {
         "start": "serverless offline start",
-        "lint": "eslint . --ext ts & exit 0",
-        "lint:fix": "eslint . --ext ts --fix & exit 0",
-        "test": "jest --coverage"
+        "lint": "eslint . --ext ts",
+        "lint:fix": "eslint . --ext ts --fix",
+        "commit": "npx lint-staged",
+        "test": "jest --coverage",
+        "postinstall": "cd .. & npx husky install ./mp-backend"
     },
     "author": "",
     "license": "MIT",
@@ -28,6 +33,7 @@
         "cache-loader": "^4.1.0",
         "eslint": "^7.11.0",
         "jest": "^26.6.0",
+        "lint-staged": "^10.4.2",
         "prettier": "2.1.2",
         "serverless-bundle": "2.0.0",
         "serverless-dotenv-plugin": "^2.1.1",
