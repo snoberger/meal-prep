@@ -31,7 +31,7 @@ jobs:
     - name: npm lint
       run: npm run lint
     - name: serverless deploy
-      uses: serverless/github-action@master
+      uses: aaronpanch/action-serverless@v1.0.0
       with:
         args: deploy --stage dev
       env:
