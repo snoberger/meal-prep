@@ -7,8 +7,8 @@ defaults:
     working-directory: ./mp-backend
 
 jobs:
-  deploy:
-    name: deploy
+  test:
+    name: test backend
     runs-on: ubuntu-latest
     strategy:
       matrix:
