@@ -4,4 +4,4 @@ describe("testMe", () => {
     });
 });
 
-export{}
+export{};
