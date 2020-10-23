@@ -17,6 +17,10 @@ custom:
       port: 3001
     webpack:
       webpackConfig: ./webpack.config.js
+    Resources:
+      dev: ''
+      local: 
+        Resources: ${file(./db-tables.yml)}
     dynamodb:
       start:
         migrate: true
@@ -26,7 +30,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: dev
+  stage: local
   region: us-east-1
   # These environment variables are made available to our functions
   # under process.env.
@@ -49,8 +53,6 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
-resources:
-  Resources: 
-    ${file(./db-tables.yml)}
+resources: ${self:custom.Resources.${opt:stage, self:provider.stage}}
 functions:
   ${file(./lambda-routes.yml)}
