@@ -3,3 +3,5 @@ describe("testMe", () => {
         expect(true).toBe(true);
     });
 });
+
+export{};
