@@ -3,14 +3,11 @@ service: mp-backend
 package:
   individually: true
 plugins:
-  - serverless-functions-base-path
-  - serverless-plugin-typescript
+  - serverless-webpack
   - serverless-offline
   - serverless-dynamodb-local
-  - serverless-dotenv-plugin # Load .env as environment variables
-  - serverless-plugin-webpack
+  - serverless-dotenv-plugin # Load .env as environment variables  
 custom:
-    functionsBasePath: src/handlers
     tableNames:
       authTable: 'auth'
       hiveTable: 'hive'
@@ -18,6 +15,8 @@ custom:
       dynamodb-url: 'http://localhost:8080'
     serverless-offline:
       port: 3001
+    webpack:
+      webpackConfig: ./webpack.config.js
     dynamodb:
       start:
         migrate: true
