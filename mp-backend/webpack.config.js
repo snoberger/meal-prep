@@ -1,31 +1,42 @@
+const path = require('path');
+const slsw = require('serverless-webpack');
+const nodeExternals = require('webpack-node-externals');
+
 module.exports = {
-    // entry: set by the plugin
-    // output: set by the plugin
+    entry: slsw.lib.entries,
+    output: {
+      libraryTarget: 'commonjs2',
+      path: path.resolve(__dirname, '.webpack'),
+      filename: '[name].js'
+    },
+    mode: 'development',
     target: 'node',
-    externals: [
-      /aws-sdk/, // Available on AWS Lambda
-    ],
+    externals: [nodeExternals()],
+    resolve: {
+      extensions: ['.ts', '.js'],
+    },
     module: {
       rules: [
         {
-          test: /\.js$/,
+          // Include ts, tsx, js, and jsx files.
+          test: /\.(ts|js)x?$/,
           exclude: /node_modules/,
-          loader: 'babel-loader',
-          query: {
-            presets: [
-              [
-                'env',
-                {
-                  target: { node: '6.10' }, // Node version on AWS Lambda
-                  useBuiltIns: true,
-                  modules: false,
-                  loose: true,
-                },
-              ],
-              'stage-0',
-            ],
-          },
-        },
-      ],
+          use: [
+            {
+              loader: 'cache-loader',
+              options: {
+                cacheDirectory: path.resolve('.webpackCache')
+              }
+            },
+            {
+              loader: 'babel-loader',
+              options: {
+                  presets: ['@babel/preset-env'],
+                  plugins: ['transform-class-properties']
+              }
+            },
+          ]
+        }
+      ]
     },
   };

@@ -1,5 +1,5 @@
 createUser:
-    handler: auth.createUser
+    handler: src/handlers/auth.createUser
     events:
         - http:
             path: api/user
