@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "backend": "cd mp-backend && npm run --silent commit",
-    "frontend": "cd mp-ui && exit 0"
+    "frontend": "cd mp-ui && npm run --silent commit"
   },
   "husky": {
     "hooks": {
