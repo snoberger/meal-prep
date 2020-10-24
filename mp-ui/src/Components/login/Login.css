@@ -1,0 +1,34 @@
+.login-div {
+    margin-top: 5%;
+}
+
+.login-card {
+    width: 600px;
+    display: inline-block;
+    height: 400px;
+    margin-top: 20px;
+}
+
+.login-input {
+    width: 80%;
+    margin-top: 30px !important;
+}
+.login-button {
+    float: right;
+    width: 200px;
+    margin: 8% 10% 0% 0% !important;
+}
+.forgot-password {
+    float: left;
+    margin: 2% 0% 0% 10% !important;
+}
+.signup {
+    float: right;
+    margin: 0% 10% 0% 0% !important;
+    width: 100% ;
+}
+
+.signup-button {
+    float: right;
+    margin: 4% 0% 0% 10% !important;
+}
