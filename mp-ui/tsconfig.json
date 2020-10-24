@@ -20,7 +20,8 @@
     "types": [
       "jest",
       "node"
-    ]
+    ],
+    "isolatedModules": true
   },
   "include": [
     "src",
