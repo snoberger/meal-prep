@@ -1,8 +1,9 @@
 import { Button, Card, CardContent, Link, TextField, Typography } from "@material-ui/core";
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import "./Login.css";
 import React from "react";
 
-interface ILoginProps {
+interface ILoginProps extends RouteComponentProps<any> {
 
 }
 
@@ -27,7 +28,6 @@ class Login extends React.Component<ILoginProps,ILoginState> {
         }
     }
 
-
     setUsername(e: React.ChangeEvent<HTMLInputElement>) {
         this.setState({email: e.target.value});
     }
@@ -38,6 +38,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
 
     private handleSubmit = async () => {
         this.setState({authToken: "fakeToken"});
+        this.props.history.push('/home');
     }
     
     render() {
@@ -63,4 +64,4 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
   }
 
-  export default Login;
+  export default withRouter(Login);
