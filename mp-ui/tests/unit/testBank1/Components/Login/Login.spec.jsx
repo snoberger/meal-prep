@@ -1,21 +1,19 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import Routes from '../../../../../src/Routes';
 import Login from '../../../../../src/Components/login/Login';
 
 let wrapper;
 beforeEach(() => {
-    wrapper = shallow(<Login.WrappedComponent/> );
+    wrapper = shallow(
+            <Login.WrappedComponent/> );
 });
 
-describe("Render Login Page", () => {
+describe("Login renders", () => {
   it('should render page title.', () => {  
     expect(wrapper.text()).toContain('Login');
   });
-  it('should render page subtitle.', () => {
-    expect(wrapper.text()).toContain('Welcome back! Login to begin meal prepping!');
-  })
   it('should render page subtitle.', () => {
     expect(wrapper.text()).toContain('Welcome back! Login to begin meal prepping!');
   })

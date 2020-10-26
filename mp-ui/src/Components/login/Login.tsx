@@ -67,3 +67,4 @@ class Login extends React.Component<ILoginProps,ILoginState> {
   }
 
   export default withRouter(Login);
+  export let LoginNoRouter = Login;

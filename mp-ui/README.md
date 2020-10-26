@@ -5,5 +5,6 @@
 #### <code>npm run lint</code> to lint the project
 #### <code>npm i | npm ci</code> to install package.json or package-lock.json contents respectively
 #### <code>npm run test</code> to run the unit and integration test suites
+#### <code>npm run test -- -u</code> to run the unit and integration test suites and update the snapshots
 #### <code>npm start</code> to run the app in the dev environment
 #### <code>npm run build</code> to build a live version of the app
