@@ -33,7 +33,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --silent=false",
+    "test": "jest",
     "testCoverage": "jest --coverage",
     "eject": "react-scripts eject",
     "lint": "eslint --ext ts,tsx ."
