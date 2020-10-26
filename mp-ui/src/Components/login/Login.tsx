@@ -38,7 +38,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
         this.setState({password: e.target.value});
     }
 
-    async handleSubmit() {
+    handleSubmit = async () => {
         this.setState({authToken: "fakeToken"});
         this.props.history.push('/home');
     }
