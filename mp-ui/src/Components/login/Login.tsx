@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Link, TextField, Typography } from "@material-ui/core";
-import { NavLink, RouteComponentProps } from 'react-router-dom'
-import { withRouter } from 'react-router'
+import { NavLink, RouteComponentProps } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import "./Login.css";
 import React from "react";
 import { AppScreens } from "../../Routes";
@@ -27,7 +27,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
         this.state = {
             email: '',
             password: '',
-        }
+        };
     }
 
     setUsername(e: React.ChangeEvent<HTMLInputElement>) {
@@ -38,7 +38,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
         this.setState({password: e.target.value});
     }
 
-    private handleSubmit = async () => {
+    async handleSubmit() {
         this.setState({authToken: "fakeToken"});
         this.props.history.push('/home');
     }
