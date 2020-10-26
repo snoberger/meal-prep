@@ -1,7 +1,9 @@
 import { Button, Card, CardContent, Link, TextField, Typography } from "@material-ui/core";
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { NavLink, RouteComponentProps } from 'react-router-dom'
+import { withRouter } from 'react-router'
 import "./Login.css";
 import React from "react";
+import { AppScreens } from "../../Routes";
 
 interface ILoginProps extends RouteComponentProps<any> {
 
@@ -54,7 +56,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
                         <Link className="forgot-password" href="/forgotpassword">Forgot Password?</Link>
                         <Button onClick={this.handleSubmit} className="login-button" variant="contained" color="primary">Login</Button>
                         <div className="signup">
-                            <Button className="signup-button" variant="contained" color="secondary">Sign up here</Button>
+                            <Button component={NavLink} to={AppScreens.SIGNUP} className="signup-button" variant="contained" color="secondary">Sign up here</Button>
                         </div>
                     </CardContent>
                 </form>
