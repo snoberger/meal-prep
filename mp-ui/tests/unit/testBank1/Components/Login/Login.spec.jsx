@@ -1,7 +1,5 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import { MemoryRouter } from 'react-router';
-import Routes from '../../../../../src/Routes';
+import { shallow } from 'enzyme';
 import Login from '../../../../../src/Components/login/Login';
 
 let wrapper;
@@ -10,6 +8,7 @@ beforeEach(() => {
             <Login.WrappedComponent/> );
 });
 
+//@TODO create more tests
 describe("Login renders", () => {
   it('should render page title.', () => {  
     expect(wrapper.text()).toContain('Login');
@@ -19,7 +18,25 @@ describe("Login renders", () => {
   })
 });
 
+// beforeEach(() => {
+//     wrapper = shallow(
+//             <Login.WrappedComponent/> );
+// });
 
+// describe("Login Input", () => {
+//   const setState = jest.fn();
+//   const useStateSpy = jest.spyOn(React, "useState")
+//   useStateSpy.mockImplementation((init) => [init, setState]);
+
+//   it('should capture email change correctly', () => { 
+//     const emailInput = wrapper.find('TextField').at(0);
+//     console.log(emailInput.debug());
+//     emailInput.instance().value = "testemail@email.com";
+//     emailInput.simulate("change");
+//     expect(setState).toHaveBeenCalledWith("testemail@email.com");
+//   });
+
+// });
 
 
 // describe("Forgot Password Link", () => {

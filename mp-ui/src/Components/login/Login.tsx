@@ -51,8 +51,8 @@ class Login extends React.Component<ILoginProps,ILoginState> {
             <Card className="login-card">
                 <form>
                     <CardContent>
-                        <TextField onChange={this.setUsername} value={this.state.email} className="login-input" label="Email Address" variant="filled" ></TextField>
-                        <TextField onChange={this.setPassword} value={this.state.password} className="login-input" label="Password"  variant="filled" type="password"></TextField>
+                        <TextField id="email" onChange={this.setUsername} value={this.state.email} className="login-input" label="Email Address" variant="filled" ></TextField>
+                        <TextField id="password" onChange={this.setPassword} value={this.state.password} className="login-input" label="Password"  variant="filled" type="password"></TextField>
                         <Link className="forgot-password" href="/forgotpassword">Forgot Password?</Link>
                         <Button onClick={this.handleSubmit} className="login-button" variant="contained" color="primary">Login</Button>
                         <div className="signup">
