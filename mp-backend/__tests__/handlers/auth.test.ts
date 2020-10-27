@@ -21,6 +21,7 @@ describe('authentication endpoint', () => {
     beforeEach(async () => {
         jest.resetModules();
         process.env.PEPPER = 'SPICY';
+        process.env.JWTSECRET = 'SECRET';
 
         dynamoDb.put = jest.fn();
         dynamoDb.get = jest.fn();
@@ -36,6 +37,7 @@ describe('authentication endpoint', () => {
 
     afterAll(() => {
         delete process.env.PEPPER;
+        delete process.env.JWTSECRET;
         jest.resetAllMocks();
         jest.resetModules();
     });
@@ -151,6 +153,21 @@ describe('authentication endpoint', () => {
         expect(result ? result.statusCode: false).toBe(500);
         expect(dynamoDb.get).toBeCalled();
         expect(authLib.getHashedCredentials).toBeCalled();
+    });
+
+    it('returns an internal server error if it fails to generate a token', async () => {
+        const event = {
+            body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
+        }
+        
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'userId': '1'}]});
+        dynamoDb.get = jest.fn().mockResolvedValueOnce({Item: userTable.user});
+        authLib.getHashedCredentials = jest.fn().mockResolvedValueOnce('hashedresult');
+        authLib.generateJWT = jest.fn().mockImplementationOnce(() => {throw new Error()});
+
+        const result = await authenticate(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode: false).toBe(500);
+        expect(authLib.generateJWT).toBeCalled();
     });
 
     it('declines requests without a body field', async () => {
