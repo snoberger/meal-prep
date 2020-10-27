@@ -90,7 +90,13 @@ describe("Navbar Button Functions", () => {
         expect(closeSpy).toBeCalled();
     });
 
+    it('Navbar buttons should not appear when.', () => {  
+        wrapper.setProps({history: {location: {pathname: "/login"}}});
+        wrapper.instance().forceUpdate();
 
+        console.log(wrapper.find('#button-list'));
+        expect(wrapper.find("#button-list").exists()).toBeFalsy();
 
+    });
   });
   

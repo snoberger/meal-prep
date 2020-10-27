@@ -47,10 +47,10 @@ class Navbar extends React.Component<INavbarProps,INavbarState> {
         }
         
 
-        if(currentPath === "/login" || currentPath === "/signup" || currentPath === '/forgotpassword') {
+        if(currentPath === "/login" || currentPath === "/signup") {
            displayButtons = false;
         }
-        buttonList = ( <div>
+        buttonList = ( <div id="button-list">
             <Button id="home-button" component={NavLink} to={AppScreens.HOME} activeClassName="active-button" className="menu-button" color="inherit">
                 Home
             </Button>
