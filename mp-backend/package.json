@@ -4,7 +4,10 @@
     "description": "A Node.js starter for Serverless Framework with ES6 and TypeScript support",
     "main": "handler.js",
     "lint-staged": {
-        "*.ts": ["eslint --fix", "jest --findRelatedTests"]
+        "*.ts": [
+            "eslint --fix",
+            "jest --findRelatedTests"
+        ]
     },
     "scripts": {
         "start": "serverless offline start",
@@ -24,6 +27,7 @@
         "@babel/plugin-transform-arrow-functions": "^7.12.1",
         "@types/aws-lambda": "^8.10.64",
         "@types/jest": "^26.0.15",
+        "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^4.5.0",
         "@typescript-eslint/parser": "^4.5.0",
         "aws-lambda-mock-context": "^3.2.1",
