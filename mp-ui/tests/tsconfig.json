@@ -3,7 +3,4 @@
     "exclude": [
         "src"
     ],
-    "compilerOptions": {
-      "isolatedModules": false,
-    }
 }
