@@ -142,7 +142,6 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
     try {
         JWTToken = authLib.generateJWT(userId);
     } catch (e) {
-        console.log('fail');
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
