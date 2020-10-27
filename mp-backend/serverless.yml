@@ -41,6 +41,7 @@ provider:
     CONFIG_HIVE_TABLE: ${self:custom.tableNames.hiveTable}
     CONFIG_DYNAMODB_ENDPOINT: ${self:custom.endpoints.dynamodb-url}
     PEPPER: 'THISISASAMPLEPEPPER'
+    JWTSECRET: 'EXAMPLEJWTSECRETBUTTHISHSOULDBE64CHARSLONG'
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
   iamRoleStatements:
