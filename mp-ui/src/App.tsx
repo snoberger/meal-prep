@@ -1,27 +1,17 @@
 import React from "react";
 import "./App.css";
-import { Button, useTheme } from "@material-ui/core";
+import Routes from "./Routes";
 
-function App() {
-  const theme = useTheme();
-  return (
-    <div className="App">
-      <style>
-        {`
-        :root {
-          --secondary-color: ${theme.palette.secondary.main};
-        }`}
-      </style>
-      <Button
-        className="Button"
-        type="submit"
-        variant="contained"
-        color="primary"
-      >
-       <svg> <text className="Button-text">Hello World</text></svg>
-      </Button>
-    </div>
-  );
+
+
+class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <Routes></Routes>
+      </div>
+    );
+  }
 }
 
 export default App;
