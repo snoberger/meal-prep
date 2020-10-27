@@ -4,7 +4,7 @@ import Login from "./Components/login/Login";
 import { Route, RouteComponentProps, withRouter } from "react-router-dom";
 
 export enum AppScreens {
-  HOME = '/',
+  HOME = '/home',
   LOGIN = '/login',
   SIGNUP = '/signup',
   FORGOT = '/forgotPassword',
