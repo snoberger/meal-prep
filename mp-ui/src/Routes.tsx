@@ -7,6 +7,12 @@ export enum AppScreens {
   HOME = '/',
   LOGIN = '/login',
   SIGNUP = '/signup',
+  FORGOT = '/forgotPassword',
+  PROFILE = '/profile',
+  COOK = '/cook',
+  RECIPES = '/recipes',
+  PANTRY = '/pantry',
+  CALENDAR = '/calendar',
 }
 interface IRouteProps extends RouteComponentProps<any> {
 
