@@ -63,7 +63,7 @@ describe("Login Input", () => {
     wrapper.update()
     await wrapper.instance().handleSubmit()
     expect(mockLogin).toHaveBeenCalledWith({password: "testPass", username: "testemail@email.com"});
-    expect(mockPush).toHaveBeenCalledWith('/home');
+    expect(mockPush).toHaveBeenCalledWith('/');
     done()
   });
 });

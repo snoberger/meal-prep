@@ -6,7 +6,7 @@ import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom
 import Home from "./Components/Home/Home";
 
 export enum AppScreens {
-  HOME = '/home',
+  HOME = '/',
   LOGIN = '/login',
   SIGNUP = '/signup',
   FORGOT = '/forgotPassword',
@@ -35,7 +35,7 @@ class Routes extends React.Component<IRouteProps,IRouteState> {
         </Route>
         <PrivateRoute
             exact={true}
-            path='/home'
+            //path={AppScreens.HOME} not specifying the route means it will catch any route that isnt found and send it to home
             component={Home}
         />
       </Switch>

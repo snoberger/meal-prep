@@ -1,0 +1,19 @@
+.info-card {
+    width: 25%;
+    min-width: 400px;
+    height: 400px;
+    background-color: #d8d8d8;
+    cursor: pointer;
+}
+.info-media {
+    height: 100%;
+}
+.info-image {
+    width: 70%;
+}
+
+
+.main-container {
+    margin-top: 5vh !important;
+    height: 100vh;
+}
