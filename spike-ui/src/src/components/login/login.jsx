@@ -16,9 +16,9 @@ export default function Login() {
     });
     const history = useHistory();
 
-    const handleChange = (prop) => (event) => {
-        setValues({ ...values, [prop]: event.target.value });
-    };
+    handleChange(e) {
+        this.setState({value: e.target.value});
+      }
 
     const handleSubmit = async () => {
         const user = {

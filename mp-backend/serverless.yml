@@ -1,0 +1,60 @@
+service: mp-backend
+# Create an optimized package for our functions
+package:
+  individually: true
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-dynamodb-local
+  - serverless-dotenv-plugin # Load .env as environment variables  
+custom:
+    tableNames:
+      authTable: 'auth'
+      hiveTable: 'hive'
+    endpoints:
+      dynamodb-url: 'http://localhost:8080'
+    serverless-offline:
+      port: 3001
+    webpack:
+      webpackConfig: ./webpack.config.js
+    Resources:
+      dev: ''
+      local: 
+        Resources: ${file(./db-tables.yml)}
+    dynamodb:
+      start:
+        migrate: true
+        port: 8080
+      stages:
+        - dev
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: local
+  region: us-east-1
+  # These environment variables are made available to our functions
+  # under process.env.
+  environment:
+    authTable: auth
+    hiveTable: hive
+    CONFIG_AUTH_TABLE: ${self:custom.tableNames.authTable}
+    CONFIG_HIVE_TABLE: ${self:custom.tableNames.hiveTable}
+    CONFIG_DYNAMODB_ENDPOINT: ${self:custom.endpoints.dynamodb-url}
+    PEPPER: 'THISISASAMPLEPEPPER'
+    JWTSECRET: 'EXAMPLEJWTSECRETBUTTHISHSOULDBE64CHARSLONG'
+  # 'iamRoleStatements' defines the permission policy for the Lambda function.
+  # In this case Lambda functions are granted with permissions to access DynamoDB.
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
+resources: ${self:custom.Resources.${opt:stage, self:provider.stage}}
+functions:
+  ${file(./lambda-routes.yml)}

@@ -1,0 +1,16 @@
+createUser:
+    handler: src/handlers/user.create
+    events:
+        - http:
+            path: api/user
+            method: post
+            cors: true
+            authorizer: aws_iam
+authenticateUser:
+    handler: src/handlers/auth.authenticate
+    events:
+        - http:
+            path: api/auth
+            method: post
+            cors: true
+            authorized: aws_iam

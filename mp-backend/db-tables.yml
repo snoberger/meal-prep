@@ -1,0 +1,27 @@
+authTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: user
+    AttributeDefinitions:
+      - AttributeName: userId
+        AttributeType: S
+      - AttributeName: username
+        AttributeType: S
+    KeySchema:
+      - AttributeName: userId
+        KeyType: HASH
+    GlobalSecondaryIndexes:
+    - IndexName: userToId
+      KeySchema:
+        - AttributeName: username
+          KeyType: HASH
+      Projection:
+        NonKeyAttributes:
+        - userId
+        ProjectionType: INCLUDE
+      ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1

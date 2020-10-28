@@ -1,0 +1,26 @@
+{
+    "env": {
+        "browser": true,
+        "jest": true,
+        "es2017": true
+    },
+    "plugins": [
+        "import"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-console": "warn",
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}
