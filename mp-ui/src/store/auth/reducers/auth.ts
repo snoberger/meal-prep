@@ -1,5 +1,7 @@
 import {
     SET_AUTH_TOKEN,
+    REQUEST_AUTH_TOKEN,
+    INVALID_LOGIN_CRED
 } from '../actionTypes';
 import { State } from '../../rootReducer';
 const initialState = {
@@ -12,6 +14,16 @@ const auth = (state = initialState, action: any) => {
             return {
                 ...state,
                 authToken: action.authToken
+            };
+        case REQUEST_AUTH_TOKEN:
+            return {
+                ...state,
+                loginDetails: action.loginDetails
+            };
+        case INVALID_LOGIN_CRED:
+            return {
+                ...state,
+                loginDetails: action.loginDetails
             };
         default:
             return initialState;

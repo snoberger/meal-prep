@@ -5,10 +5,12 @@ import "./Login.css";
 import React from "react";
 import { AppScreens } from "../../Routes";
 import { connect } from 'react-redux';
-import { setAuthToken } from '../../store/auth/actions/auth';
+import { fetchLogin} from '../../store/auth/actions/auth';
+import { SET_AUTH_TOKEN } from "../../store/auth/actionTypes";
 
 interface ILoginProps extends RouteComponentProps<any> {
     setAuthToken: Function;
+    dispatch: any;
 }
 
 interface ILoginState {
@@ -16,8 +18,6 @@ interface ILoginState {
     password?: string;
     authToken?: string;
 }
-
-
 
 class Login extends React.Component<ILoginProps,ILoginState> {
     constructor(props: any) {
@@ -40,8 +40,13 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
 
     handleSubmit = async () => {
-        this.props.setAuthToken('dummy');
-        this.props.history.push('/home');
+        const response = await this.props.dispatch(fetchLogin({
+            username: this.state.email || "",
+            password: this.state.password || ""
+        }))
+        if(response.type === SET_AUTH_TOKEN) {
+            this.props.history.push('/home')
+        }
     }
     
     render() {
@@ -70,13 +75,11 @@ class Login extends React.Component<ILoginProps,ILoginState> {
 const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
     return {
         ...state
-    };
-};
-
-const mapDispatchToProps = { setAuthToken: setAuthToken };
+    }
+}
   
-export default withRouter(connect(
+export default connect(
     mapStateToProps,
-    mapDispatchToProps
-)(Login));
+    null
+)(withRouter(Login))
 export let LoginNoRouter = Login;
