@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import Login from "./Components/Login/Login";
-import PrivateRoute from './PrivateRoute'
+import PrivateRoute from './PrivateRoute';
 import { Route, RouteComponentProps, withRouter } from "react-router-dom";
 import Home from "./Components/Home/Home";
 

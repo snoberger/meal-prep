@@ -70,13 +70,13 @@ class Login extends React.Component<ILoginProps,ILoginState> {
 const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
     return {
         ...state
-    }
-}
+    };
+};
 
-const mapDispatchToProps = { setAuthToken: setAuthToken }
+const mapDispatchToProps = { setAuthToken: setAuthToken };
   
 export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-)(Login))
+)(Login));
 export let LoginNoRouter = Login;

@@ -13,19 +13,19 @@ interface stateProps {
 const mapStateToProps = (state: any ) => {
   return {
       authToken: getAuthToken(state),
-    }
-}
+    };
+};
 const connector = connect<stateProps>(
   mapStateToProps,
   {}
-)
+);
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 type PrivateRouteCombinedProps = PropsFromRedux & PrivateRouteProps;
 
 export class PrivateRoute extends Route<PrivateRouteCombinedProps> {
-    public render() {
-        let isAuthenticated = this.props.authToken
+    render() {
+        let isAuthenticated = this.props.authToken;
         if (isAuthenticated) {
             return <Route {...this.props} component={this.props.component}/>;
         } else {
@@ -34,4 +34,4 @@ export class PrivateRoute extends Route<PrivateRouteCombinedProps> {
     }
 }
 
-export default connector(PrivateRoute)
+export default connector(PrivateRoute);
