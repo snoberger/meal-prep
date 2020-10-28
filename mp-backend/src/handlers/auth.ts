@@ -1,47 +1,155 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
+import { authLib } from '../libs/authentication';
 
 interface AuthEventBody extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
-  userId: string,
-  userpass: string,
-  createTs: number,
-  updateTs: number
+    username: string,
+    password: string
 }
 
 function isAuthEventBody(data: Record<string, unknown>): data is AuthEventBody {
-    return 'userId' in data && 'userpass' in data && Object.keys(data).length == 2;
+    return 'username' in data && 'password' in data && Object.keys(data).length == 2;
 }
 
-export const createUser: APIGatewayProxyHandler = async (event) => {
+async function getIdFromUsername(username: string) {
+    const getUserParams: DynamoDB.DocumentClient.QueryInput = {
+        TableName: 'user',
+        IndexName: 'userToId',
+        KeyConditionExpression: '#username = :usernamePlaceholder',
+        ExpressionAttributeNames : {
+            '#username': 'username'
+        },
+        ExpressionAttributeValues: {
+            ':usernamePlaceholder': username
+        }
+    };
+
+    return await dynamoLib.query(getUserParams);
+}
+
+async function getUserpassAndSalt(userId: string) {
+    const getUserPassAndSalt: DynamoDB.DocumentClient.GetItemInput = {
+        TableName: 'user',
+        Key: {
+            'userId': userId
+        },
+        AttributesToGet: ['userpass', 'salt']
+    };
+    
+    return await dynamoLib.get(getUserPassAndSalt);
+}
+
+export const authenticate: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
         data = JSON.parse(event.body) as Record<string, unknown>;
     } else {
         return {
             // TODO: correct status code
-            statusCode: 404,
-            body: JSON.stringify({message: 'failure'})
+            statusCode: 400,
+            body: JSON.stringify({message: 'Bad request'})
         }
     }
 
     if(!isAuthEventBody(data)) {
         return {
-            statusCode: 404,
-            body: JSON.stringify({message: 'failure'})
+            statusCode: 400,
+            body: JSON.stringify({message: 'Bad request'})
         }
     }
 
-    data.createTs = Date.now();
-    data.updateTs = Date.now();
-
-    const params: DynamoDB.DocumentClient.PutItemInput = {
-        TableName: 'auth',
-        Item: data,
+    const authRequest: AuthEventBody = data;
+    let result;
+    try {
+        result = await getIdFromUsername(authRequest.username);
+    } catch(e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
     }
-    await dynamoLib.put(params);
+
+    if(!result || !result.Items || result.Count == null || result.Count > 1) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+
+    if(result.Count == 0) {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({message: 'User does not exist'})
+        }
+    }
+
+    const user: DynamoDB.AttributeMap = result.Items[0];
+    let userId: string;
+    if(user && user.userId) {
+        userId = user.userId as string;
+    } else {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+
+    let userpassResult: DynamoDB.GetItemOutput;
+    try {
+        userpassResult = await getUserpassAndSalt(userId);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+
+    if(!userpassResult || !userpassResult.Item) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+
+    interface UserPassItem {
+        'userpass': string,
+        'salt': string
+    }
+    const item: UserPassItem = <unknown>userpassResult.Item as UserPassItem;
+
+    const userpassHash = item.userpass;
+    const salt = item.salt;
+
+    let computedHash: string;
+    try {
+        computedHash = await authLib.getHashedCredentials(authRequest.username, authRequest.password, salt);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+
+    if(computedHash != userpassHash) {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({message: 'Login failure'})
+        }
+    }
+
+    let JWTToken;
+    try {
+        JWTToken = authLib.generateJWT(userId);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+
     return {
-        statusCode: 201,
-        body: JSON.stringify({ message: 'success' }),
-    };
+        statusCode: 200,
+        body: JSON.stringify({message: JWTToken})
+    }
 };

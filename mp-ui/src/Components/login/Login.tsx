@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Link, TextField, Typography } from "@material-ui/core";
-import { NavLink, RouteComponentProps } from 'react-router-dom'
-import { withRouter } from 'react-router'
+import { NavLink, RouteComponentProps } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import "./Login.css";
 import React from "react";
 import { AppScreens } from "../../Routes";
@@ -27,7 +27,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
         this.state = {
             email: '',
             password: '',
-        }
+        };
     }
 
     setUsername(e: React.ChangeEvent<HTMLInputElement>) {
@@ -38,7 +38,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
         this.setState({password: e.target.value});
     }
 
-    private handleSubmit = async () => {
+    handleSubmit = async () => {
         this.setState({authToken: "fakeToken"});
         this.props.history.push('/home');
     }
@@ -51,8 +51,8 @@ class Login extends React.Component<ILoginProps,ILoginState> {
             <Card className="login-card">
                 <form>
                     <CardContent>
-                        <TextField onChange={this.setUsername} value={this.state.email} className="login-input" label="Email Address" variant="filled" ></TextField>
-                        <TextField onChange={this.setPassword} value={this.state.password} className="login-input" label="Password"  variant="filled" type="password"></TextField>
+                        <TextField id="email" onChange={this.setUsername} value={this.state.email} className="login-input" label="Email Address" variant="filled" ></TextField>
+                        <TextField id="password" onChange={this.setPassword} value={this.state.password} className="login-input" label="Password"  variant="filled" type="password"></TextField>
                         <Link className="forgot-password" href="/forgotpassword">Forgot Password?</Link>
                         <Button onClick={this.handleSubmit} className="login-button" variant="contained" color="primary">Login</Button>
                         <div className="signup">

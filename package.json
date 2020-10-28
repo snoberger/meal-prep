@@ -1,0 +1,28 @@
+{
+  "name": "meal-prep",
+  "version": "1.0.0",
+  "description": "CS506 Project Repository",
+  "main": "index.js",
+  "scripts": {
+    "backend": "cd mp-backend && npm run --silent commit",
+    "frontend": "cd mp-ui && npm run --silent commit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run --silent backend && npm run --silent frontend"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctfloyd/meal-prep.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ctfloyd/meal-prep/issues"
+  },
+  "homepage": "https://github.com/ctfloyd/meal-prep#readme",
+  "devDependencies": {
+    "husky": "^4.3.0"
+  }
+}

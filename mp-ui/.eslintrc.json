@@ -2,7 +2,7 @@
     "env": {
         "browser": true,
         "jest": true,
-        "es6": true
+        "es2017": true
     },
     "plugins": [
         "import"

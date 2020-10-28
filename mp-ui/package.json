@@ -30,13 +30,21 @@
     "ts-node": "^9.0.0",
     "typescript": "^3.7.5"
   },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "jest --findRelatedTests"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --silent=false",
     "testCoverage": "jest --coverage",
     "eject": "react-scripts eject",
-    "lint": "eslint --ext ts,tsx ."
+    "lint": "eslint --ext ts,tsx .",
+    "commit": "npx lint-staged",
+    "postinstall": "cd .. && npx husky install ./mp-ui"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -59,6 +67,7 @@
     "babel-jest": "^26.6.0",
     "enzyme-to-json": "^3.6.1",
     "jest": "^26.6.0",
+    "lint-staged": "^10.4.2",
     "react-test-renderer": "^17.0.0"
   }
 }
