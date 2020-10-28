@@ -8,30 +8,31 @@ export const setAuthToken = (authToken: string) => {
     authToken
   };
 };
-export function invalidLoginCredentials(loginDetails: AuthenticateItem) {
+export function invalidLoginCredentials() {
   return {
     type: INVALID_LOGIN_CRED,
-    loginDetails
-  }
+  };
 }
 function requestAuthToken(loginDetails: AuthenticateItem) {
   return {
     type: REQUEST_AUTH_TOKEN,
     loginDetails
-  }
+  };
 }
 
 export function fetchLogin(loginDetails: AuthenticateItem) {
   return async (dispatch: any) => {
-    dispatch(requestAuthToken(loginDetails))
-    return await loginUser(loginDetails).then((response) => {
-      if(response.status === 200) {
-        return dispatch(setAuthToken(response.data.message))
-      }
-      return dispatch(invalidLoginCredentials(loginDetails))
-
-    }).catch((error) => {
-        return dispatch(invalidLoginCredentials(loginDetails))
-    })
-  }
+    dispatch(requestAuthToken(loginDetails));
+    try{
+      return await loginUser(loginDetails).then((response) => {
+        if(response.status === 200 && response.data.message) {
+          return dispatch(setAuthToken(response.data.message));
+        }
+        return dispatch(invalidLoginCredentials());
+      });
+    } catch(e) {
+      return dispatch(invalidLoginCredentials());
+    }
+    
+  };
 }

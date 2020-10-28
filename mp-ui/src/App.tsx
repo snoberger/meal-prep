@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import Routes from "./Routes";
 import { Provider } from 'react-redux';
-import thunkMiddleware from 'redux-thunk'
+import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './store/rootReducer';
 

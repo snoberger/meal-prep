@@ -4,13 +4,10 @@ import { withRouter } from 'react-router';
 import "./Login.css";
 import React from "react";
 import { AppScreens } from "../../Routes";
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { fetchLogin} from '../../store/auth/actions/auth';
-import { SET_AUTH_TOKEN } from "../../store/auth/actionTypes";
 
 interface ILoginProps extends RouteComponentProps<any> {
-    setAuthToken: Function;
-    dispatch: any;
 }
 
 interface ILoginState {
@@ -18,8 +15,25 @@ interface ILoginState {
     password?: string;
     authToken?: string;
 }
+const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
+    return {
+        ...state
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        fetchLogin: (loginItem: any) => dispatch(fetchLogin(loginItem)),
+    };
+};
+const connector = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  );
 
-class Login extends React.Component<ILoginProps,ILoginState> {
+type PropsFromRedux = ConnectedProps<typeof connector>
+type LoginCombinedProps = PropsFromRedux & ILoginProps;
+
+class Login extends React.Component<LoginCombinedProps,ILoginState> {
     constructor(props: any) {
         super(props);
         this.setUsername = this.setUsername.bind(this);
@@ -40,13 +54,11 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
 
     handleSubmit = async () => {
-        const response = await this.props.dispatch(fetchLogin({
+        await this.props.fetchLogin({
             username: this.state.email || "",
             password: this.state.password || ""
-        }))
-        if(response.type === SET_AUTH_TOKEN) {
-            this.props.history.push('/home')
-        }
+        });
+        this.props.history.push('/home');
     }
     
     render() {
@@ -72,14 +84,6 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
 }
 
-const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
-    return {
-        ...state
-    }
-}
-  
-export default connect(
-    mapStateToProps,
-    null
-)(withRouter(Login))
+
+export default connector(withRouter(Login));
 export let LoginNoRouter = Login;

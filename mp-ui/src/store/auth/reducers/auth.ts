@@ -23,7 +23,7 @@ const auth = (state = initialState, action: any) => {
         case INVALID_LOGIN_CRED:
             return {
                 ...state,
-                loginDetails: action.loginDetails
+                alert: true
             };
         default:
             return initialState;
