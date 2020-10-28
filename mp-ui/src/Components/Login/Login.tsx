@@ -4,11 +4,10 @@ import { withRouter } from 'react-router';
 import "./Login.css";
 import React from "react";
 import { AppScreens } from "../../Routes";
-import { connect } from 'react-redux';
-import { setAuthToken } from '../../store/auth/actions/auth';
+import { connect, ConnectedProps } from 'react-redux';
+import { fetchLogin} from '../../store/auth/actions/auth';
 
 interface ILoginProps extends RouteComponentProps<any> {
-    setAuthToken: Function;
 }
 
 interface ILoginState {
@@ -16,10 +15,25 @@ interface ILoginState {
     password?: string;
     authToken?: string;
 }
+const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
+    return {
+        ...state
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        fetchLogin: (loginItem: any) => dispatch(fetchLogin(loginItem)),
+    };
+};
+const connector = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  );
 
+type PropsFromRedux = ConnectedProps<typeof connector>
+type LoginCombinedProps = PropsFromRedux & ILoginProps;
 
-
-class Login extends React.Component<ILoginProps,ILoginState> {
+class Login extends React.Component<LoginCombinedProps,ILoginState> {
     constructor(props: any) {
         super(props);
         this.setUsername = this.setUsername.bind(this);
@@ -40,7 +54,10 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
 
     handleSubmit = async () => {
-        this.props.setAuthToken('dummy');
+        await this.props.fetchLogin({
+            username: this.state.email || "",
+            password: this.state.password || ""
+        });
         this.props.history.push('/home');
     }
     
@@ -67,16 +84,6 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
 }
 
-const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
-    return {
-        ...state
-    };
-};
 
-const mapDispatchToProps = { setAuthToken: setAuthToken };
-  
-export default withRouter(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Login));
+export default connector(withRouter(Login));
 export let LoginNoRouter = Login;

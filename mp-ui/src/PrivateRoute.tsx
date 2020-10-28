@@ -17,7 +17,11 @@ const mapStateToProps = (state: any ) => {
 };
 const connector = connect<stateProps>(
   mapStateToProps,
-  {}
+  {}, 
+  null, 
+  {
+    pure: false,
+  }
 );
 
 type PropsFromRedux = ConnectedProps<typeof connector>
