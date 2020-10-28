@@ -4,9 +4,11 @@ import { withRouter } from 'react-router';
 import "./Login.css";
 import React from "react";
 import { AppScreens } from "../../Routes";
+import { connect } from 'react-redux';
+import { setAuthToken } from '../../store/auth/actions/auth';
 
 interface ILoginProps extends RouteComponentProps<any> {
-
+    setAuthToken: Function;
 }
 
 interface ILoginState {
@@ -16,9 +18,8 @@ interface ILoginState {
 }
 
 
-class Login extends React.Component<ILoginProps,ILoginState> {
 
-    
+class Login extends React.Component<ILoginProps,ILoginState> {
     constructor(props: any) {
         super(props);
         this.setUsername = this.setUsername.bind(this);
@@ -39,7 +40,7 @@ class Login extends React.Component<ILoginProps,ILoginState> {
     }
 
     handleSubmit = async () => {
-        this.setState({authToken: "fakeToken"});
+        this.props.setAuthToken('dummy');
         this.props.history.push('/home');
     }
     
@@ -64,7 +65,18 @@ class Login extends React.Component<ILoginProps,ILoginState> {
           </div>
     );
     }
-  }
+}
 
-  export default withRouter(Login);
-  export let LoginNoRouter = Login;
+const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
+    return {
+        ...state
+    }
+}
+
+const mapDispatchToProps = { setAuthToken: setAuthToken }
+  
+export default withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Login))
+export let LoginNoRouter = Login;
