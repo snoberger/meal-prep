@@ -14,3 +14,11 @@ authenticateUser:
             method: post
             cors: true
             authorized: aws_iam
+deleteUser:
+    handler: src/handlers/user.deleteUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: delete
+            cors: true
+            authorizer: aws_iam

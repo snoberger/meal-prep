@@ -10,14 +10,14 @@ type Timestamp = number;
 type Uuid = string;
 
 interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
-  userId: Uuid,
-  userpass: string,
-  salt: SecureRandomString,
-  createTs: Timestamp,
-  updateTs: Timestamp
+    userId: Uuid,
+    userpass: string,
+    salt: SecureRandomString,
+    createTs: Timestamp,
+    updateTs: Timestamp
 }
 
-export interface UserRequestBody extends Record<string, string>{
+export interface UserRequestBody extends Record<string, string> {
     username: string,
     password: string
 }
@@ -26,6 +26,15 @@ function isUserRequestBody(data: Record<string, unknown>): data is UserRequestBo
     return 'username' in data && 'password' in data;
 }
 
+export interface UserIdRequestBody extends Record<string, string> {
+    userId: string
+}
+
+function isUserIdRequestBody(data: Record<string, unknown>): data is UserIdRequestBody {
+    return 'userId' in data;
+}
+
+
 // TODO: move user to id lookup part to library, so that everybody can avoid
 // TODO: this exact code is also used in auth.ts
 async function userAlreadyExists(username: string) {
@@ -33,7 +42,7 @@ async function userAlreadyExists(username: string) {
         TableName: 'user',
         IndexName: 'userToId',
         KeyConditionExpression: '#username = :usernamePlaceholder',
-        ExpressionAttributeNames : {
+        ExpressionAttributeNames: {
             '#username': 'username'
         },
         ExpressionAttributeValues: {
@@ -54,14 +63,14 @@ export const create: APIGatewayProxyHandler = async (event) => {
         return {
             // TODO: correct status code
             statusCode: 400,
-            body: JSON.stringify({message: 'Malformed event body'})
+            body: JSON.stringify({ message: 'Malformed event body' })
         }
     }
 
-    if(!isUserRequestBody(data)) {
+    if (!isUserRequestBody(data)) {
         return {
             statusCode: 400,
-            body: JSON.stringify({message: 'Malformed event body'})
+            body: JSON.stringify({ message: 'Malformed event body' })
         }
     }
 
@@ -74,14 +83,14 @@ export const create: APIGatewayProxyHandler = async (event) => {
     } catch (e) {
         return {
             statusCode: 500,
-            body: JSON.stringify({message: 'Internal server error'})
+            body: JSON.stringify({ message: 'Internal server error' })
         }
     }
 
-    if(userExists) {
+    if (userExists) {
         return {
             statusCode: 409,
-            body: JSON.stringify({message: 'User already exists'})
+            body: JSON.stringify({ message: 'User already exists' })
         }
     }
 
@@ -92,7 +101,7 @@ export const create: APIGatewayProxyHandler = async (event) => {
     } catch (e) {
         return {
             statusCode: 500,
-            body: JSON.stringify({message: 'Internal server error'})
+            body: JSON.stringify({ message: 'Internal server error' })
         }
     }
 
@@ -115,7 +124,7 @@ export const create: APIGatewayProxyHandler = async (event) => {
     } catch (e) {
         return {
             statusCode: 500,
-            body: JSON.stringify({message: 'Internal server error'})
+            body: JSON.stringify({ message: 'Internal server error' })
         }
     }
 
@@ -125,4 +134,47 @@ export const create: APIGatewayProxyHandler = async (event) => {
     };
 };
 
+
+export const deleteUser: APIGatewayProxyHandler = async (event) => {
+    let data: Record<string, unknown>;
+    if (event && event.body) {
+        data = JSON.parse(event.body) as Record<string, unknown>;
+    } else {
+        return {
+            // TODO: correct status code
+            statusCode: 400,
+            body: JSON.stringify({ message: 'Malformed event body' })
+        }
+    }
+
+    if (!isUserIdRequestBody(data)) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ message: 'Malformed event body' })
+        }
+    }
+
+    const userIdRequest: UserIdRequestBody = data;
+
+    const deleteParams: DynamoDB.DocumentClient.DeleteItemInput = {
+        TableName: 'user',
+        Key: {
+            'userID': userIdRequest.userId,
+        },
+    }
+
+    try {
+        await dynamoLib.delete(deleteParams);
+    } catch (e) {
+        return {
+            statusCode: 404,
+            body: JSON.stringify({ message: 'Not Found' })
+        }
+    }
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'success' }),
+    };
+};
 
