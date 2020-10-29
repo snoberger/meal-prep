@@ -35,10 +35,17 @@ recipeTable:
     KeySchema:
       - AttributeName: id
         KeyType: HASH
+      - AttributeName: recipeId
+        KeyType: HASH
+      - AttributeName: userId 
+        KeyType: RANGE
+    
     GlobalSecondaryIndexes:
-    - IndexName: IdToRecipe
+    - IndexName: recipeToId
       KeySchema:
-      - AttributeName: id
+      - AttributeName: recipeId
+        KeyType: HASH
+      - AttributeName: userId
         KeyType: HASH
       Projection:
         NonKeyAttributes:
