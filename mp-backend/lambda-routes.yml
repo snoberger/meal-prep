@@ -7,7 +7,7 @@ createUser:
             path: api/user
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer: aws_iam
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
@@ -15,4 +15,4 @@ authenticateUser:
             path: api/auth
             method: post
             cors: true
-            authorized: authenticateJWT
+            authorized: aws_iam
