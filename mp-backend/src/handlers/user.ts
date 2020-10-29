@@ -10,7 +10,7 @@ type Timestamp = number;
 type Uuid = string;
 
 interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
-  userId: Uuid,
+  id: Uuid,
   userpass: string,
   salt: SecureRandomString,
   createTs: Timestamp,
@@ -97,7 +97,7 @@ export const create: APIGatewayProxyHandler = async (event) => {
     }
 
     const newUser: UserTableEntry = {
-        'userId': uuidv4(),
+        'id': uuidv4(),
         'username': userRequest.username,
         'userpass': userPassHash,
         'salt': salt,

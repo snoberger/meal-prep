@@ -6,6 +6,14 @@ createUser:
             method: post
             cors: true
             authorizer: aws_iam
+createRecipe:
+    handler: src/handlers/recipe.create
+    events:
+        - http:
+            path: api/recipe
+            method: post
+            cors: true
+            authorizer: aws_iam
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
