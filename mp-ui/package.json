@@ -6,6 +6,7 @@
     "@babel/core": "^7.12.3",
     "@babel/preset-typescript": "^7.12.1",
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -42,7 +43,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --silent=false",
+    "test": "jest",
     "testCoverage": "jest --coverage",
     "eject": "react-scripts eject",
     "lint": "eslint --ext ts,tsx .",

@@ -6,9 +6,15 @@ import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom
 import Home from "./Components/Home/Home";
 
 export enum AppScreens {
-  HOME = '/',
+  HOME = '/home',
   LOGIN = '/login',
   SIGNUP = '/signup',
+  FORGOT = '/forgotPassword',
+  PROFILE = '/profile',
+  COOK = '/cook',
+  RECIPES = '/recipes',
+  PANTRY = '/pantry',
+  CALENDAR = '/calendar',
 }
 
 interface IRouteProps extends RouteComponentProps<any> {
