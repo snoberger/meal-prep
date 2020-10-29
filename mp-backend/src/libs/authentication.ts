@@ -77,5 +77,5 @@ export const authLib: AuthLib = {
 
         const result: Record<string, unknown> = (<JWTLib>jwt).verify(token, secret, options);
         return result;
-    }
+    },
 }
