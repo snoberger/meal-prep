@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Navbar from '../../../../../src/Components/Navbar/Navbar';
+import Navbar from '../../../../src/Components/Navbar/Navbar';
 
 
 
@@ -93,10 +93,7 @@ describe("Navbar Button Functions", () => {
     it('Navbar buttons should not appear when.', () => {  
         wrapper.setProps({history: {location: {pathname: "/login"}}});
         wrapper.instance().forceUpdate();
-
-        console.log(wrapper.find('#button-list'));
         expect(wrapper.find("#button-list").exists()).toBeFalsy();
-
     });
   });
   

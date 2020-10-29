@@ -1,7 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Login from '../../../../../src/Components/Login/Login';
-import { doesNotReject } from 'assert';
+import Login from '../../../../src/Components/Login/Login';
 
 
 describe("Login renders", () => {

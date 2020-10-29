@@ -44,25 +44,25 @@ class Home extends React.Component<IHomeProps,IHomeState> {
                     alignItems="center"
                     >
                         <Grid item container lg={6} xl={6} justify="center"  alignItems="center">
-                            <Card className='info-card' onClick={()=>{this.handleClick(AppScreens.COOK)}}>
+                            <Card className='info-card' id="cook" onClick={()=>{this.handleClick(AppScreens.COOK)}}>
                                 <CardHeader title="Cook"/>
                                 <CardMedia className="info-media"> <img src={cookImg} className="info-image" alt="Cook"/> </CardMedia>
                             </Card>
                         </Grid>
                         <Grid item container lg={6} xl={6} justify="center"  alignItems="center">
-                            <Card className='info-card' onClick={()=>{this.handleClick(AppScreens.RECIPES)}}>
+                            <Card className='info-card' id="recipes" onClick={()=>{this.handleClick(AppScreens.RECIPES)}}>
                                 <CardHeader title="Recipes"/>
                                 <CardMedia className="info-media"> <img src={recipesImg} className="info-image" alt="Recipes"/> </CardMedia>
                             </Card>
                         </Grid>
                         <Grid item container lg={6} xl={6} justify="center"  alignItems="center">
-                            <Card className='info-card' onClick={()=>{this.handleClick(AppScreens.PANTRY)}}>
+                            <Card className='info-card' id="pantry" onClick={()=>{this.handleClick(AppScreens.PANTRY)}}>
                                 <CardHeader title="Pantry"/>
                                 <CardMedia className="info-media"> <img src={pantryImg} className="info-image" alt="Pantry"/> </CardMedia>
                             </Card>
                         </Grid>
                         <Grid item container lg={6} xl={6} justify="center"  alignItems="center">
-                            <Card className='info-card' onClick={()=>{this.handleClick(AppScreens.CALENDAR)}}>
+                            <Card className='info-card' id="calendar" onClick={()=>{this.handleClick(AppScreens.CALENDAR)}}>
                                 <CardHeader title="Calendar"/>
                                 <CardMedia className="info-media"> <img src={calendarImg} className="info-image" alt="Calendar"/> </CardMedia>
                             </Card>
