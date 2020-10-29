@@ -32,7 +32,7 @@ async function getUserpassAndSalt(userId: string) {
     const getUserPassAndSalt: DynamoDB.DocumentClient.GetItemInput = {
         TableName: 'user',
         Key: {
-            'userId': userId
+            'id': userId
         },
         AttributesToGet: ['userpass', 'salt']
     };
