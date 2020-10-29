@@ -25,3 +25,30 @@ authTable:
     ProvisionedThroughput:
       ReadCapacityUnits: 1
       WriteCapacityUnits: 1
+recipeTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: recipe
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    GlobalSecondaryIndexes:
+    - IndexName: IdToRecipe
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      Projection:
+        NonKeyAttributes:
+        - userId
+        - steps
+        - ingredients
+        ProjectionType: INCLUDE
+      ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
