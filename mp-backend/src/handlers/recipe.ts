@@ -44,7 +44,7 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
     return
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
-    return !!!determineRecipeRequestBodyFields(data)
+    return !determineRecipeRequestBodyFields(data)
 }
 
 export const create: APIGatewayProxyHandler = async (event) => {
@@ -63,7 +63,7 @@ export const create: APIGatewayProxyHandler = async (event) => {
     if(!isRecipeRequestBody(data)) {
         return {
             statusCode: 400,
-            body: JSON.stringify({message: `Malformed event body: ${determineRecipeRequestBodyFields(data)}`})
+            body: JSON.stringify({message: `Malformed event body: ${determineRecipeRequestBodyFields(data) || "None"}`})
         }
     }
 
