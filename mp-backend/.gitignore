@@ -53,3 +53,7 @@ env.yml
 
 # Ignore typescript build
 .build/
+
+.webpackCache
+
+package-lock.json
