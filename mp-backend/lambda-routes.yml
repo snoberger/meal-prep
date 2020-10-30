@@ -1,3 +1,5 @@
+authenticateJWT:
+    handler: src/middleware/authenticateJWT.authenticateJWT
 createUser:
     handler: src/handlers/user.create
     events:
@@ -13,7 +15,7 @@ createRecipe:
             path: api/recipe
             method: post
             cors: true
-            authorizer: aws_iam
+            authorizer: authenticateJWT
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:

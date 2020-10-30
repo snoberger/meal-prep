@@ -48,7 +48,6 @@ function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeReque
 }
 
 export const create: APIGatewayProxyHandler = async (event) => {
-
     let data: Record<string, unknown>;
     if (event && event.body) {
         data = JSON.parse(event.body) as Record<string, unknown>;
