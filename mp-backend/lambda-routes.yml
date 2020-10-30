@@ -15,7 +15,7 @@ createRecipe:
             path: api/recipe
             method: post
             cors: true
-            authorizer: aws_iam
+            authorizer: authenticateJWT
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
