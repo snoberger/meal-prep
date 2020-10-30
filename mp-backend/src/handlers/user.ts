@@ -10,7 +10,7 @@ type Timestamp = number;
 type Uuid = string;
 
 interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
-    userId: Uuid,
+    id: Uuid,
     userpass: string,
     salt: SecureRandomString,
     createTs: Timestamp,
@@ -27,11 +27,11 @@ function isUserRequestBody(data: Record<string, unknown>): data is UserRequestBo
 }
 
 export interface UserIdRequestBody extends Record<string, string> {
-    userId: string
+    id: string
 }
 
 function isUserIdRequestBody(data: Record<string, unknown>): data is UserIdRequestBody {
-    return 'userId' in data;
+    return 'id' in data;
 }
 
 
@@ -106,7 +106,7 @@ export const create: APIGatewayProxyHandler = async (event) => {
     }
 
     const newUser: UserTableEntry = {
-        'userId': uuidv4(),
+        'id': uuidv4(),
         'username': userRequest.username,
         'userpass': userPassHash,
         'salt': salt,
@@ -159,7 +159,7 @@ export const deleteUser: APIGatewayProxyHandler = async (event) => {
     const deleteParams: DynamoDB.DocumentClient.DeleteItemInput = {
         TableName: 'user',
         Key: {
-            'userId': userIdRequest.userId,
+            'id': userIdRequest.id,
         },
     }
 

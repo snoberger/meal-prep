@@ -6,7 +6,6 @@ import { authLib } from "../../src/libs/authentication"
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
 
-
 describe('user POST endpoint', () => {
 
     beforeEach(() => {
@@ -109,25 +108,33 @@ describe('user POST endpoint', () => {
     });
 
     // delete
-    // it('accepts delete requests with an exactly-defined body', async () => {
-    //     const event = {
-    //         body: JSON.stringify({ 'username': 'hi', 'password': 'hello' })
-    //     };
-    //     const event1 = {
-    //         body: JSON.stringify({ 'userId': '1' })
-    //     };
-    //     dynamoDb.put = jest.fn().mockResolvedValueOnce({
-    //         TableName: 'user', Items: [{
-    //             'userId': '1',
-    //             'username': 'username', 'userpass': 'pass', 'salt': 'salt', 'createTs': 'Now',
-    //             'updateTs': 'now'
-    //         }]
-    //     });
-    //     await create(createEvent(event), Context(), () => { return });
-    //     const result = await deleteUser(createEvent(event1), Context(), () => { return });
-    //     expect(result ? result.statusCode : false).toBe(200);
-    //     expect(dynamoDb.delete).toHaveBeenCalled();
-    // });
+    it('accepts delete requests with an exactly-defined body', async () => {
+        const event = {
+            body: JSON.stringify({ 'id': '1' })
+        };
+
+        dynamoDb.delete = jest.fn().mockResolvedValueOnce({
+            Attributes: [],
+            ConsumedCapacity: 0,
+            ItemCollectionMetrics: []
+        });
+
+        const result = await deleteUser(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(dynamoDb.delete).toHaveBeenCalled();
+    });
+
+    it('declines delete requests with an exactly-defined body, but database fails', async () => {
+        const event = {
+            body: JSON.stringify({ 'id': '1' })
+        };
+
+        dynamoDb.delete = jest.fn().mockRejectedValueOnce({'error': 'testError'})
+
+        const result = await deleteUser(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(404);
+        expect(dynamoDb.delete).toHaveBeenCalled();
+    });
 
     it('delete declines create requests without a body field', async () => {
         const event = {
