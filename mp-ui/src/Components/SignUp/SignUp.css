@@ -1,0 +1,35 @@
+.signup-div {
+    margin-top: 5%;
+}
+
+.signup-card {
+    width: 600px;
+    display: inline-block;
+    height: 450px;
+    margin-top: 20px;
+}
+
+.signup-input1 {
+    width: 80%;
+    margin-top: 30px !important;
+}
+.signup-button1 {
+    float: right;
+    width: 200px;
+    margin: 4% 10% 0% 0% !important;
+}
+.signup-password1 {
+    float: left;
+    margin: 2% 0% 0% 10% !important;
+}
+.login-click {
+    float: right;
+    margin: 4% 0% 0% 0% !important;
+    width: 200px;
+}
+
+.signup-button1 {
+    float: right;
+    margin: 4% 10% 0% 10% !important;
+    width: 200px;
+}

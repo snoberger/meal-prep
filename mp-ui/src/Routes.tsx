@@ -4,6 +4,7 @@ import Login from "./Components/Login/Login";
 import PrivateRoute from './PrivateRoute';
 import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import Home from "./Components/Home/Home";
+import SignUp from "./Components/SignUp/SignUp";
 
 export enum AppScreens {
   HOME = '/',
@@ -32,6 +33,9 @@ class Routes extends React.Component<IRouteProps,IRouteState> {
       <Switch>
         <Route path={AppScreens.LOGIN}>
           <Login></Login>
+        </Route>
+        <Route path={AppScreens.SIGNUP}>
+          <SignUp></SignUp>
         </Route>
         <PrivateRoute
             exact={true}

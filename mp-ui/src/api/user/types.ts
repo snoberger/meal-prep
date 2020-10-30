@@ -1,6 +1,8 @@
 export interface CreateUserResponse {
     config: {},
-    data: string | false,
+    data:  {
+        message: string
+    },
     headers: {},
     request: XMLHttpRequest,
     status: number,
