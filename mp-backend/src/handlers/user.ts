@@ -159,7 +159,7 @@ export const deleteUser: APIGatewayProxyHandler = async (event) => {
     const deleteParams: DynamoDB.DocumentClient.DeleteItemInput = {
         TableName: 'user',
         Key: {
-            'userID': userIdRequest.userId,
+            'userId': userIdRequest.userId,
         },
     }
 
@@ -171,7 +171,6 @@ export const deleteUser: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({ message: 'Not Found' })
         }
     }
-
     return {
         statusCode: 200,
         body: JSON.stringify({ message: 'success' }),
