@@ -55,7 +55,6 @@ async function userAlreadyExists(username: string) {
 }
 
 export const create: APIGatewayProxyHandler = async (event) => {
-
     let data: Record<string, unknown>;
     if (event && event.body) {
         data = JSON.parse(event.body) as Record<string, unknown>;

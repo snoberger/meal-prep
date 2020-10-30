@@ -72,7 +72,6 @@ class Signup extends React.Component<SignUpCombinedProps,ISignUpState> {
         await this.props.fetchSignUp({
             username: this.state.email || "",
             password: this.state.password || "",
-            confirmpassword: this.state.confirmpassword || ""
         });
         this.props.history.push('/home');
     }
@@ -87,7 +86,7 @@ class Signup extends React.Component<SignUpCombinedProps,ISignUpState> {
                         <TextField id="email" onChange={this.setUsername} value={this.state.email} className="signup-input1" label="Email Address" variant="filled" ></TextField>
                         <TextField id="password" onChange={this.setPassword} value={this.state.password} className="signup-input1" label="Password"  variant="filled" type="password"></TextField>
                         <TextField id="confirm password" onChange={this.setConfirmPassword} value={this.state.confirmpassword} className="signup-input1" label="Confirm Password" variant="filled" type="password"></TextField>
-                        <Button component={NavLink} to={AppScreens.HOME} className="signup-button1" variant="contained" color="primary">Sign Up</Button>                           
+                        <Button onClick={this.handleSubmit} className="signup-button1" variant="contained" color="primary">Sign Up</Button>                           
                         <div className="login">
                             <Button component={NavLink} to={AppScreens.LOGIN} className="login-click" variant="contained" color="secondary">Login</Button>
                         </div>         
