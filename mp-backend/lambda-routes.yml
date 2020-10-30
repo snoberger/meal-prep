@@ -1,3 +1,5 @@
+authenticateJWT:
+    handler: src/middleware/authenticateJWT.authenticateJWT
 createUser:
     handler: src/handlers/user.create
     events:
@@ -6,6 +8,14 @@ createUser:
             method: post
             cors: true
             authorizer: aws_iam
+createRecipe:
+    handler: src/handlers/recipe.create
+    events:
+        - http:
+            path: api/recipe
+            method: post
+            cors: true
+            authorizer: authenticateJWT
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
@@ -14,3 +24,11 @@ authenticateUser:
             method: post
             cors: true
             authorized: aws_iam
+deleteUser:
+    handler: src/handlers/user.deleteUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: delete
+            cors: true
+            authorizer: aws_iam

@@ -32,7 +32,7 @@ async function getUserpassAndSalt(userId: string) {
     const getUserPassAndSalt: DynamoDB.DocumentClient.GetItemInput = {
         TableName: 'user',
         Key: {
-            'userId': userId
+            'id': userId
         },
         AttributesToGet: ['userpass', 'salt']
     };
@@ -86,8 +86,8 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     const user: DynamoDB.AttributeMap = result.Items[0];
     let userId: string;
-    if(user && user.userId) {
-        userId = user.userId as string;
+    if(user && user.id) {
+        userId = user.id as string;
     } else {
         return {
             statusCode: 500,
@@ -104,7 +104,6 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-
     if(!userpassResult || !userpassResult.Item) {
         return {
             statusCode: 500,

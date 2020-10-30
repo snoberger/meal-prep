@@ -58,7 +58,7 @@ class Login extends React.Component<LoginCombinedProps,ILoginState> {
             username: this.state.email || "",
             password: this.state.password || ""
         });
-        this.props.history.push('/home');
+        this.props.history.push('/');
     }
     
     render() {

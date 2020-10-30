@@ -1,7 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Login from '../../../../../src/Components/Login/Login';
-import { doesNotReject } from 'assert';
+import Login from '../../../../src/Components/Login/Login';
 
 
 describe("Login renders", () => {
@@ -63,7 +62,7 @@ describe("Login Input", () => {
     wrapper.update()
     await wrapper.instance().handleSubmit()
     expect(mockLogin).toHaveBeenCalledWith({password: "testPass", username: "testemail@email.com"});
-    expect(mockPush).toHaveBeenCalledWith('/home');
+    expect(mockPush).toHaveBeenCalledWith('/');
     done()
   });
 });
