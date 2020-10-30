@@ -69,7 +69,7 @@ class Signup extends React.Component<SignUpCombinedProps,ISignUpState> {
             //handle error
             return;
         }
-        const response = await this.props.fetchSignUp({
+        await this.props.fetchSignUp({
             username: this.state.email || "",
             password: this.state.password || "",
             confirmpassword: this.state.confirmpassword || ""
