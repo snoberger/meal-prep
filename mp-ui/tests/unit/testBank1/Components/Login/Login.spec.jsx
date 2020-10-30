@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Login from '../../../../../src/Components/login/Login';
+import Login from '../../../../../src/Components/Login/Login';
+import { doesNotReject } from 'assert';
 
 
 describe("Login renders", () => {
@@ -44,25 +45,25 @@ describe("Login Input", () => {
     submitbutton.simulate('click')
     expect(wrapper.instance().handleSubmit).toHaveBeenCalled();
   });
-  it('should call setState and history', () => { 
+  it('should call setState and history', async (done) => { 
     const wrapper = shallow(<Login.WrappedComponent/>)
     const emailInput = wrapper.find('#email');
     const passInput = wrapper.find('#password');
     
     emailInput.simulate("change", { target: { value: 'testemail@email.com' } });
     passInput.simulate("change", { target: { value: 'testPass' } });
-    wrapper.instance().setState = jest.fn()
     const mockPush = jest.fn()
-    wrapper.setProps({history: {
-      push: mockPush
-    }})
+    const mockLogin = jest.fn(async()=>{return})
+    wrapper.setProps({
+      history: {
+        push: mockPush
+      },
+      fetchLogin: mockLogin
+    })
     wrapper.update()
-    const submitbutton = wrapper.find('.login-button')
-    submitbutton.simulate('click')
-    expect(wrapper.instance().setState).toHaveBeenCalledWith({
-        // this will break
-        authToken: 'fakeToken'
-      });
+    await wrapper.instance().handleSubmit()
+    expect(mockLogin).toHaveBeenCalledWith({password: "testPass", username: "testemail@email.com"});
     expect(mockPush).toHaveBeenCalledWith('/home');
+    done()
   });
 });

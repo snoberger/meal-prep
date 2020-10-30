@@ -3,5 +3,7 @@
 exports[`App renders should match snapshot 1`] = `
 <div
   className="App"
-/>
+>
+  <div />
+</div>
 `;

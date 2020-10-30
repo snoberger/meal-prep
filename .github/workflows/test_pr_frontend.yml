@@ -8,7 +8,7 @@ defaults:
 
 jobs:
   test:
-    name: test backend
+    name: test frontend
     runs-on: ubuntu-latest
     strategy:
       matrix:
