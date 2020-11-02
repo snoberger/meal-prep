@@ -6,7 +6,7 @@ import { authLib } from "../../src/libs/authentication"
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
 
-describe('user POST endpoint', () => {
+describe('create user', () => {
 
     beforeEach(() => {
         jest.resetModules();
@@ -40,6 +40,24 @@ describe('user POST endpoint', () => {
         expect(result ? result.statusCode : false).toBe(201);
         expect(dynamoDb.query).toHaveBeenCalled();
         expect(dynamoDb.put).toHaveBeenCalled();
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
+        const event = {
+            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
+        }
+
+        const result = await create(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
+        const event = {
+            body: '{"username": "singleQuote", "password": "SingleQuote",}'
+        }
+
+        const result = await create(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
     });
 
     it('returns internal server error on database query failure', async () => {
@@ -106,8 +124,23 @@ describe('user POST endpoint', () => {
         const result = await create(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(400);
     });
+});
 
-    // delete
+describe('delete user', () => {
+    beforeEach(() => {
+        jest.resetModules();
+        process.env.PEPPER = 'SPICY'
+        dynamoDb.put = jest.fn();
+        dynamoDb.get = jest.fn();
+        dynamoDb.query = jest.fn().mockResolvedValue({ Count: 0 });
+    });
+
+    afterAll(() => {
+        delete process.env.PEPPER;
+        jest.resetAllMocks();
+        jest.resetModules();
+    });
+
     it('accepts delete requests with an exactly-defined body', async () => {
         const event = {
             body: JSON.stringify({ 'id': '1' })
@@ -123,6 +156,25 @@ describe('user POST endpoint', () => {
         expect(result ? result.statusCode : false).toBe(200);
         expect(dynamoDb.delete).toHaveBeenCalled();
     });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
+        const event = {
+            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
+        }
+
+        const result = await deleteUser(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
+        const event = {
+            body: '{"username": "singleQuote", "password": "SingleQuote",}'
+        }
+
+        const result = await deleteUser(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
 
     it('declines delete requests with an exactly-defined body, but database fails', async () => {
         const event = {
