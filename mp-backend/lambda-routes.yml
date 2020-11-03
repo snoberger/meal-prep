@@ -31,7 +31,7 @@ createRecipe:
             path: api/recipe
             method: post
             cors: true
-            # authorizer: authenticateJWT
+            authorizer: authenticateJWT
 getAllRecipes:
     handler: src/handlers/recipe.getAllRecipes
     events:
@@ -39,7 +39,7 @@ getAllRecipes:
             path: api/recipe/{userId}
             method: get
             cors: true
-            # authorizer: authenticateJWT
+            authorizer: authenticateJWT
 getRecipe:
     handler: src/handlers/recipe.getRecipe
     events:
@@ -47,5 +47,22 @@ getRecipe:
             path: api/recipe/{userId}/{recipeId}
             method: get
             cors: true
-            # authorizer: authenticateJWT
+            authorizer: authenticateJWT
+updateRecipe:
+    handler: src/handlers/recipe.updateRecipe
+    events:
+        - http:
+            path: api/recipe/{userId}/{recipeId}
+            method: put
+            cors: true
+            authorizer: authenticateJWT
+deleteRecipe:
+    handler: src/handlers/recipe.deleteRecipe
+    events:
+        - http:
+            path: api/recipe/{userId}/{recipeId}
+            method: delete
+            cors: true
+            authorizer: authenticateJWT
+
 
