@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { expect } from "@jest/globals";
-import { authenticate } from  "../../src/handlers/auth";
+import { authenticate, authenticateToken } from  "../../src/handlers/auth";
 import { createEvent } from  "../utils/event.handler";
 import { create } from '../../src/handlers/user'
 import dynamoDb from "../../src/libs/dynamodb-lib";
@@ -184,5 +183,80 @@ describe('authentication endpoint', () => {
         }
         const result = await authenticate(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode: false).toBe(400);
+    });
+});
+
+describe('authenticateJWT endpoint', () => {
+
+    interface LambdaResponse {
+        message: string
+    }
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env.PEPPER = 'SPICY';
+        process.env.JWTSECRET = 'SECRET';
+    });
+
+    afterAll(() => {
+        delete process.env.PEPPER;
+        delete process.env.JWTSECRET;
+        jest.resetAllMocks();
+        jest.resetModules();
+    });
+
+    it('accepts a known valid JWT', async () => {
+        const goodToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNjQyMjA3Mi0wMjYyLTQwYWQtOTc0Yy0yMzU5MjdjYzAxOTUiLCJpYXQiOjE2MDM4MTMyNjQsImV4cCI6OTk5OTk5OTk5OSwiaXNzIjoicHJlcCJ9.72jRsU8sOI1TBiC3GV5vW9bYb3Q6YFzd61H0nxxW7Ah1TnYOj6rzWfJR2di2YdA7ayM503XEubz2tYVOr19BJQ';
+        const event = {
+            pathParameters: {token: goodToken},
+            identity: {
+                userArn: 'testARN'
+            }
+        }
+
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Authorized");
+    });
+
+    it('declines a known invalid JWT', async () => {
+        const badToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNjQyMjA3Mi0wMjYyLTQwYWQtOTc0Yy0yMzU5MjdjYzAxOTUiLCJpYXQiOjE2MDM4MTMyNjQsImV4cCI6MCwiaXNzIjoicHJlcCJ9.Lkjq86oj1arh4Zhxc1qD7rBk47XPr9_Ou6Hj00NnguvE9M0GlsBkXu4W8TYQhasoxPMyXFI4YjaPs5D4C4P9tw';
+        const event = {
+            pathParameters: {token: badToken},
+            identity: {
+                userArn: 'testARN'
+            }
+        }
+
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(401);
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Unauthorized");
+    });
+
+    it('declines a request with invalid pathParameters', async () => {
+        const badToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNjQyMjA3Mi0wMjYyLTQwYWQtOTc0Yy0yMzU5MjdjYzAxOTUiLCJpYXQiOjE2MDM4MTMyNjQsImV4cCI6MCwiaXNzIjoicHJlcCJ9.Lkjq86oj1arh4Zhxc1qD7rBk47XPr9_Ou6Hj00NnguvE9M0GlsBkXu4W8TYQhasoxPMyXFI4YjaPs5D4C4P9tw';
+        const event = {
+            pathParameters: {token2: badToken},
+            identity: {
+                userArn: 'testARN'
+            }
+        }
+
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(401);
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Unauthorized");
+    });
+
+    it('declines a request with invalid identity', async () => {
+        const badToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNjQyMjA3Mi0wMjYyLTQwYWQtOTc0Yy0yMzU5MjdjYzAxOTUiLCJpYXQiOjE2MDM4MTMyNjQsImV4cCI6MCwiaXNzIjoicHJlcCJ9.Lkjq86oj1arh4Zhxc1qD7rBk47XPr9_Ou6Hj00NnguvE9M0GlsBkXu4W8TYQhasoxPMyXFI4YjaPs5D4C4P9tw';
+        const event = {
+            pathParameters: {token: badToken},
+            identity: {
+            }
+        }
+
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(401);
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Unauthorized");
     });
 });
