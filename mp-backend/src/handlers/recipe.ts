@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
+import { getPrincipleId } from '../middleware/validation';
 
 type Timestamp = number;
 type Uuid = string;
@@ -10,7 +11,7 @@ interface RecipeStep {
     type: string,
     resources: string[],
     time: number,
-    order: number,
+    order: number
 }
 type Steps = RecipeStep[]
 interface RecipeTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
@@ -45,15 +46,6 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
     return !determineRecipeRequestBodyFields(data);
-}
-
-function getPrincipleId(event: APIGatewayProxyEvent): string {
-
-    if(event.requestContext.authorizer && event.requestContext.authorizer.principalId) {
-        return event.requestContext.authorizer.principalId as string;
-    } else {
-        throw new Error("No principalId");
-    }
 }
 
 export const createRecipe: APIGatewayProxyHandler = async (event) => {
