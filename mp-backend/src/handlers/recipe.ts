@@ -31,23 +31,23 @@ export interface RecipeRequestBody extends Record<string, string | RecipeRequest
     steps: Steps,
     ingredients: Ingredients
 }
-function determineRecipeRequestBodyFields(data: Record<string, unknown>): string | undefined {
+function determineRecipeRequestBodyFields(data: Record<string, unknown>): string  {
     if(!('userId' in data)) {
-        return "UserId not specified"
+        return "UserId not specified";
     }
     if(!('ingredients' in data)) {
-        return "Ingredients not specified"
+        return "Ingredients not specified";
     }
     if(!('steps' in data)) {
-        return "Ingredients not specified"
+        return "Steps not specified";
     }
-    return
+    return "";
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
-    return !determineRecipeRequestBodyFields(data)
+    return !determineRecipeRequestBodyFields(data);
 }
 
-export const create: APIGatewayProxyHandler = async (event) => {
+export const createRecipe: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
         data = JSON.parse(event.body) as Record<string, unknown>;
@@ -62,7 +62,7 @@ export const create: APIGatewayProxyHandler = async (event) => {
     if(!isRecipeRequestBody(data)) {
         return {
             statusCode: 400,
-            body: JSON.stringify({message: `Malformed event body: ${determineRecipeRequestBodyFields(data) || "None"}`})
+            body: JSON.stringify({message: `Malformed event body: ${determineRecipeRequestBodyFields(data)}`})
         }
     }
 
@@ -97,5 +97,69 @@ export const create: APIGatewayProxyHandler = async (event) => {
         body: JSON.stringify({ message: 'success' }),
     };
 };
+
+export const getAllRecipes: APIGatewayProxyHandler = async (event) => {
+    if(!event || !event.pathParameters || !event.pathParameters.userId) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+    
+    const pathParameters = event.pathParameters;
+    const userId = pathParameters.userId;
+    const params: DynamoDB.DocumentClient.QueryInput = {
+        TableName: 'recipe',
+        KeyConditionExpression: '#userId = :userId',
+        ExpressionAttributeNames: {
+            '#userId': 'userId'
+        },
+        ExpressionAttributeValues: {
+            ':userId': userId
+        }
+    };
+    let data;
+    try {
+        data = await dynamoLib.query(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    return {statusCode: 200, body: JSON.stringify(data.Items)};
+}
+
+export const getRecipe: APIGatewayProxyHandler = async (event) => {
+    if(!event || !event.pathParameters || !event.pathParameters.userId) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+    
+    const pathParameters = event.pathParameters;
+    const userId = pathParameters.userId;
+    const recipeId = pathParameters.recipeId;
+
+    const params: DynamoDB.DocumentClient.GetItemInput = {
+        TableName: 'recipe',
+        Key: {
+            'userId': userId,
+            'id': recipeId
+        }
+    };
+    let data;
+    try {
+        data = await dynamoLib.get(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    return {statusCode: 200, body: JSON.stringify(data.Item)};
+}    
+
 
 
