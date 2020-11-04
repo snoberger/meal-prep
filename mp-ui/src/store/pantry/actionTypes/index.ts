@@ -1,0 +1,1 @@
+export const SET_INGREDIENTS = 'SET_INGREDIENTS';
