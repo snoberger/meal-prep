@@ -2,9 +2,6 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { authLib } from '../libs/authentication';
-import { APIGatewayTokenAuthorizerEvent } from 'aws-lambda/trigger/api-gateway-authorizer'
-import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy'
-import { authenticateJWT } from '../middleware/authenticateJWT'
 
 interface AuthEventBody extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     username: string,
