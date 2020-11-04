@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
+import { APIGatewayProxyHandler } from 'aws-lambda';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
@@ -234,7 +234,7 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
             'userId': userId,
             'id': recipeId
         },
-        UpdateExpression: "set recipe.steps = :s, recipe.ingredients = :i, recipe.updateTs = :t",
+        UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
         ExpressionAttributeValues:{
             ":s":recipeRequest.steps,
             ":i":recipeRequest.ingredients,
