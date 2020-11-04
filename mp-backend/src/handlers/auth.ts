@@ -156,34 +156,9 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
     }
 };
 
-export const authenticateToken: APIGatewayProxyHandler = (event, context) => {
-    if(!event || !event.pathParameters || !event.pathParameters.token || !event.requestContext.identity.userArn) {
-        return Promise.resolve({
-            statusCode: 401,
-            body: JSON.stringify({message: "Unauthorized"})
-        });
-    }
-    
-    const token = event.pathParameters.token;
-    const authenticateEvent: APIGatewayTokenAuthorizerEvent = {
-        authorizationToken: 'bearer ' + token,
-        type: 'TOKEN',
-        methodArn: event.requestContext.identity.userArn
-    }
-
-    let result: APIGatewayProxyResult = {
-        statusCode: 401,
-        body: JSON.stringify({message: "Unauthorized"})
-    };
-
-    authenticateJWT(authenticateEvent, context, (err) => {
-        if(!err) {
-            result =  {
-                statusCode: 200,
-                body: JSON.stringify({message: "Authorized"})
-            }
-        }
+export const authenticateToken: APIGatewayProxyHandler = () => {
+    return Promise.resolve({
+        statusCode: 200,
+        body: JSON.stringify({message: "success"})
     });
-
-    return Promise.resolve(result);
 }

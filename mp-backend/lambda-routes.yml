@@ -37,7 +37,7 @@ authenticateToken:
     handler: src/handlers/auth.authenticateToken
     events:
         - http:
-            path: api/auth/{token}
+            path: api/auth
             method: get
             cors: true
-            authorizer: aws_iam
+            authorizer: authenticateJWT
