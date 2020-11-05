@@ -35,7 +35,7 @@ for(let i = 0; i < 4; i++){
 
 /* istanbul ignore next */
 const initialState = {
-    ingredients: process.env.IS_OFFLINE ? ingreds : [],
+    ingredients: ingreds
 };
 
 const pantry = (state = initialState, action: any) => {
