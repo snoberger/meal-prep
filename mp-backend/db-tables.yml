@@ -30,14 +30,14 @@ recipeTable:
   Properties:
     TableName: recipe
     AttributeDefinitions:
-      - AttributeName: id
-        AttributeType: S
       - AttributeName: userId
         AttributeType: S
-    KeySchema:
       - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: userId
         KeyType: HASH
-      - AttributeName: userId 
+      - AttributeName: id 
         KeyType: RANGE
     ProvisionedThroughput:
       ReadCapacityUnits: 1
