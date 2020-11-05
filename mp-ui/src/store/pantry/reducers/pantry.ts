@@ -8,29 +8,31 @@ export type Ingredient = {
     amount: string,
     metric: string
 }
+const ingreds = [];
+for(let i = 0; i < 4; i++){
+    ingreds.push({
+        name: 'flour',
+        amount: '2',
+        metric: 'bags'
+    });
+    ingreds.push({
+        name: 'sugar',
+        amount: '2',
+        metric: 'cups'
+    });
+    ingreds.push({
+        name: 'Corn Starch',
+        amount: '16',
+        metric: 'oz'
+    });
+    ingreds.push({
+        name: 'milk',
+        amount: '1',
+        metric: 'gallon'
+    });
+}
 const initialState = {
-    ingredients: [
-        {
-            name: 'flour',
-            amount: '2',
-            metric: 'bags'
-        },
-        {
-            name: 'sugar',
-            amount: '2',
-            metric: 'cups'
-        },
-        {
-            name: 'corn starch',
-            amount: '16',
-            metric: 'oz'
-        },
-        {
-            name: 'milk',
-            amount: '1',
-            metric: 'gallon'
-        }
-    ],
+    ingredients: ingreds,
 };
 
 const pantry = (state = initialState, action: any) => {
