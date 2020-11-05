@@ -13,12 +13,18 @@ interface IPantryProps extends RouteComponentProps<any> {
 
 interface IPantryState {
 }
+
+// this function will not run in test
+/* istanbul ignore next */
 const mapStateToProps = (state: State /*, ownProps*/) => {
+    console.log('ran')
     return {
         ...state,
         ingredients: getIngredients(state)
     };
 };
+// this function will not run in test
+/* istanbul ignore next */
 const mapDispatchToProps = (dispatch: any) => {
     return {
     };
@@ -32,9 +38,6 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type PantryCombinedProps = PropsFromRedux & IPantryProps;
 
 export class Pantry extends React.Component<PantryCombinedProps,IPantryState> {
-    // constructor(props: any) {
-    //     super(props);
-    // }
     render() {
       return (
         <Grid container justify="center" alignItems="center">

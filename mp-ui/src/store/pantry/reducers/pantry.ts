@@ -1,5 +1,5 @@
 import {
-    SET_INGREDIENTS,
+    UPDATE_INGREDIENTS,
 } from '../actionTypes';
 import { State } from '../../rootReducer';
 
@@ -31,13 +31,16 @@ for(let i = 0; i < 4; i++){
         metric: 'gallon'
     });
 }
+// if we are testing return a default initial state since this will go away when we hook to DB
+
+/* istanbul ignore next */
 const initialState = {
-    ingredients: ingreds,
+    ingredients: process.env.IS_OFFLINE ? ingreds : [],
 };
 
 const pantry = (state = initialState, action: any) => {
     switch (action.type) {
-        case SET_INGREDIENTS:
+        case UPDATE_INGREDIENTS:
             return {
                 ...state,
                 ingredients: action.ingredients

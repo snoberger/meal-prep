@@ -19,10 +19,14 @@ const mapStateToProps = (state: State, ownProps: any) => {
         ownProps: ownProps
     };
 };
+// this function will not run in test
+/* istanbul ignore next */
 const mapDispatchToProps = (dispatch: any) => {
     return {
     };
 };
+// this function will not run in test
+/* istanbul ignore next */
 const connector = connect(
     mapStateToProps,
     mapDispatchToProps

@@ -1,9 +1,9 @@
-import { SET_INGREDIENTS } from '../actionTypes';
+import { UPDATE_INGREDIENTS } from '../actionTypes';
 
 
-export const setIngredients = (ingredients: string) => {
+export const updateIngredients = (ingredients: string) => {
   return {
-    type: SET_INGREDIENTS,
+    type: UPDATE_INGREDIENTS,
     ingredients
   };
 };

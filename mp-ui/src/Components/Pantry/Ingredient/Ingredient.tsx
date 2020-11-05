@@ -13,12 +13,16 @@ interface IIngredientProps extends RouteComponentProps<any> {
 
 interface IIngredientState {
 }
+// this function will not run in test
+/* istanbul ignore next */
 const mapStateToProps = (state: State, ownProps: any) => {
     return {
         ...state,
         ownProps: ownProps
     };
 };
+// this function will not run in test
+/* istanbul ignore next */
 const mapDispatchToProps = (dispatch: any) => {
     return {
     };
