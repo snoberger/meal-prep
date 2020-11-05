@@ -24,6 +24,15 @@ deleteUser:
             method: delete
             cors: true
             authorizer: aws_iam
+
+authenticateToken:
+    handler: src/handlers/auth.authenticateToken
+    events:
+        - http:
+            path: api/auth
+            method: get
+            cors: true
+            authorizer: authenticateJWT
 createRecipe:
     handler: src/handlers/recipe.createRecipe
     events:
