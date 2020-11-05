@@ -42,3 +42,24 @@ recipeTable:
     ProvisionedThroughput:
       ReadCapacityUnits: 1
       WriteCapacityUnits: 1
+ingredientTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ingredient
+    AttributeDefinitions:
+      - AttributeName: ingredientId
+        AttributeType: S
+      - AttributeName: name
+        AttributeType: S
+      - AttributeName: metric
+        AttributeType: S
+    KeySchema:
+      - AttributeName: ingredientId
+        KeyType: HASH
+      - AttributeName: name
+        KeyType: RANGE
+      - AttributeName: metric
+        KeyType: RANGE
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
