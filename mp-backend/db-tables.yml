@@ -42,3 +42,24 @@ recipeTable:
     ProvisionedThroughput:
       ReadCapacityUnits: 1
       WriteCapacityUnits: 1
+pantryTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: pantry
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      - AttributeName: userId
+        AttributeType: S
+      - AttributeName: ingredientId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      - AttributeName: userId
+        KeyType: RANGE
+      - AttributeName: ingredientId
+        KeyType: RANGE
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
