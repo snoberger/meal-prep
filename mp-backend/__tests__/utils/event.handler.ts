@@ -2,7 +2,10 @@ import {  APIGatewayProxyEvent} from "aws-lambda";
 
 export type Event = {
     body?: string,
-    pathParameters?: Record<string,string>,
+    pathParameters?: Record<string, string>
+    identity?: {
+        userArn?: string
+    }
     principalId?: string
 }
 export const createEvent = (event: Event): APIGatewayProxyEvent => {
@@ -41,7 +44,7 @@ export const createEvent = (event: Event): APIGatewayProxyEvent => {
                 sourceIp: '',
                 user: '',
                 userAgent: '',
-                userArn: '',
+                userArn: event.identity ? event.identity.userArn ? event.identity.userArn : '' : '',
             },
             stage: '', 
             requestId: '',

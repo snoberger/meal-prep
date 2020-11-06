@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { expect } from "@jest/globals";
-import { authenticate } from  "../../src/handlers/auth";
+import { authenticate, authenticateToken } from  "../../src/handlers/auth";
 import { createEvent } from  "../utils/event.handler";
 import { create } from '../../src/handlers/user'
 import dynamoDb from "../../src/libs/dynamodb-lib";
@@ -184,5 +183,19 @@ describe('authentication endpoint', () => {
         }
         const result = await authenticate(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode: false).toBe(400);
+    });
+});
+
+describe('authenticateJWT endpoint', () => {
+
+    interface LambdaResponse {
+        message: string
+    }
+
+    it('always returns success', async () => {
+        const event = {};
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("success");
     });
 });
