@@ -57,18 +57,14 @@ pantryTable:
   Properties:
     TableName: pantry
     AttributeDefinitions:
-      - AttributeName: id
-        AttributeType: S
       - AttributeName: userId
         AttributeType: S
-      - AttributeName: ingredientId
+      - AttributeName: id
         AttributeType: S
     KeySchema:
-      - AttributeName: id
-        KeyType: HASH
       - AttributeName: userId
-        KeyType: RANGE
-      - AttributeName: ingredientId
+        KeyType: HASH
+      - AttributeName: id
         KeyType: RANGE
     ProvisionedThroughput:
       ReadCapacityUnits: 1
