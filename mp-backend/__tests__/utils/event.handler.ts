@@ -1,25 +1,32 @@
 import {  APIGatewayProxyEvent} from "aws-lambda";
 
-type Event = {
-    body?: string
+export type Event = {
+    body?: string,
+    pathParameters?: Record<string, string>
+    identity?: {
+        userArn?: string
+    }
+    principalId?: string
 }
 export const createEvent = (event: Event): APIGatewayProxyEvent => {
     // create an event object that will allow us to be properly formatted for the handler function
     const eventBody:APIGatewayProxyEvent = {
         headers: {test:''},
-        body: event.body ? event.body : '',
+        body: event.body || '',
         multiValueHeaders: {test:['']},
         httpMethod: '',
         isBase64Encoded: false,
         path: '',
-        pathParameters: {test:''},
+        pathParameters: event.pathParameters || {test:''},
         queryStringParameters: {test:''},
         multiValueQueryStringParameters: {test:['']},
         stageVariables: {test:''},
         requestContext: {
             accountId:'',
             apiId: '',
-            authorizer: {},
+            authorizer: {
+                principalId: event.principalId || '',
+            },
             protocol: '',
             httpMethod: '',
             path: '',
@@ -37,7 +44,7 @@ export const createEvent = (event: Event): APIGatewayProxyEvent => {
                 sourceIp: '',
                 user: '',
                 userAgent: '',
-                userArn: '',
+                userArn: event.identity ? event.identity.userArn ? event.identity.userArn : '' : '',
             },
             stage: '', 
             requestId: '',
