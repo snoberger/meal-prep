@@ -17,7 +17,6 @@ interface IPantryState {
 // this function will not run in test
 /* istanbul ignore next */
 const mapStateToProps = (state: State /*, ownProps*/) => {
-    console.log('ran')
     return {
         ...state,
         ingredients: getIngredients(state)
@@ -25,7 +24,7 @@ const mapStateToProps = (state: State /*, ownProps*/) => {
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (/*dispatch: any*/) => {
     return {
     };
 };

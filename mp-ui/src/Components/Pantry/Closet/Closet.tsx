@@ -13,6 +13,8 @@ interface IClosetProps extends RouteComponentProps<any> {
 
 interface IClosetState {
 }
+// this function will not run in test
+/* istanbul ignore next */
 const mapStateToProps = (state: State, ownProps: any) => {
     return {
         ...state,
@@ -21,12 +23,11 @@ const mapStateToProps = (state: State, ownProps: any) => {
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (/*dispatch: any*/) => {
     return {
     };
 };
-// this function will not run in test
-/* istanbul ignore next */
+
 const connector = connect(
     mapStateToProps,
     mapDispatchToProps
@@ -37,18 +38,18 @@ type ClosetCombinedProps = PropsFromRedux & IClosetProps;
 
 export class Closet extends React.Component<ClosetCombinedProps,IClosetState> {
     render() {
-        let closet: Array<Array<Ingredient>> = []
-        let shelf: Array<Ingredient> = []
+        let closet: Array<Array<Ingredient>> = [];
+        let shelf: Array<Ingredient> = [];
         this.props.ingredients.forEach((item, index) => {
-            shelf.push(item)
+            shelf.push(item);
             if ((index + 1) % 6 === 0){
                 //each shelf has at most 6 ingredients on it so push if its on a mult of 6
                 closet.push(shelf);
                 shelf = [];
             } 
-        })
-        //add whatever is left to the shelves
-        if(shelf.length) {
+        });
+        //add whatever is left to the shelves, or add an empty one if the user has no ingredients
+        if(shelf.length || closet.length === 0) {
             closet.push(shelf);
         }
 
@@ -57,10 +58,10 @@ export class Closet extends React.Component<ClosetCombinedProps,IClosetState> {
         closet.forEach((shelf, index)=> {
             if(index === closet.length - 1 && shelf.length === 6){
                 //if this is the last shelf, but it is full add an empty shelf
-                shelfElements.push(<Shelf shelfItems={shelf}></Shelf>)
-                shelfElements.push(<Shelf shelfItems={[]}></Shelf>)
+                shelfElements.push(<Shelf key={"shelf:" + index} shelfItems={shelf}></Shelf>);
+                shelfElements.push(<Shelf key={"empty"} shelfItems={[]}></Shelf>);
             } else {
-                shelfElements.push(<Shelf shelfItems={shelf}></Shelf>)
+                shelfElements.push(<Shelf key={"shelf:" + index} shelfItems={shelf}></Shelf>);
             }
             
         });

@@ -25,7 +25,7 @@ const mapStateToProps = (state: State , ownProps: any) => {
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (/*dispatch: any*/) => {
     return {
     };
 };
@@ -39,19 +39,18 @@ type ShelfCombinedProps = PropsFromRedux & IShelfProps;
 
 export class Shelf extends React.Component<ShelfCombinedProps,IShelfState> {
     render() {
-        let ingredients: Array<any> = []
-        this.props.shelfItems.forEach((item) => {
-            ingredients.push(<IngredientComponent ingredient={item} key={item.name}></IngredientComponent>)
-        })
+        let ingredients: Array<any> = [];
+        this.props.shelfItems.forEach((item, index) => {
+            ingredients.push(<IngredientComponent ingredient={item} key={item.name + index}></IngredientComponent>);
+        });
         if(this.props.shelfItems.length < 6) {
             ingredients.push(
-            <Grid item xs={2} className="ingredient-container">
+            <Grid key="add" item xs={2} className="ingredient-container">
                 <IconButton color="primary" className="add-ingredient-icon" component="span">
                     <Add fontSize="large"/>
                 </IconButton>
-            </Grid>)
+            </Grid>);
         }
-        console.log(ingredients)
         return (
             <div>
                 <Paper color={'secondary'} className="shelf-container" elevation={0}>

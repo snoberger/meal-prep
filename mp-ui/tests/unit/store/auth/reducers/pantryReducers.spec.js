@@ -5,11 +5,13 @@ import * as types from '../../../../../src/store/pantry/actionTypes';
 
 describe('pantry reducer handlers', () => {
   it('should return the initial state', () => {
+    process.env.TESTING = true
     expect(reducer(undefined, {})).toEqual(
       {
         ingredients: []
       }
     )
+    process.env.TESTING = false
   })
 
   it('should handle UPDATE_INGREDIENTS', () => {

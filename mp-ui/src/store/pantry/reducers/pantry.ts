@@ -35,7 +35,8 @@ for(let i = 0; i < 4; i++){
 
 /* istanbul ignore next */
 const initialState = {
-    ingredients: ingreds
+    // eslint-disable-next-line
+    ingredients: process.env.NODE_ENV === 'test' ? [] : ingreds
 };
 
 const pantry = (state = initialState, action: any) => {

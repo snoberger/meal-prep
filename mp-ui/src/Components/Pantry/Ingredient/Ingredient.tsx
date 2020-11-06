@@ -23,7 +23,7 @@ const mapStateToProps = (state: State, ownProps: any) => {
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (/*dispatch: any*/) => {
     return {
     };
 };
