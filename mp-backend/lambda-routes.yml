@@ -73,5 +73,27 @@ deleteRecipe:
             method: delete
             cors: true
             authorizer: authenticateJWT
-
-
+createIngredient:
+    handler: src/handlers/ingredient.createIngredient
+    events:
+        - http:
+            path: api/ingredient
+            method: post
+            cors: true
+            authorizer: authenticateJWT
+getIngredient:
+    handler: src/handlers/ingredient.getIngredient
+    events:
+        - http:
+            path: api/ingredient/{ingredientId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+deleteIngredient:
+    handler: src/handlers/ingredient.deleteIngredient
+    events:
+        - http:
+            path: api/ingredient/{ingredientId}
+            method: delete
+            cors: true
+            authorizer: authenticateJWT
