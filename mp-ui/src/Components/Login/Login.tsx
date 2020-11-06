@@ -6,6 +6,7 @@ import React from "react";
 import { AppScreens } from "../../Routes";
 import { connect, ConnectedProps } from 'react-redux';
 import { fetchLogin} from '../../store/auth/actions/auth';
+import { State } from "../../store/rootReducer";
 
 interface ILoginProps extends RouteComponentProps<any> {
 }
@@ -15,7 +16,7 @@ interface ILoginState {
     password?: string;
     authToken?: string;
 }
-const mapStateToProps = (state: ILoginState /*, ownProps*/) => {
+const mapStateToProps = (state: State /*, ownProps*/) => {
     return {
         ...state
     };

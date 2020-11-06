@@ -5,18 +5,18 @@ import * as types from '../../../../../src/store/auth/actionTypes';
 
 describe('auth reducer handlers', () => {
   it('should return the initial state', () => {
-    expect(reducer(undefined, {})).toEqual([
+    expect(reducer(undefined, {})).toEqual(
       {
         authToken: ''
       }
-    ])
+    )
   })
 
   it('should handle SET_AUTH_TOKEN', () => {
     expect(
       reducer([], {
         type: types.SET_AUTH_TOKEN,
-        text: 'dummyToken'
+        authToken: 'dummyToken'
       })
     ).toEqual(
       {
@@ -28,6 +28,6 @@ describe('auth reducer handlers', () => {
 
 describe('auth reducer getters', () => {
   it('should return the initial state', () => {
-    expect(getters.getAuthToken({ auth: { authToken: 'dummytoken'}})).toEqual('dummyToken')
+    expect(getters.getAuthToken({ auth: { authToken: 'dummyToken'}})).toEqual('dummyToken')
   })
 })

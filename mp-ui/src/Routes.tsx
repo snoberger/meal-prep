@@ -4,6 +4,7 @@ import Login from "./Components/Login/Login";
 import PrivateRoute from './PrivateRoute';
 import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import Home from "./Components/Home/Home";
+import Pantry from "./Components/Pantry/Pantry";
 import SignUp from "./Components/SignUp/SignUp";
 
 export enum AppScreens {
@@ -37,6 +38,11 @@ class Routes extends React.Component<IRouteProps,IRouteState> {
         <Route path={AppScreens.SIGNUP}>
           <SignUp></SignUp>
         </Route>
+        <PrivateRoute
+            exact={true}
+            path={AppScreens.PANTRY}
+            component={Pantry}
+        />
         <PrivateRoute
             exact={true}
             //path={AppScreens.HOME} not specifying the route means it will catch any route that isnt found and send it to home

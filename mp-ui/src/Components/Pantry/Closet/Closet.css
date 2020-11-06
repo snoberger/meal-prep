@@ -1,0 +1,10 @@
+.closet-container {
+    height: 90% !important;
+    width: 60%;
+    overflow-y: scroll;
+    border-radius: 0px !important;
+}
+
+.closet-container::-webkit-scrollbar {
+    display: none;
+}

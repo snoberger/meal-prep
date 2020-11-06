@@ -4,7 +4,10 @@ import {
     SIGNUP_ERROR
 } from '../actionTypes';
 
-const initialState = {};
+const initialState = {
+    signUpDetails: {},
+    alert: false
+};
 
 const user = (state = initialState, action: any) => {
     switch (action.type) {
