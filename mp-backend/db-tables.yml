@@ -52,6 +52,9 @@ ingredientTable:
     KeySchema:
       - AttributeName: id
         KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
 pantryTable:
   Type: AWS::DynamoDB::Table
   Properties:
