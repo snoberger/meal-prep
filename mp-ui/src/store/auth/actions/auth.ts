@@ -1,16 +1,19 @@
 import { AuthenticateItem, loginUser } from '../../../api';
-import { SET_AUTH_TOKEN, REQUEST_AUTH_TOKEN, INVALID_LOGIN_CRED } from '../actionTypes';
+import { InfoMessage } from '../../../Components/InfoComponent/InfoComponent';
+import { SET_AUTH_TOKEN, REQUEST_AUTH_TOKEN, INVALID_LOGIN_CRED, CLEAR_AUTH_ALERT } from '../actionTypes';
 
 
 export const setAuthToken = (authToken: string) => {
   return {
     type: SET_AUTH_TOKEN,
-    authToken
+    authToken: authToken,
   };
 };
-export function invalidLoginCredentials() {
+
+export function invalidLoginCredentials(message: InfoMessage) {
   return {
     type: INVALID_LOGIN_CRED,
+    alert: message
   };
 }
 function requestAuthToken(loginDetails: AuthenticateItem) {
@@ -19,7 +22,12 @@ function requestAuthToken(loginDetails: AuthenticateItem) {
     loginDetails
   };
 }
-
+export const clearAuthAlert = () => {
+    return {
+      type: CLEAR_AUTH_ALERT,
+      alert: undefined
+    };
+};
 export function fetchLogin(loginDetails: AuthenticateItem) {
   return async (dispatch: any) => {
     dispatch(requestAuthToken(loginDetails));
@@ -28,10 +36,16 @@ export function fetchLogin(loginDetails: AuthenticateItem) {
         if(response.status === 200 && response.data.message) {
           return dispatch(setAuthToken(response.data.message));
         }
-        return dispatch(invalidLoginCredentials());
+        return dispatch(invalidLoginCredentials({
+          header: "Failed to login",
+          body: "Invalid Login Credentials"
+        }));
       });
     } catch(e) {
-      return dispatch(invalidLoginCredentials());
+      return dispatch(invalidLoginCredentials({
+        header: "Failed to login",
+        body: "Connection Issue"
+      }));
     }
     
   };

@@ -24,10 +24,38 @@ describe('auth reducer handlers', () => {
       }
     )
   })
+  it('should handle INVALID_LOGIN_CRED', () => {
+    expect(
+      reducer([], {
+        type: types.INVALID_LOGIN_CRED,
+        alert: {
+          header: "dummyHeader",
+          body: "dummyBody"
+        }
+      })
+    ).toEqual(
+      {
+        alert: {
+          header: "dummyHeader",
+          body: "dummyBody"
+        },
+        authToken: ""
+      }
+    )
+  })
 })
 
 describe('auth reducer getters', () => {
   it('should return the initial state', () => {
     expect(getters.getAuthToken({ auth: { authToken: 'dummyToken'}})).toEqual('dummyToken')
+  })
+  it('should return the initial state', () => {
+    expect(getters.getAuthAlert({ auth: { alert: {
+      header: "dummyHeader",
+      body: "dummyBody"
+    }}})).toEqual({
+      header: "dummyHeader",
+      body: "dummyBody"
+    })
   })
 })

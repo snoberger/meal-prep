@@ -7,6 +7,8 @@ import { AppScreens } from "../../Routes";
 import { connect, ConnectedProps } from 'react-redux';
 import { fetchLogin} from '../../store/auth/actions/auth';
 import { State } from "../../store/rootReducer";
+import InfoComponent, { InfoComponentMessageType } from "../InfoComponent/InfoComponent";
+import { getAuthAlert } from "../../store/auth/reducers/auth";
 
 interface ILoginProps extends RouteComponentProps<any> {
 }
@@ -18,7 +20,8 @@ interface ILoginState {
 }
 const mapStateToProps = (state: State /*, ownProps*/) => {
     return {
-        ...state
+        ...state,
+        alert: getAuthAlert(state)
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
@@ -80,6 +83,9 @@ class Login extends React.Component<LoginCombinedProps,ILoginState> {
                     </CardContent>
                 </form>
             </Card>
+            <InfoComponent
+            {...this.props}
+             message={this.props.auth.alert} type={InfoComponentMessageType.ERROR} />
           </div>
     );
     }
