@@ -43,7 +43,14 @@ async function getUserpassAndSalt(userId: string) {
 export const authenticate: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
-        data = JSON.parse(event.body) as Record<string, unknown>;
+        try {
+            data = JSON.parse(event.body) as Record<string, unknown>;
+        } catch (e) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({message: 'Malformed request body'})
+            }
+        }
     } else {
         return {
             // TODO: correct status code

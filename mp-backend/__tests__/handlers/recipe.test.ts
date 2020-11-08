@@ -24,6 +24,24 @@ describe('createRecipe', () => {
         jest.resetModules();
     });
 
+    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
+        const event = {
+            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
+        }
+
+        const result = await createRecipe(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
+        const event = {
+            body: '{"username": "singleQuote", "password": "SingleQuote",}'
+        }
+
+        const result = await createRecipe(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
     it('should return 200 and success message when putting a new recipe', async () => {
         event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
         
@@ -126,6 +144,8 @@ describe('getAllRecipes', () => {
         expect(result ? result.statusCode: false).toBe(200);
         expect(dynamoDb.query).toBeCalled();
     });
+
+    
     it('should return status code 400 and Malformed event body if the event does not have pathParameters', async () => {
 
         const result = await getAllRecipes(createEvent(event), Context(), () => {return});
@@ -251,6 +271,24 @@ describe('updateRecipe', () => {
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode: false).toBe(200);
         expect(dynamoDb.update).toBeCalled();
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
+        const event = {
+            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
+        }
+
+        const result = await updateRecipe(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
+        const event = {
+            body: '{"username": "singleQuote", "password": "SingleQuote",}'
+        }
+
+        const result = await updateRecipe(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
     });
 
     it('should return status code 400 and Malformed event body if the event does not have a body', async () => {

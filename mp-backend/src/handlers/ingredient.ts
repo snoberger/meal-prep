@@ -37,7 +37,15 @@ function determineIngredientRequestBodyFields(data: Record<string, unknown>): st
 export const createIngredient: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
-        data = JSON.parse(event.body) as Record<string, unknown>;
+        try {
+            data = JSON.parse(event.body) as Record<string, unknown>;
+        } catch(e) {
+            return {
+                // TODO: correct status code
+                statusCode: 400,
+                body: JSON.stringify({message: 'Malformed event body'})
+            }
+        }
     } else {
         return {
             // TODO: correct status code

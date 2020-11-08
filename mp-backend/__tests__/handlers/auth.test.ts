@@ -6,7 +6,7 @@ import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
 import { authLib } from "../../src/libs/authentication";
 
-describe('authentication endpoint', () => {
+describe('authenticate endpoint', () => {
 
     const userTable = {
         user: {
@@ -53,6 +53,25 @@ describe('authentication endpoint', () => {
         expect(result ? result.statusCode: false).toBe(200);
         expect(dynamoDb.get).toBeCalled();
         expect(authLib.getHashedCredentials).toBeCalled();
+    });
+
+    it('returns malformed event body on non JSON-parsable bodies (single quotes)', async () => {
+        const event = {
+            body: "{\"username\": \"iexist\", 'password': 'yay'}"
+        }
+
+        const result = await authenticate(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode: false).toBe(400);
+
+    });
+    
+    it('returns malformed event body on non JSON-parsable bodies (trailing comma)', async () => {
+        const event = {
+            body: "{\"username\": \"iexist\", \"password\": \"yay\",}"
+        }
+
+        const result = await authenticate(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode: false).toBe(400);
     });
 
     it('fails with an invalid username password combination', async () => {
