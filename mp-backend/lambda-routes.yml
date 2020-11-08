@@ -8,14 +8,6 @@ createUser:
             method: post
             cors: true
             authorizer: aws_iam
-createRecipe:
-    handler: src/handlers/recipe.create
-    events:
-        - http:
-            path: api/recipe
-            method: post
-            cors: true
-            authorizer: authenticateJWT
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
@@ -32,3 +24,76 @@ deleteUser:
             method: delete
             cors: true
             authorizer: aws_iam
+
+authenticateToken:
+    handler: src/handlers/auth.authenticateToken
+    events:
+        - http:
+            path: api/auth
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+createRecipe:
+    handler: src/handlers/recipe.createRecipe
+    events:
+        - http:
+            path: api/recipe
+            method: post
+            cors: true
+            authorizer: authenticateJWT
+getAllRecipes:
+    handler: src/handlers/recipe.getAllRecipes
+    events:
+        - http:
+            path: api/recipe/{userId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+getRecipe:
+    handler: src/handlers/recipe.getRecipe
+    events:
+        - http:
+            path: api/recipe/{userId}/{recipeId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+updateRecipe:
+    handler: src/handlers/recipe.updateRecipe
+    events:
+        - http:
+            path: api/recipe/{userId}/{recipeId}
+            method: put
+            cors: true
+            authorizer: authenticateJWT
+deleteRecipe:
+    handler: src/handlers/recipe.deleteRecipe
+    events:
+        - http:
+            path: api/recipe/{userId}/{recipeId}
+            method: delete
+            cors: true
+            authorizer: authenticateJWT
+createIngredient:
+    handler: src/handlers/ingredient.createIngredient
+    events:
+        - http:
+            path: api/ingredient
+            method: post
+            cors: true
+            authorizer: authenticateJWT
+getIngredient:
+    handler: src/handlers/ingredient.getIngredient
+    events:
+        - http:
+            path: api/ingredient/{ingredientId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+deleteIngredient:
+    handler: src/handlers/ingredient.deleteIngredient
+    events:
+        - http:
+            path: api/ingredient/{ingredientId}
+            method: delete
+            cors: true
+            authorizer: authenticateJWT

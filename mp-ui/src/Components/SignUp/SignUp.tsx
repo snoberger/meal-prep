@@ -7,6 +7,7 @@ import { AppScreens } from "../../Routes";
 import { connect, ConnectedProps } from 'react-redux';
 import { fetchSignUp} from '../../store/user/actions/user';
 import { CreateUserItem } from "../../api";
+import { State } from "../../store/rootReducer";
 
 interface ISignUpProps extends RouteComponentProps<any> {
     fetchSignUp: (signUpDetails: CreateUserItem) => void
@@ -18,7 +19,7 @@ interface ISignUpState {
     confirmpassword?: string;
     authToken?: string;
 }
-const mapStateToProps = (state: ISignUpState /*, ownProps*/) => {
+const mapStateToProps = (state: State /*, ownProps*/) => {
     return {
         ...state
     };

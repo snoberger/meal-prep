@@ -159,3 +159,10 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
         body: JSON.stringify({message: JWTToken})
     }
 };
+
+export const authenticateToken: APIGatewayProxyHandler = () => {
+    return Promise.resolve({
+        statusCode: 200,
+        body: JSON.stringify({message: "success"})
+    });
+}

@@ -1,0 +1,19 @@
+.main-container {
+    margin-top: 5vh !important;
+    height: 85vh;
+    min-width: 1200px;
+    max-width: 1200px !important;
+}
+
+.pantry-title {
+    height: 40px;
+    width: 60%;
+    border-radius: 0px !important;
+    text-align: left;
+    background-color:  #CCC7B9 !important;
+}
+.pantry-title-text {
+    font-weight: 600 !important;
+    margin: 5px 0px 0px 13px !important;
+    padding-top: 3px;
+}

@@ -1,0 +1,17 @@
+.shelf-container {
+    height: 100px;
+    box-shadow: inset 0px 26px 20px 13px #5a411126 !important;
+    border-radius: 0px !important;
+    border-width: 5px 10px 4px 10px;
+    border-color: #CCC7B9;
+    border-style: solid;
+    background-color: #CCC7B9 !important;
+}
+
+.shelf-grid {
+    height: 100%;
+}
+
+.add-ingredient-icon {
+    margin: 20px 0px !important;
+}

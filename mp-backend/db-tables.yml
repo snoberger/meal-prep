@@ -30,14 +30,44 @@ recipeTable:
   Properties:
     TableName: recipe
     AttributeDefinitions:
+      - AttributeName: userId
+        AttributeType: S
       - AttributeName: id
         AttributeType: S
+    KeySchema:
       - AttributeName: userId
+        KeyType: HASH
+      - AttributeName: id 
+        KeyType: RANGE
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+ingredientTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ingredient
+    AttributeDefinitions:
+      - AttributeName: id
         AttributeType: S
     KeySchema:
       - AttributeName: id
         KeyType: HASH
-      - AttributeName: userId 
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+pantryTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: pantry
+    AttributeDefinitions:
+      - AttributeName: userId
+        AttributeType: S
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: userId
+        KeyType: HASH
+      - AttributeName: id
         KeyType: RANGE
     ProvisionedThroughput:
       ReadCapacityUnits: 1
