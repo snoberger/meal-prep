@@ -32,6 +32,24 @@ describe('createIngredient', () => {
         expect(dynamoDb.put).toBeCalled();
     });
 
+    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
+        const event = {
+            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
+        }
+
+        const result = await createIngredient(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
+        const event = {
+            body: '{"username": "singleQuote", "password": "SingleQuote",}'
+        }
+
+        const result = await createIngredient(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
     it('should return status code 400 and Malformed event body if the event does not have a body', async () => {
         const result = await createIngredient(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
