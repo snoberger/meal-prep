@@ -85,6 +85,19 @@ describe('createRecipe', () => {
     });
     
 
+    it('should create ingredient on create recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [
+            {
+                "name":"testName",
+                "metric": "testMetric"
+            }
+        ]});
+
+        const result = await createRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(201);
+        expect(dynamoDb.put).toHaveBeenCalledTimes(2)
+    });
+    
 });
 
 describe('getAllRecipes', () => {
@@ -318,6 +331,21 @@ describe('updateRecipe', () => {
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(401);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
+    });
+
+    it('should update ingredient on update recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [
+            {
+                "id":'recipe1234',
+                "name":"testName",
+                "metric": "testMetric"
+            }
+        ]});
+        event.pathParameters = {'userId': '1234', 'recipeId': '1'};
+
+        const result = await updateRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(dynamoDb.update).toHaveBeenCalledTimes(2)
     });
     
 

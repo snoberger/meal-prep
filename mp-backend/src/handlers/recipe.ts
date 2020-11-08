@@ -3,6 +3,8 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
+import { IngredientTableEntry } from './ingredient';
+import { String } from 'aws-sdk/clients/cloudhsm';
 
 type Timestamp = number;
 type Uuid = string;
@@ -17,14 +19,16 @@ type Steps = RecipeStep[]
 interface RecipeTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
   id: Uuid,
   userId: Uuid,
-  ingredients: Ingredients,
+  ingredients: Uuid[],
   steps: Steps
   createTs: Timestamp,
   updateTs: Timestamp
 }
 type Ingredients = Ingredient[]
 interface Ingredient {
-    name: string
+    id?: string,
+    name: string,
+    metric: string
 }
 type RecipeRequestBodyArray = Array<RecipeStep | Ingredient>
 export interface RecipeRequestBody extends Record<string, string | RecipeRequestBodyArray>{
@@ -79,16 +83,34 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
+    const ingredients: string[] = []
+    for (var i = 0; i < recipeRequest.ingredients.length; i++) {
+        const newIngredient: IngredientTableEntry = {
+            'id': uuidv4(),
+            'name': recipeRequest.ingredients[i].name,
+            'metric': recipeRequest.ingredients[i].metric,
+            'createTs': Date.now()
+        }
+        const params: DynamoDB.DocumentClient.PutItemInput = {
+            TableName: 'ingredient',
+            Item: newIngredient
+        }
+    
+        try {
+            await dynamoLib.put(params);
+            ingredients.push(newIngredient.id)
+        } catch (e) {
+        }
+    }
 
     const newRecipe: RecipeTableEntry = {
         'id': uuidv4(),
         'userId': userId,
         'steps': recipeRequest.steps,
-        'ingredients': recipeRequest.ingredients,
+        'ingredients': ingredients,
         'createTs': Date.now(),
         'updateTs': Date.now()
     }
-
     const params: DynamoDB.DocumentClient.PutItemInput = {
         TableName: 'recipe',
         Item: newRecipe,
@@ -228,6 +250,33 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
     }
     const recipeId = pathParameters.recipeId;
 
+    const ingredients: string[] = []
+    for (var i = 0; i < recipeRequest.ingredients.length; i++) {
+        if(!!!recipeRequest.ingredients[i].id) {
+            continue
+        }
+        const params: DynamoDB.DocumentClient.UpdateItemInput = {
+            TableName: 'ingredient',
+            Key: {
+                'id': recipeRequest.ingredients[i].id
+            },
+            UpdateExpression: "set name = :n, metric = :m, updateTs = :t",
+            ExpressionAttributeValues:{
+                ":n":recipeRequest.ingredients[i].name,
+                ":m":recipeRequest.ingredients[i].metric,
+                ":t": Date.now()
+            },
+            ReturnValues:"UPDATED_NEW"
+        }
+    
+        try {
+            await dynamoLib.update(params);
+            // condition already checked
+            ingredients.push(recipeRequest.ingredients[i].id || "")
+        } catch (e) {
+        }
+    }
+
     const params: DynamoDB.DocumentClient.UpdateItemInput = {
         TableName: 'recipe',
         Key: {
@@ -237,7 +286,7 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
         UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
         ExpressionAttributeValues:{
             ":s":recipeRequest.steps,
-            ":i":recipeRequest.ingredients,
+            ":i":ingredients,
             ":t": Date.now()
         },
         ReturnValues:"UPDATED_NEW"
