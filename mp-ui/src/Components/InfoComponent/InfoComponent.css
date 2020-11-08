@@ -1,0 +1,27 @@
+
+:root {
+    --info-color: #ff0000
+}
+
+.info-component-container {
+    display: inline-flex;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: var(--info-color);
+    height: auto;
+    flex-direction: column;
+    width: auto;
+    max-width: 20vw;
+    padding: 10px 10px 10px 10px;
+    box-shadow: 1pt 1px 8px 1px #80808050;
+}
+.info-component-header {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.info-component-body {
+    color: white;
+}
