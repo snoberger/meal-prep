@@ -1,6 +1,6 @@
 import { AuthenticateItem, loginUser } from '../../../api';
 import { InfoMessage } from '../../../Components/InfoComponent/InfoComponent';
-import { SET_AUTH_TOKEN, REQUEST_AUTH_TOKEN, INVALID_LOGIN_CRED } from '../actionTypes';
+import { SET_AUTH_TOKEN, REQUEST_AUTH_TOKEN, INVALID_LOGIN_CRED, CLEAR_AUTH_ALERT } from '../actionTypes';
 
 
 export const setAuthToken = (authToken: string) => {
@@ -22,7 +22,12 @@ function requestAuthToken(loginDetails: AuthenticateItem) {
     loginDetails
   };
 }
-
+export const clearAuthAlert = () => {
+    return {
+      type: CLEAR_AUTH_ALERT,
+      alert: undefined
+    };
+};
 export function fetchLogin(loginDetails: AuthenticateItem) {
   return async (dispatch: any) => {
     dispatch(requestAuthToken(loginDetails));

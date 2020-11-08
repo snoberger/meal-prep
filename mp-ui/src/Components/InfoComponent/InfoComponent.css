@@ -21,7 +21,10 @@
     font-weight: bold;
     margin-bottom: 10px;
 }
-
+.info-component-icon {
+    align-self: flex-end;
+    
+}
 .info-component-body {
     color: white;
 }

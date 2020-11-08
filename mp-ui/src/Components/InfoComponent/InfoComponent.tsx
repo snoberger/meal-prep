@@ -1,6 +1,12 @@
 import { withTheme } from '@material-ui/core';
 import React from 'react';
 import "./InfoComponent.css";
+import xIcon  from '../../assets/xIcon.svg';
+import { getAuthAlert } from '../../store/auth/reducers/auth';
+import { State } from '../../store/rootReducer';
+import { connect, ConnectedProps } from 'react-redux';
+import { clearAuthAlert } from '../../store/auth/actions/auth';
+import { RouteComponentProps } from 'react-router-dom';
 export enum InfoComponentMessageType {
     ERROR = 'error',
     SUCCESS = 'success'
@@ -9,15 +15,34 @@ export interface InfoMessage {
     header?: string,
     body?: string
 }
-interface InfoComponentProps {
+
+const mapStateToProps = (state: State /*, ownProps*/) => {
+    return {
+        ...state,
+        alert: getAuthAlert(state)
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        clearAuthAlert: () => dispatch(clearAuthAlert())
+    };
+};
+const connector = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  );
+  
+type PropsFromRedux = ConnectedProps<typeof connector>
+type InfoComponentCombinedProps = PropsFromRedux & InfoComponentProps;
+interface InfoComponentProps extends RouteComponentProps<any> {
     type?: InfoComponentMessageType,
     message?: InfoMessage,
     theme: any
 }
-class InfoComponent extends React.Component<InfoComponentProps, {
+class InfoComponent extends React.Component<InfoComponentCombinedProps, {
     type: InfoComponentMessageType
 }> {
-    constructor(props: InfoComponentProps) {
+    constructor(props: InfoComponentCombinedProps) {
         super(props);
 
         this.state = {
@@ -46,6 +71,12 @@ class InfoComponent extends React.Component<InfoComponentProps, {
                     }
                     `}
                 </style>
+                
+                <div onClick={() => {
+                    this.props.clearAuthAlert();
+                }} className="info-component-icon">
+                    <img src={xIcon}></img>
+               </div>
                 <div className="info-component-header">
                     {this.props.message.header}
                 </div>
@@ -58,5 +89,4 @@ class InfoComponent extends React.Component<InfoComponentProps, {
         );
     }
 }
-
-export default withTheme(InfoComponent);
+export default connector(withTheme(InfoComponent));

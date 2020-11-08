@@ -9,7 +9,7 @@ describe("infoComponent renders", () => {
   beforeEach(() => {
     wrapper = mount(
       <ThemeProvider theme={createMuiTheme({palette: {success: {main: '#0f0'}, error: {main: '#f00'}}})}>
-        <InfoComponent message={{
+        <InfoComponent.WrappedComponent message={{
       header: "TEST_HEADER",
       body: "TEST_BODY"}} />
         </ThemeProvider> );
