@@ -116,7 +116,24 @@ describe('createRecipe', () => {
         expect(dynamoDb.query).toHaveBeenCalledTimes(1)
         expect(dynamoDb.put).toHaveBeenCalledTimes(1)
     });
-    
+    it('should throw error on create ingredient error on create recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        
+        // @ts-ignore
+        dynamoDb.query = jest.fn((query: any) => {
+            return {Items: []}
+        })
+        dynamoDb.put = jest.fn().mockRejectedValueOnce({ 'error': 'testError' });
+        const result = await createRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(dynamoDb.query).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(1)
+    });
 });
 
 describe('getAllRecipes', () => {

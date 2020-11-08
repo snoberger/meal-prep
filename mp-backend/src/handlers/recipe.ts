@@ -119,23 +119,22 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
-
-    const ingredients = await updateIngredients(data.ingredients)
-
-    const newRecipe: RecipeTableEntry = {
-        'id': uuidv4(),
-        'userId': userId,
-        'steps': recipeRequest.steps,
-        'ingredients': ingredients,
-        'createTs': Date.now(),
-        'updateTs': Date.now()
-    }
-    const params: DynamoDB.DocumentClient.PutItemInput = {
-        TableName: 'recipe',
-        Item: newRecipe,
-    }
-
     try {
+        const ingredients = await updateIngredients(data.ingredients)
+        
+        const newRecipe: RecipeTableEntry = {
+            'id': uuidv4(),
+            'userId': userId,
+            'steps': recipeRequest.steps,
+            'ingredients': ingredients,
+            'createTs': Date.now(),
+            'updateTs': Date.now()
+        }
+        const params: DynamoDB.DocumentClient.PutItemInput = {
+            TableName: 'recipe',
+            Item: newRecipe,
+        }
+
         await dynamoLib.put(params);
     } catch (e) {
         return {
@@ -268,26 +267,25 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
         }
     }
     const recipeId = pathParameters.recipeId;
-    
-    const ingredients = await updateIngredients(recipeRequest.ingredients)
-
-    const params: DynamoDB.DocumentClient.UpdateItemInput = {
-        TableName: 'recipe',
-        Key: {
-            'userId': userId,
-            'id': recipeId
-        },
-        UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
-        ExpressionAttributeValues:{
-            ":s":recipeRequest.steps,
-            ":i":ingredients,
-            ":t": Date.now()
-        },
-        ReturnValues:"UPDATED_NEW"
-        
-    };
     let updatedData;
     try {
+        const ingredients = await updateIngredients(recipeRequest.ingredients)
+
+        const params: DynamoDB.DocumentClient.UpdateItemInput = {
+            TableName: 'recipe',
+            Key: {
+                'userId': userId,
+                'id': recipeId
+            },
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
+            ExpressionAttributeValues:{
+                ":s":recipeRequest.steps,
+                ":i":ingredients,
+                ":t": Date.now()
+            },
+            ReturnValues:"UPDATED_NEW"
+            
+        };
         updatedData = await dynamoLib.update(params);
     } catch (e) {
         return {
