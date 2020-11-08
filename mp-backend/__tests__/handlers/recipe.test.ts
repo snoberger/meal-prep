@@ -3,7 +3,7 @@ import { expect } from "@jest/globals";
 import { Event, createEvent } from  "../utils/event.handler";
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
-import { getAllRecipes, getRecipe, createRecipe, updateRecipe, deleteRecipe, updateIngredients } from "../../src/handlers/recipe";
+import { getAllRecipes, getRecipe, createRecipe, updateRecipe, deleteRecipe } from "../../src/handlers/recipe";
 
 
 interface LambdaBody {
@@ -92,9 +92,8 @@ describe('createRecipe', () => {
             metric: 'testMetric',
             amount: 1
         }]});
-        // @ts-ignore
-        dynamoDb.query = jest.fn((query: any) => {
-            return {Items: []}
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
         })
         await createRecipe(createEvent(event), Context(), () => {return});
         expect(dynamoDb.query).toHaveBeenCalled()
@@ -108,9 +107,8 @@ describe('createRecipe', () => {
             amount: 1
         }]});
         
-        // @ts-ignore
-        dynamoDb.query = jest.fn((query: any) => {
-            return {Items: [{id: 'ingredient1234'}]}
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: [{id: 'ingredient1234'}]
         })
         await createRecipe(createEvent(event), Context(), () => {return});
         expect(dynamoDb.query).toHaveBeenCalledTimes(1)
@@ -124,9 +122,8 @@ describe('createRecipe', () => {
             amount: 1
         }]});
         
-        // @ts-ignore
-        dynamoDb.query = jest.fn((query: any) => {
-            return {Items: []}
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
         })
         dynamoDb.put = jest.fn().mockRejectedValueOnce({ 'error': 'testError' });
         const result = await createRecipe(createEvent(event), Context(), () => {return});
@@ -393,9 +390,9 @@ describe('updateRecipe', () => {
             amount: 1
         }]});
         event.pathParameters = {'userId': '1234', 'recipeId': '1'};
-        // @ts-ignore
-        dynamoDb.query = jest.fn((query: any) => {
-            return {Items: []}
+
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
         })
         await updateRecipe(createEvent(event), Context(), () => {return});
         expect(dynamoDb.query).toHaveBeenCalled()
@@ -411,9 +408,9 @@ describe('updateRecipe', () => {
         }]});
         
         event.pathParameters = {'userId': '1234', 'recipeId': '1'};
-        // @ts-ignore
-        dynamoDb.query = jest.fn((query: any) => {
-            return {Items: [{id: 'ingredient1234'}]}
+
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: [{id: 'ingredient1234'}]
         })
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(200);
