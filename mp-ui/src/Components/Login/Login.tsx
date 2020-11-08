@@ -84,6 +84,7 @@ class Login extends React.Component<LoginCombinedProps,ILoginState> {
                 </form>
             </Card>
             <InfoComponent
+            {...this.props}
              message={this.props.auth.alert} type={InfoComponentMessageType.ERROR} />
           </div>
     );
