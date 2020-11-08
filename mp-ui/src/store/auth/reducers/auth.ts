@@ -42,6 +42,6 @@ export const getAuthAlert = (state: State) => {
     return state.auth.alert;
 };
 export const clearAuthAlert = (state: State) => {
-    state.auth.alert = undefined
-}
- export default auth;
+    state.auth.alert = undefined;
+};
+export default auth;

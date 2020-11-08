@@ -8,7 +8,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { fetchLogin} from '../../store/auth/actions/auth';
 import { State } from "../../store/rootReducer";
 import InfoComponent, { InfoComponentMessageType } from "../InfoComponent/InfoComponent";
-import { getAuthAlert, getAuthToken } from "../../store/auth/reducers/auth";
+import { getAuthAlert } from "../../store/auth/reducers/auth";
 
 interface ILoginProps extends RouteComponentProps<any> {
 }
@@ -58,7 +58,7 @@ class Login extends React.Component<LoginCombinedProps,ILoginState> {
     }
 
     handleSubmit = async () => {
-        const response = await this.props.fetchLogin({
+        await this.props.fetchLogin({
             username: this.state.email || "",
             password: this.state.password || ""
         });
