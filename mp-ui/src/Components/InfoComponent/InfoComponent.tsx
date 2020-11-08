@@ -75,7 +75,7 @@ class InfoComponent extends React.Component<InfoComponentCombinedProps, {
                 <div onClick={() => {
                     this.props.clearAuthAlert();
                 }} className="info-component-icon">
-                    <img src={xIcon}></img>
+                    <img alt="" src={xIcon}></img>
                </div>
                 <div className="info-component-header">
                     {this.props.message.header}
