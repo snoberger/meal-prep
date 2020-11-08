@@ -7,6 +7,7 @@ import { State } from "../../../store/rootReducer";
 import { Ingredient } from "../../../store/pantry/reducers/pantry";
 import IngredientComponent from "../Ingredient/Ingredient";
 import { Add } from "@material-ui/icons";
+import { toggleAddIngredientDialogue } from "../../../store/pantry/actions/pantry";
 
 interface IShelfProps extends RouteComponentProps<any> {
     shelfItems: Array<Ingredient>;
@@ -25,8 +26,9 @@ const mapStateToProps = (state: State , ownProps: any) => {
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (/*dispatch: any*/) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
+        toggleAddIngredientDialogue: () => dispatch(toggleAddIngredientDialogue()),
     };
 };
 const connector = connect(
@@ -46,7 +48,7 @@ export class Shelf extends React.Component<ShelfCombinedProps,IShelfState> {
         if(this.props.shelfItems.length < 6) {
             ingredients.push(
             <Grid key="add" item xs={2} className="ingredient-container">
-                <IconButton color="primary" className="add-ingredient-icon" component="span">
+                <IconButton color="primary" className="add-ingredient-icon" component="span" onClick={this.props.toggleAddIngredientDialogue}>
                     <Add fontSize="large"/>
                 </IconButton>
             </Grid>);

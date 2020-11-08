@@ -9,8 +9,8 @@ describe('auth reducer handlers', () => {
       {
         authToken: ''
       }
-    )
-  })
+    );
+  });
 
   it('should handle SET_AUTH_TOKEN', () => {
     expect(
@@ -22,9 +22,9 @@ describe('auth reducer handlers', () => {
       {
         authToken: 'dummyToken'
       }
-    )
-  })
-})
+    );
+  });
+});
 
 describe('auth reducer getters', () => {
   it('should return the initial state', () => {

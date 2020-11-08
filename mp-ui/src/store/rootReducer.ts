@@ -9,7 +9,8 @@ export  interface State {
       authToken: string
     },
     pantry: {
-      ingredients: Array<Ingredient>
+      ingredients: Array<Ingredient>,
+      displayAddIngredientDiaglogue: boolean
     },
     user: {
       signUpDetails: CreateUserItem,

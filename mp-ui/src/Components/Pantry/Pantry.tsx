@@ -7,6 +7,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { getIngredients} from '../../store/pantry/reducers/pantry';
 import { State } from "../../store/rootReducer";
 import Closet from "./Closet/Closet";
+import AddIngredient from "./AddIngredient/AddIngredient";
 
 interface IPantryProps extends RouteComponentProps<any> {
 }
@@ -40,6 +41,7 @@ export class Pantry extends React.Component<PantryCombinedProps,IPantryState> {
     render() {
       return (
         <Grid container justify="center" alignItems="center">
+            <AddIngredient ></AddIngredient>
             <Grid 
                 item
                 container 
