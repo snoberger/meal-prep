@@ -3,6 +3,13 @@ import { Ingredient } from './ingredient.types';
 export type Timestamp = number;
 export type Uuid = string;
 
+export type OptionalRequestBody = {
+    id ?: string,
+    amount ?: string
+    name ?: string
+    metric ?: string
+}
+
 export interface PantryIngredientData {
     id: Uuid,
     amount: number
@@ -26,7 +33,7 @@ export interface PantryTableEntry<I = PantryIngredientData> extends DynamoDB.Doc
 export type PantryId = Uuid;
 export interface PantryRequest {
     pantryId: PantryId,
-    ingredients: PantryIngredient[],
+    ingredient: PantryIngredient | PantryIngredientData,
 }
 
 export type PantryRequestBodyArray = Array<PantryRequest | PantryIngredient>

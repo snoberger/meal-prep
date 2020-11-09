@@ -3,9 +3,8 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
-import { IngredientTableEntry, updateIngredients } from './ingredient';
+import { updateIngredients } from './ingredient';
 import {  RecipeRequestBody, RecipeTableEntry } from './recipe.types'
-import {  Ingredient, IngredientData } from './ingredient.types';
 
 
 function determineRecipeRequestBodyFields(data: Record<string, unknown>): string  {
