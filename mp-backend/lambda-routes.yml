@@ -101,7 +101,7 @@ createPantryEntry:
     handler: src/handlers/pantry.createPantry
     events:
         - http:
-            path: api/pantry/{ingredientId}/{quantity}
+            path: api/pantry
             method: post
             cors: true
             authorizer: authenticateJWT
@@ -125,7 +125,7 @@ updatePantryEntry:
     handler: src/handlers/pantry.updatePantry
     events:
         - http:
-            path: api/pantry/{pantryId}/{quantity}
+            path: api/pantry/{userId}/{pantryId}/{quantity}
             method: put
             cors: true
             authorizer: authenticateJWT
