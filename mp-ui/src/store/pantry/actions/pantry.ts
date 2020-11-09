@@ -26,7 +26,6 @@ export const createdPantryIngredientError = () => {
 
 export function handleCreateIngredient(ingredient: Ingredient) {
   return async (dispatch: any) => {
-    dispatch(updateIngredients());
     try{
       return await createPantryIngredient(ingredient).then((response: any) => {
         if(response.status === 200 && response.data.message) {
