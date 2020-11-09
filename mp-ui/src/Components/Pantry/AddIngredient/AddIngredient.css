@@ -1,0 +1,14 @@
+.addingredient-input {
+  width: 80%;
+  margin: 1% 10% !important;
+}
+
+.addingredient-button {
+  margin: 15px !important;
+  float: right;
+}
+
+.close-icon {
+  margin: -10px !important;
+  float: right;
+}

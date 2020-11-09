@@ -26,7 +26,7 @@ const user = (state = initialState, action: any) => {
                 alert: true
             };
         default:
-            return initialState;
+            return {...state};
     }
 };
   

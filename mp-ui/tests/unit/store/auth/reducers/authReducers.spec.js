@@ -9,8 +9,8 @@ describe('auth reducer handlers', () => {
       {
         authToken: ''
       }
-    )
-  })
+    );
+  });
 
   it('should handle SET_AUTH_TOKEN', () => {
     expect(

@@ -1,4 +1,7 @@
 import {
+    ADD_PANTRY_INGREDIENT,
+    TOGGLE_ADDDIALOGUE,
+    TOGGLE_PANTRYERROR,
     UPDATE_INGREDIENTS,
 } from '../actionTypes';
 import { State } from '../../rootReducer';
@@ -36,23 +39,49 @@ for(let i = 0; i < 4; i++){
 /* istanbul ignore next */
 const initialState = {
     // eslint-disable-next-line
-    ingredients: process.env.NODE_ENV === 'test' ? [] : ingreds
+    ingredients: process.env.NODE_ENV === 'test' ? [] : ingreds,
+    displayAddIngredientDiaglogue: false,
+    alert: false,
 };
 
 const pantry = (state = initialState, action: any) => {
+    let ingredients;
     switch (action.type) {
         case UPDATE_INGREDIENTS:
             return {
-                ...state,
-                ingredients: action.ingredients
+                ...state
             };
+        case TOGGLE_ADDDIALOGUE:
+            return {
+                ...state,
+                displayAddIngredientDiaglogue: !state.displayAddIngredientDiaglogue,
+            };
+        case ADD_PANTRY_INGREDIENT:
+            ingredients = state.ingredients;
+            ingredients.push(action.ingredient);
+            return {
+                ...state,
+                ingredients: ingredients
+            };
+        case TOGGLE_PANTRYERROR:
+            return {
+                ...state,
+                alert: true
+            };
+        
         default:
-            return initialState;
+            return {...state};
     }
 };
   
 export const getIngredients = (state: State) => {
     return state.pantry.ingredients;
 };
+
+export const getAddIngredientDialogueOpen = (state: State) => {
+    return state.pantry.displayAddIngredientDiaglogue;
+};
+
+
  
  export default pantry;

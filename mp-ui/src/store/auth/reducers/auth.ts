@@ -11,6 +11,7 @@ const initialState = {
 };
 
 const auth = (state = initialState, action: any) => {
+    
     switch (action.type) {
         case SET_AUTH_TOKEN:
             return {
@@ -30,7 +31,7 @@ const auth = (state = initialState, action: any) => {
                 alert: action.alert
             };
         default:
-            return initialState;
+            return {...state};
     }
 };
   

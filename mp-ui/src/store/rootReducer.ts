@@ -11,7 +11,8 @@ export  interface State {
       alert?: InfoMessage
     },
     pantry: {
-      ingredients: Array<Ingredient>
+      ingredients: Array<Ingredient>,
+      displayAddIngredientDiaglogue: boolean
     },
     user: {
       signUpDetails: CreateUserItem,
