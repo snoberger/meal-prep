@@ -4,6 +4,7 @@ import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { authLib } from '../libs/authentication';
 import crypto from 'crypto';
+import { getPrincipleId } from '../middleware/validation';
 
 type SecureRandomString = string;
 type Timestamp = number;
@@ -26,13 +27,13 @@ function isUserRequestBody(data: Record<string, unknown>): data is UserRequestBo
     return 'username' in data && 'password' in data;
 }
 
-export interface UserIdRequestBody extends Record<string, string> {
-    id: string
-}
+// export interface UserIdRequestBody extends Record<string, string> {
+//     id: string
+// }
 
-function isUserIdRequestBody(data: Record<string, unknown>): data is UserIdRequestBody {
-    return 'id' in data;
-}
+// function isUserIdRequestBody(data: Record<string, unknown>): data is UserIdRequestBody {
+//     return 'id' in data;
+// }
 
 
 // TODO: move user to id lookup part to library, so that everybody can avoid
@@ -142,38 +143,21 @@ export const create: APIGatewayProxyHandler = async (event) => {
 
 
 export const deleteUser: APIGatewayProxyHandler = async (event) => {
-    let data: Record<string, unknown>;
-    if (event && event.body) {
-        try {
-            data = JSON.parse(event.body) as Record<string, unknown>;
-        } catch (e) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({message: 'Malformed event body'})
-            }
-        }
-    } else {
+    let userId: string;
+    try {
+        userId = getPrincipleId(event);
+    } catch (e) {
         return {
-            // TODO: correct status code
-            statusCode: 400,
-            body: JSON.stringify({ message: 'Malformed event body' })
-        }
+            statusCode: 401,
+            body: JSON.stringify({ message: 'Not authorized' })
+        };
     }
-
-    if (!isUserIdRequestBody(data)) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ message: 'Malformed event body' })
-        }
-    }
-
-    const userIdRequest: UserIdRequestBody = data;
 
     const deleteParams: DynamoDB.DocumentClient.DeleteItemInput = {
         TableName: 'user',
         Key: {
-            'id': userIdRequest.id,
-        },
+            'id': userId,
+        }
     }
 
     try {
@@ -182,11 +166,12 @@ export const deleteUser: APIGatewayProxyHandler = async (event) => {
         return {
             statusCode: 404,
             body: JSON.stringify({ message: 'Not Found' })
-        }
+        };
     }
+    
     return {
         statusCode: 200,
         body: JSON.stringify({ message: 'success' }),
     };
-};
+}
 

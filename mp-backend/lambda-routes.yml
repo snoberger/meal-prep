@@ -97,3 +97,43 @@ deleteIngredient:
             method: delete
             cors: true
             authorizer: authenticateJWT
+createPantryEntry:
+    handler: src/handlers/pantry.createPantry
+    events:
+        - http:
+            path: api/pantry
+            method: post
+            cors: true
+            authorizer: authenticateJWT
+getAllPantryEntries:
+    handler: src/handlers/pantry.getAllPantry
+    events:
+        - http:
+            path: api/pantry/{userId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+getPantryEntry:
+    handler: src/handlers/pantry.getPantry
+    events:
+        - http:
+            path: api/pantry/{userId}/{pantryId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+updatePantryEntry:
+    handler: src/handlers/pantry.updatePantry
+    events:
+        - http:
+            path: api/pantry/{userId}/{pantryId}/{quantity}
+            method: put
+            cors: true
+            authorizer: authenticateJWT
+deletePantryEntry:
+    handler: src/handlers/pantry.deletePantry
+    events:
+        - http:
+            path: api/pantry/{userId}/{pantryId}
+            method: delete
+            cors: true
+            authorizer: authenticateJWT

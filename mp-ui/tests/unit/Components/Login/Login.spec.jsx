@@ -7,7 +7,7 @@ describe("Login renders", () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallow(
-      <Login.WrappedComponent/> );
+      <Login.WrappedComponent auth={{alert: null}} /> );
   });
 
   it('should render page title.', () => {  
@@ -19,21 +19,23 @@ describe("Login renders", () => {
 });
 
 describe("Login Input", () => {
+  let wrapper;
+  beforeEach(() => {
+    wrapper = shallow(
+      <Login.WrappedComponent auth={{alert: null}} /> );
+  });
   it('should capture email change correctly', () => { 
-    const wrapper = shallow(<Login.WrappedComponent/>)
     const emailInput = wrapper.find('#email');
     emailInput.simulate("change", { target: { value: 'testemail@email.com' } });
     expect(wrapper.state().email).toBe("testemail@email.com");
   });
   it('should capture password change correctly', () => { 
-    const wrapper = shallow(<Login.WrappedComponent/>)
     const passInput = wrapper.find('#password');
     passInput.simulate("change", { target: { value: 'testPass' } });
     expect(wrapper.state().password).toBe("testPass");
   });
 
   it('should call submit handler', () => { 
-    const wrapper = shallow(<Login.WrappedComponent/>)
     const emailInput = wrapper.find('#email');
     const passInput = wrapper.find('#password');
     wrapper.instance().handleSubmit = jest.fn()
@@ -45,7 +47,6 @@ describe("Login Input", () => {
     expect(wrapper.instance().handleSubmit).toHaveBeenCalled();
   });
   it('should call setState and history', async (done) => { 
-    const wrapper = shallow(<Login.WrappedComponent/>)
     const emailInput = wrapper.find('#email');
     const passInput = wrapper.find('#password');
     

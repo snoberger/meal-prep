@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { expect } from "@jest/globals";
 import { create, deleteUser } from "../../src/handlers/user";
-import { createEvent } from "../utils/event.handler";
-import { authLib } from "../../src/libs/authentication"
+import { Event, createEvent } from "../utils/event.handler";
+import { authLib } from "../../src/libs/authentication";
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
 
@@ -126,24 +126,23 @@ describe('create user', () => {
     });
 });
 
+
 describe('delete user', () => {
+    let event: Event;
     beforeEach(() => {
         jest.resetModules();
-        process.env.PEPPER = 'SPICY'
-        dynamoDb.put = jest.fn();
-        dynamoDb.get = jest.fn();
-        dynamoDb.query = jest.fn().mockResolvedValue({ Count: 0 });
+        dynamoDb.delete = jest.fn();
     });
 
     afterAll(() => {
-        delete process.env.PEPPER;
         jest.resetAllMocks();
         jest.resetModules();
     });
 
     it('accepts delete requests with an exactly-defined body', async () => {
-        const event = {
-            body: JSON.stringify({ 'id': '1' })
+        event = {
+            principalId: "1234",
+            pathParameters: {'userId': '1234'}
         };
 
         dynamoDb.delete = jest.fn().mockResolvedValueOnce({
@@ -157,77 +156,29 @@ describe('delete user', () => {
         expect(dynamoDb.delete).toHaveBeenCalled();
     });
 
-    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
-        const event = {
-            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
-        }
-
-        const result = await deleteUser(createEvent(event), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(400);
-    });
-
-    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
-        const event = {
-            body: '{"username": "singleQuote", "password": "SingleQuote",}'
-        }
-
-        const result = await deleteUser(createEvent(event), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(400);
-    });
-
-
     it('declines delete requests with an exactly-defined body, but database fails', async () => {
-        const event = {
-            body: JSON.stringify({ 'id': '1' })
+        event = {
+            principalId: "1234",
+            pathParameters: {'userId': '1234'}
         };
 
-        dynamoDb.delete = jest.fn().mockRejectedValueOnce({'error': 'testError'})
+        dynamoDb.delete = jest.fn().mockRejectedValueOnce({ 'error': 'testError' })
 
         const result = await deleteUser(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(404);
         expect(dynamoDb.delete).toHaveBeenCalled();
     });
 
-    it('delete declines create requests without a body field', async () => {
-        const event = {
-            body: JSON.stringify({ 'username': 'hi', 'password': 'hello' })
+    it('declines requests with undefined principle id', async () => {
+        event = {
+            principalId: "1234",
+            pathParameters: {
+                userId: "1234",
+            }
         };
-        const event1 = {
-            body: ''
-        };
-        dynamoDb.put = jest.fn().mockResolvedValueOnce({
-            TableName: 'user', Items: [{
-                'userId': '1',
-                'username': 'username', 'userpass': 'pass', 'salt': 'salt', 'createTs': 'Now',
-                'updateTs': 'now'
-            }]
-        });
-        await create(createEvent(event), Context(), () => { return });
-        const result = await deleteUser(createEvent(event1), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(400);
-    });
-
-    it('declines requests with malformed body', async () => {
-        const event = {
-            body: JSON.stringify({ 'username': 'hi', 'password': 'hello' })
-        };
-        const event1 = {
-            body: JSON.stringify({ 'useRRId': 'oops' })
-        };
-        dynamoDb.put = jest.fn().mockResolvedValueOnce({
-            TableName: 'user', Items: [{
-                'userId': '1',
-                'username': 'username', 'userpass': 'pass', 'salt': 'salt', 'createTs': 'Now',
-                'updateTs': 'now'
-            }]
-        });
-        await create(createEvent(event), Context(), () => { return });
-        const result = await deleteUser(createEvent(event1), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(400);
+        event.principalId = undefined
+        const result = await deleteUser(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(401);
     });
 });
-
-
-
-
 

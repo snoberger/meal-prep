@@ -4,8 +4,10 @@ import {
     INVALID_LOGIN_CRED
 } from '../actionTypes';
 import { State } from '../../rootReducer';
+
 const initialState = {
     authToken: '',
+    alert: undefined
 };
 
 const auth = (state = initialState, action: any) => {
@@ -14,7 +16,8 @@ const auth = (state = initialState, action: any) => {
         case SET_AUTH_TOKEN:
             return {
                 ...state,
-                authToken: action.authToken
+                authToken: action.authToken,
+                alert: undefined
             };
         case REQUEST_AUTH_TOKEN:
             return {
@@ -24,7 +27,8 @@ const auth = (state = initialState, action: any) => {
         case INVALID_LOGIN_CRED:
             return {
                 ...state,
-                alert: true
+                authToken: "",
+                alert: action.alert
             };
         default:
             return {...state};
@@ -34,5 +38,8 @@ const auth = (state = initialState, action: any) => {
 export const getAuthToken = (state: State) => {
     return state.auth.authToken;
 };
- 
- export default auth;
+
+export const getAuthAlert = (state: State) => {
+    return state.auth.alert;
+};
+export default auth;

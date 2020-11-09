@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-interface IngredientTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
+export interface IngredientTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     id: string,
     name: string,
     metric: string,
