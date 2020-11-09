@@ -14,6 +14,7 @@ describe('createRecipe', () => {
     beforeEach(() => {
         jest.resetModules();
         dynamoDb.put = jest.fn();
+        dynamoDb.query = jest.fn()
         event = {
             principalId: "1234",
         };
@@ -102,7 +103,52 @@ describe('createRecipe', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
     });
     
-
+    it('should create ingredient on create recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
+        })
+        await createRecipe(createEvent(event), Context(), () => {return});
+        expect(dynamoDb.query).toHaveBeenCalled()
+        expect(dynamoDb.put).toHaveBeenCalledTimes(2)
+    });
+    it('should attach existing ingredient on create recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: [{id: 'ingredient1234'}]
+        })
+        await createRecipe(createEvent(event), Context(), () => {return});
+        expect(dynamoDb.query).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(1)
+    });
+    it('should throw error on create ingredient error on create recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
+        })
+        dynamoDb.put = jest.fn().mockRejectedValueOnce({ 'error': 'testError' });
+        const result = await createRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(dynamoDb.query).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(1)
+    });
 });
 
 describe('getAllRecipes', () => {
@@ -254,6 +300,8 @@ describe('updateRecipe', () => {
     beforeEach(() => {
         jest.resetModules();
         dynamoDb.update = jest.fn();
+        dynamoDb.query = jest.fn();
+        dynamoDb.put = jest.fn();
         event = {
             principalId: "1234",
         };
@@ -357,7 +405,57 @@ describe('updateRecipe', () => {
         expect(result ? result.statusCode : false).toBe(401);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
     });
-    
+
+    it('should update ingredient on update recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        
+        event.pathParameters = {'userId': '1234', 'recipeId': '1'};
+        await updateRecipe(createEvent(event), Context(), () => {return});
+        expect(dynamoDb.query).toHaveBeenCalled()
+        expect(dynamoDb.put).toHaveBeenCalled()
+        expect(dynamoDb.update).toHaveBeenCalled()
+    });
+    it('should create ingredient on update recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        event.pathParameters = {'userId': '1234', 'recipeId': '1'};
+
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
+        })
+        await updateRecipe(createEvent(event), Context(), () => {return});
+        expect(dynamoDb.query).toHaveBeenCalled()
+        expect(dynamoDb.update).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(1)
+    });
+    it('should attach existing ingredient on update recipe', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        
+        event.pathParameters = {'userId': '1234', 'recipeId': '1'};
+
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: [{id: 'ingredient1234'}]
+        })
+        const result = await updateRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(dynamoDb.query).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(0)
+        expect(dynamoDb.update).toHaveBeenCalledTimes(1)
+    });
 
 });
 

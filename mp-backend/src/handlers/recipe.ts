@@ -3,30 +3,10 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
+import { IngredientTableEntry } from './ingredient';
+import { Ingredient, IngredientData, Ingredients, RecipeRequestBodyArray, RecipeTableEntry, Steps, Uuid } from './recipe.types'
 
-type Timestamp = number;
-type Uuid = string;
-interface RecipeStep {
-    description: string,
-    type: string,
-    resources: string[],
-    time: number,
-    order: number
-}
-type Steps = RecipeStep[]
-interface RecipeTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
-  id: Uuid,
-  userId: Uuid,
-  ingredients: Ingredients,
-  steps: Steps
-  createTs: Timestamp,
-  updateTs: Timestamp
-}
-type Ingredients = Ingredient[]
-interface Ingredient {
-    name: string
-}
-type RecipeRequestBodyArray = Array<RecipeStep | Ingredient>
+
 export interface RecipeRequestBody extends Record<string, string | RecipeRequestBodyArray>{
     userId: Uuid,
     steps: Steps,
@@ -47,7 +27,67 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
     return !determineRecipeRequestBodyFields(data);
 }
+export async function updateIngredients(ingredients: Ingredient[]): Promise<IngredientData[]> {
+    const ingredientReturn: IngredientData[] = []
+    for(let i = 0; i < ingredients.length; i++) {
+        const queryParams: DynamoDB.DocumentClient.QueryInput = {
+            TableName: 'ingredient',
+            Select: 'ALL_PROJECTED_ATTRIBUTES',
+            IndexName: 'nameToId',
+            KeyConditionExpression: '#name = :namePlaceholder',
+            ExpressionAttributeNames: {
+                '#name':'name'
+            },
+            ExpressionAttributeValues: {
+                ':namePlaceholder' : ingredients[i].name
+            },
+        };
+        let data;
+        try {
 
+            data = await dynamoLib.query(queryParams);
+            // Update existing
+            if(data && data.Items && data.Items.length > 0){
+                const oldIngredient = data.Items[0]
+                ingredientReturn.push({
+                    id: String(oldIngredient.id),
+                    amount: ingredients[i].amount
+                })
+                continue
+            }
+            // Create new
+            const newIngredient: IngredientTableEntry = {
+                'id': uuidv4(),
+                'name': ingredients[i].name,
+                'metric': ingredients[i].metric,
+                'createTs': Date.now()
+            }
+            const params: DynamoDB.DocumentClient.PutItemInput = {
+                TableName: 'ingredient',
+                Item: newIngredient
+            }
+        
+            try {
+                await dynamoLib.put(params);
+                ingredientReturn.push({
+                    id: newIngredient.id,
+                    amount: ingredients[i].amount
+                })
+            } catch (e) {
+                throw {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Internal server error'})
+                }
+            }
+        } catch (e) {
+            throw {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error'})
+            }
+        }
+    }
+    return ingredientReturn
+}
 export const createRecipe: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
@@ -87,22 +127,22 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
-
-    const newRecipe: RecipeTableEntry = {
-        'id': uuidv4(),
-        'userId': userId,
-        'steps': recipeRequest.steps,
-        'ingredients': recipeRequest.ingredients,
-        'createTs': Date.now(),
-        'updateTs': Date.now()
-    }
-
-    const params: DynamoDB.DocumentClient.PutItemInput = {
-        TableName: 'recipe',
-        Item: newRecipe,
-    }
-
     try {
+        const ingredients = await updateIngredients(data.ingredients)
+        
+        const newRecipe: RecipeTableEntry = {
+            'id': uuidv4(),
+            'userId': userId,
+            'steps': recipeRequest.steps,
+            'ingredients': ingredients,
+            'createTs': Date.now(),
+            'updateTs': Date.now()
+        }
+        const params: DynamoDB.DocumentClient.PutItemInput = {
+            TableName: 'recipe',
+            Item: newRecipe,
+        }
+
         await dynamoLib.put(params);
     } catch (e) {
         return {
@@ -243,24 +283,25 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
         }
     }
     const recipeId = pathParameters.recipeId;
-
-    const params: DynamoDB.DocumentClient.UpdateItemInput = {
-        TableName: 'recipe',
-        Key: {
-            'userId': userId,
-            'id': recipeId
-        },
-        UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
-        ExpressionAttributeValues:{
-            ":s":recipeRequest.steps,
-            ":i":recipeRequest.ingredients,
-            ":t": Date.now()
-        },
-        ReturnValues:"UPDATED_NEW"
-        
-    };
     let updatedData;
     try {
+        const ingredients = await updateIngredients(recipeRequest.ingredients)
+
+        const params: DynamoDB.DocumentClient.UpdateItemInput = {
+            TableName: 'recipe',
+            Key: {
+                'userId': userId,
+                'id': recipeId
+            },
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
+            ExpressionAttributeValues:{
+                ":s":recipeRequest.steps,
+                ":i":ingredients,
+                ":t": Date.now()
+            },
+            ReturnValues:"UPDATED_NEW"
+            
+        };
         updatedData = await dynamoLib.update(params);
     } catch (e) {
         return {
