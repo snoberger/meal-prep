@@ -327,6 +327,44 @@ describe('update pantry entry', () => {
     });
 
 
+
+    it('should create ingredient on update pantry', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        event.pathParameters = {'userId': '1234', 'pantryId': '1'};
+
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: []
+        })
+        await updatePantry(createEvent(event), Context(), () => {return});
+        expect(dynamoDb.query).toHaveBeenCalled()
+        expect(dynamoDb.update).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(1)
+    });
+    it('should attach existing ingredient on update pantry', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'ingredients': [{
+            name: "testName",
+            id: 'ingredient1234',
+            metric: 'testMetric',
+            amount: 1
+        }]});
+        
+        event.pathParameters = {'userId': '1234', 'pantryId': '1'};
+
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({
+            Items: [{id: 'ingredient1234'}]
+        })
+        const result = await updatePantry(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(dynamoDb.query).toHaveBeenCalledTimes(1)
+        expect(dynamoDb.put).toHaveBeenCalledTimes(0)
+        expect(dynamoDb.update).toHaveBeenCalledTimes(1)
+    });
+
 });
 
 describe('delete pantry entry', () => {

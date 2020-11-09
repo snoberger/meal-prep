@@ -3,6 +3,7 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { getPrincipleId } from "../middleware/validation";
 import { v4 as uuidv4 } from 'uuid';
+import { Ingredient, IngredientData } from "./ingredient.types";
 
 
 
@@ -97,6 +98,67 @@ export const createIngredient: APIGatewayProxyHandler = async (event) => {
         body: JSON.stringify({ message: 'success' }),
     };
 };
+export async function updateIngredients(ingredients: Ingredient[]): Promise<IngredientData[]> {
+    const ingredientReturn: IngredientData[] = []
+    for(let i = 0; i < ingredients.length; i++) {
+        const queryParams: DynamoDB.DocumentClient.QueryInput = {
+            TableName: 'ingredient',
+            Select: 'ALL_PROJECTED_ATTRIBUTES',
+            IndexName: 'nameToId',
+            KeyConditionExpression: '#name = :namePlaceholder',
+            ExpressionAttributeNames: {
+                '#name':'name'
+            },
+            ExpressionAttributeValues: {
+                ':namePlaceholder' : ingredients[i].name
+            },
+        };
+        let data;
+        try {
+
+            data = await dynamoLib.query(queryParams);
+            // Update existing
+            if(data && data.Items && data.Items.length > 0){
+                const oldIngredient = data.Items[0]
+                ingredientReturn.push({
+                    id: String(oldIngredient.id),
+                    amount: ingredients[i].amount
+                })
+                continue
+            }
+            // Create new
+            const newIngredient: IngredientTableEntry = {
+                'id': uuidv4(),
+                'name': ingredients[i].name,
+                'metric': ingredients[i].metric,
+                'createTs': Date.now()
+            }
+            const params: DynamoDB.DocumentClient.PutItemInput = {
+                TableName: 'ingredient',
+                Item: newIngredient
+            }
+        
+            try {
+                await dynamoLib.put(params);
+                ingredientReturn.push({
+                    id: newIngredient.id,
+                    amount: ingredients[i].amount
+                })
+            } catch (e) {
+                throw {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Internal server error'})
+                }
+            }
+        } catch (e) {
+            throw {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error'})
+            }
+        }
+    }
+    return ingredientReturn
+}
 
 export const getIngredient: APIGatewayProxyHandler = async (event) => {
     if(!event || !event.pathParameters ||  !event.pathParameters.ingredientId) {
