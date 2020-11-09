@@ -17,14 +17,71 @@ interface PantryTableEntry extends DynamoDB.DocumentClient.PutItemInputAttribute
   updateTs: Timestamp
 }
 
+type PantryId = Uuid;
+interface PantryRequest {
+    pantryId: PantryId,
+    ingredientId: IngredientId,
+    quantity: string
+}
+
+type PantryRequestBodyArray = Array<PantryRequest>
+
+export interface PantryRequestBody extends Record<string, string | PantryRequestBodyArray> {
+    ingredientId: IngredientId,
+    quantity: string
+}
+
+function determinePantryRequestBodyFields(data: Record<string, unknown>): string  {
+    if(!('ingredientId' in data)) {
+        return "Ingredient not specified";
+    }
+    if(!('quantity' in data)) {
+        return "Quantity not specified";
+    }
+    return "";
+}
+
+function isPantryRequestBody(data: Record<string, unknown>): data is PantryRequestBody {
+    return !determinePantryRequestBodyFields(data);
+}
+
 export const createPantry: APIGatewayProxyHandler = async (event) => {
 
-    if(!event || !event.pathParameters || !event.pathParameters.ingredientId || !event.pathParameters.quantity) {
+    // if(!event || !event.pathParameters || !event.pathParameters.ingredientId || !event.pathParameters.quantity || !event.pathParameters.userId) {
+    //     return {
+    //         statusCode: 400,
+    //         body: JSON.stringify({message: `Malformed event body`})
+    //     }
+    // }
+
+    let data: Record<string, unknown>;
+    if (event && event.body) {
+        try {
+            data = JSON.parse(event.body) as Record<string, unknown>;
+        } catch (e) {
+            return {
+                // TODO: correct status code
+                statusCode: 400,
+                body: JSON.stringify({message: 'Malformed event body'})
+            }
+        }
+    } else {
         return {
+            // TODO: correct status code
             statusCode: 400,
-            body: JSON.stringify({message: `Malformed event body`})
+            body: JSON.stringify({message: 'Malformed event body'})
         }
     }
+
+    if(!isPantryRequestBody(data)) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: `Malformed event body: ${determinePantryRequestBodyFields(data)}`})
+        }
+    }
+
+
+    const recipeRequest: PantryRequestBody = data;
 
     let userId: string;
     try {
@@ -36,8 +93,8 @@ export const createPantry: APIGatewayProxyHandler = async (event) => {
         }
     }
 
-    const ingredientId = event.pathParameters.ingredientId;
-    const quantity = event.pathParameters.quantity;
+    const ingredientId = recipeRequest.ingredientId;
+    const quantity = recipeRequest.quantity;
 
     const newPantry: PantryTableEntry = {
         'id': uuidv4(),
@@ -148,7 +205,7 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
 
 export const updatePantry: APIGatewayProxyHandler = async (event) => {
 
-    if(!event || !event.pathParameters || !event.pathParameters.pantryId || !event.pathParameters.quantity) {
+    if(!event || !event.pathParameters || !event.pathParameters.pantryId || !event.pathParameters.quantity || !event.pathParameters.userId) {
         return {
             statusCode: 400,
             body: JSON.stringify({message: 'Malformed event body'})
@@ -233,43 +290,3 @@ export const deletePantry: APIGatewayProxyHandler = async (event) => {
     }
     return {statusCode: 200, body: JSON.stringify(data)};
 }
-
-// I'm leaving this commented out because I don't think it is necessary, but in case the way we go about implementing
-// this endpoint changes, the code will be here for ease of access. I.E. We don't currently use the event body for anything
-// on this endpoint, as you can define an ingredientID and quantity through path parameters. There is no complex data structure
-// necessary like there is for a recipe.
-
-// type PantryId = Uuid;
-// interface PantryRequest {
-//     pantryId: PantryId,
-//     ingredientId: IngredientId,
-//     quantity: string
-// }
-
-// type PantryRequestBodyArray = Array<PantryRequest>
-
-// export interface PantryRequestBody extends Record<string, string | PantryRequestBodyArray> {
-//     pantryId: PantryId
-//     ingredientId: IngredientId,
-//     quantity: string
-// }
-
-// function determinePantryRequestBodyFields(data: Record<string, unknown>): string  {
-//     if(!('userId' in data)) {
-//         return "UserId not specified";
-//     }
-//     if(!('pantryId' in data)) {
-//         return "PantryId not specified";
-//     }
-//     if(!('ingredientId' in data)) {
-//         return "Ingredient not specified";
-//     }
-//     if(!('quantity' in data)) {
-//         return "Quantity not specified";
-//     }
-//     return "";
-// }
-
-// function isPantryRequestBody(data: Record<string, unknown>): data is PantryRequestBody {
-//     return !determinePantryRequestBodyFields(data);
-// }

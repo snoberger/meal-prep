@@ -25,10 +25,10 @@ describe('create pantry entry', () => {
     });
 
     it('should return 200 and success message when creating a new pantry entry', async () => {
-        event.pathParameters = {
+        event.body = JSON.stringify({
             'ingredientId': '1',
-            'quantity': '3 oz'
-        }
+            'quantity': '1'
+        });
 
         const result = await createPantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(201);
@@ -38,10 +38,10 @@ describe('create pantry entry', () => {
 
 
     it('should return status code 500 and Internal server error if dynamoDB.put fails', async () => {
-        event.pathParameters = {
+        event.body = JSON.stringify({
             'ingredientId': '1',
-            'quantity': '3 oz'
-        }
+            'quantity': '1'
+        });
         dynamoDb.put = jest.fn().mockRejectedValueOnce({ 'error': 'Test Error' });
 
         const result = await createPantry(createEvent(event), Context(), () => { return });
@@ -50,10 +50,11 @@ describe('create pantry entry', () => {
     });
 
     it('should return Not authorized and status code 401 if no prinicpalId', async () => {
-        event.pathParameters = {
+        event.body = JSON.stringify({
             'ingredientId': '1',
-            'quantity': '3 oz'
-        }
+            'quantity': '1'
+        });
+        event.pathParameters = { 'userId': '1234'};
         event.principalId = undefined;
 
         const result = await createPantry(createEvent(event), Context(), () => { return });
@@ -61,24 +62,26 @@ describe('create pantry entry', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
     });
 
-    it('should return malformed event body and status code 400 if no ingredeitnId', async () => {
-        event.pathParameters = {
-            'quantity': '3 oz'
-        }
+    it('should return malformed event body and status code 400 if no ingredientId', async () => {
+        event.body = JSON.stringify({
+            'quantity': '1',
+        });
+        event.pathParameters = { 'userId': '1234'};
 
         const result = await createPantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body");
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Ingredient not specified");
     });
 
     it('should return malformed event body and status code 400 if no quantity', async () => {
-        event.pathParameters = {
+        event.body = JSON.stringify({
             'ingredientId': '1',
-        }
+        });
+        event.pathParameters = { 'userId': '1234'};
 
         const result = await createPantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body");
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Quantity not specified");
     });
 
     it('should return malformed event body and status code 400 if no path parameters', async () => {
@@ -262,7 +265,16 @@ describe('update pantry entry', () => {
     });
 
     it('should return status code 400 and Malformed event body if the path parameters does not have userId', async () => {
-        event.pathParameters = { 'pantryId': '1' };
+        event.pathParameters = { 'pantryId': '1', 'quantity': '3'};
+
+        const result = await updatePantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    
+    it('should return status code 400 and Malformed event body if the path parameters does not have pantryId', async () => {
+        event.pathParameters = { 'userId': '1234', 'quantity': '3'};
 
         const result = await updatePantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(400);
