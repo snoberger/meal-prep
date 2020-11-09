@@ -21,25 +21,16 @@ describe('pantry reducer handlers', () => {
 
 //   it('should handle UPDATE_INGREDIENTS', () => {
 //     expect(
-//       reducer([], {
+//       reducer([{ingredients: []}], {
 //         type: types.UPDATE_INGREDIENTS,
-//         ingredients: [{
-//             name: 'flour',
-//             amount: '2',
-//             metric: 'bags'
-//         }]
 //       })
 //     ).toEqual(
 //       {
-//         ingredients: [{
-//             name: 'flour',
-//             amount: '2',
-//             metric: 'bags'
-//         }]
+//         ingredients: []
 //       }
 //     );
 //   });
-// });
+});
 
 // describe('pantry reducer getters', () => {
 //   it('should return the initial state', () => {
@@ -53,4 +44,4 @@ describe('pantry reducer handlers', () => {
 //         metric: 'bags'
 //     }]);
 //   });
-});
+// });

@@ -22,5 +22,21 @@ describe("Synchronous Actions", () => {
     expect(actions.createdPantryIngredient({name: "name", amount: "amount", metric: "metric"})).toEqual(expectedAction);
 
   });
+  it('should send TOGGLE_ADDDIALOGUE with toggleAddIngredientDialogue action', () => {  
+    const expectedAction = {
+      type: types.TOGGLE_ADDDIALOGUE
+    };
+
+    expect(actions.toggleAddIngredientDialogue()).toEqual(expectedAction);
+  });
+
+  it('should send TOGGLE_PANTRYERROR with createdPantryIngredient action', () => {  
+    const expectedAction = {
+      type: types.TOGGLE_PANTRYERROR
+    };
+
+    expect(actions.createdPantryIngredientError()).toEqual(expectedAction);
+  });
 });
 
+//@TODO Create tests for asynchronous test handleCreateIngredient
