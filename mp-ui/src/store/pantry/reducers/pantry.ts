@@ -47,7 +47,7 @@ const pantry = (state = initialState, action: any) => {
                 ingredients: action.ingredients
             };
         default:
-            return initialState;
+            return {...state};
     }
 };
   

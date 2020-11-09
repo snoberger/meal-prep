@@ -28,7 +28,7 @@ class Navbar extends React.Component<INavbarProps,INavbarState> {
     }
 
     onLogout() {
-        localStorage.removeItem("auth");
+        sessionStorage.removeItem("token");
         this.setState({anchorEl: null});
     }
     handleMenuClick(event: React.MouseEvent<HTMLButtonElement>) {
