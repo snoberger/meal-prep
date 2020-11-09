@@ -70,7 +70,7 @@ const pantry = (state = initialState, action: any) => {
             };
         
         default:
-            return initialState;
+            return {...state};
     }
 };
   

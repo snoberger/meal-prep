@@ -60,11 +60,7 @@ class AddIngredient extends React.Component<AddIngredientCombinedProps,IAddIngre
         this.setMetric = this.setMetric.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleClose = this.handleClose.bind(this);
-
-
-        
-        this.state = initialState;
-        
+       this.state = initialState;   
     }
 
   setName(e: React.ChangeEvent<HTMLInputElement>) {

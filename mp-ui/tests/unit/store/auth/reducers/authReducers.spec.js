@@ -28,6 +28,6 @@ describe('auth reducer handlers', () => {
 
 describe('auth reducer getters', () => {
   it('should return the initial state', () => {
-    expect(getters.getAuthToken({ auth: { authToken: 'dummyToken'}})).toEqual('dummyToken')
-  })
-})
+    expect(getters.getAuthToken({ auth: { authToken: 'dummyToken'}})).toEqual('dummyToken');
+  });
+});

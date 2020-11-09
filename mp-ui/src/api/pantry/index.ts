@@ -1,8 +1,8 @@
 import { Ingredient } from "../../store/pantry/reducers/pantry";
 
-//@ts-ignore
 /* eslint-disable */
-export async function createPantryIngredient(ingredient: Ingredient): any {
+//@ts-ignore
+export async function createPantryIngredient(ingredient: Ingredient): Promise {
     return  new Promise((resolve,reject) => {
         resolve(
             {
