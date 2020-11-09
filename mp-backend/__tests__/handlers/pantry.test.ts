@@ -49,6 +49,24 @@ describe('create pantry entry', () => {
         expect(dynamoDb.put).toBeCalled();
     });
 
+    it('returns malformed data error when a user passes in non-JSON parsable body (single quote case)', async () => {
+        const event = {
+            body: "{\"username\": 'singleQuote', \"password\": 'SingleQuote'}"
+        }
+
+        const result = await createPantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
+    it('returns malformed data error when a user passes in non-JSON parsable body (trailing comma case)', async () => {
+        const event = {
+            body: '{"username": "singleQuote", "password": "SingleQuote",}'
+        }
+
+        const result = await createPantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+    });
+
     it('should return Not authorized and status code 401 if no prinicpalId', async () => {
         event.body = JSON.stringify({
             'ingredientId': '1',
