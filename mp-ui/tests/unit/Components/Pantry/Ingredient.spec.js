@@ -10,7 +10,6 @@ describe("ingredient renders", () => {
                 amount: '1',
                 metric: 'oz'
             }} /> );
-        console.log(wrapper.debug())
         expect(wrapper.find('.ingredient-name').text()).toBe('TEST');
         expect(wrapper.find('.ingredient-amount').text()).toBe('1 OZ');
     });
