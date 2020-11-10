@@ -3,8 +3,8 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
-import { OptionalRequestBody, PantryIngredient, PantryRequestBody, PantryTableEntry } from './pantry.types';
-import { updateIngredients } from './ingredient';
+import { OptionalRequestBody, PantryIngredient, PantryIngredientData, PantryRequestBody, PantryTableEntry } from './pantry.types';
+import { IngredientTableEntry, isIngredientResponse, updateIngredients } from './ingredient';
 
 
 function determinePantryRequestBodyFields(data: Record<string, unknown>): string  {
@@ -24,6 +24,25 @@ function determinePantryRequestBodyFields(data: Record<string, unknown>): string
     return "";
 }
 
+function determinePantryResponseFields(data: Record<string, unknown>): string  {
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
+    if(!("id" in data)) {
+        return "id not specified";
+    }
+    if(!("userId" in data)) {
+        return "userId not specified"
+    }
+    if(ingredients && Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !ingredient.amount
+                || !ingredient.id) {
+                return "Ingredient in body malformed";
+            }
+        }
+    }
+    
+    return "";
+}
 function determinePantryUpdateRequestBodyFields(data: Record<string, unknown>): string  {
     
     const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
@@ -54,6 +73,10 @@ function isPantryRequestBody(data: Record<string, unknown>): data is PantryReque
 
 function isPantryRequestUpdateBody(data: Record<string, unknown>): data is PantryRequestBody {
     return !determinePantryUpdateRequestBodyFields(data);
+}
+
+function isPantryResponseBody(data: Record<string, unknown>): data is PantryTableEntry<PantryIngredientData> {
+    return !determinePantryResponseFields(data);
 }
 
 export const createPantry: APIGatewayProxyHandler = async (event) => {
@@ -203,12 +226,19 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
             'id': pantryId
         }
     };
-    let pantryItem: PantryTableEntry<PantryIngredient> | undefined = undefined;
+    let pantryItem: PantryTableEntry<PantryIngredientData> | undefined = undefined;
+    
+    let outputPantry: PantryTableEntry<PantryIngredient> | undefined = undefined;
     try {
-        const response = await dynamoLib.get(params);
-        if(response.Item && response.Item.ingredients) {
-            const item: any = response.Item
-            pantryItem = item
+        const resp = await dynamoLib.get(params);
+        
+        if(resp.Item) {
+            if(!isPantryResponseBody(resp.Item)) {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Pantry item is malformed: ' + determinePantryResponseFields(resp.Item)})}
+            }
+            pantryItem = resp.Item
         }
         
     } catch (e) {
@@ -219,14 +249,14 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
     }
     if(pantryItem) {
         const ingredients = pantryItem.ingredients
-        let ingredientData: PantryIngredient[] = []
+        let ingredientData: IngredientTableEntry[] = []
         try {
             const params: DynamoDB.DocumentClient.BatchGetItemInput = {
                 RequestItems:  {
                     "ingredient": {
                         Keys: ingredients.map((item) => {
                             return {
-                                "id": item.id
+                                "id": item.id,
                             }
                         })
                     }
@@ -234,19 +264,37 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
             };
         
             const response = await dynamoLib.batchGet(params);
-            if(response.Responses && response.Responses["ingredient"]) {
-                const ingredientsResponse: any = response.Responses['ingredient']
-                ingredientData = ingredientsResponse
+            const responses = response.Responses
+            if(responses && isIngredientResponse(responses['ingredient'])) {
+                ingredientData = responses['ingredient']
             }
+            else {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Malformed Ingredient in database'})
+                }
+            }
+            
         } catch (e) {
             return {
                 statusCode: 500,
-                body: JSON.stringify({message: 'Internal server error', e})
+                body: JSON.stringify({message: 'Internal server error'})
             }
         }
-        pantryItem.ingredients = ingredientData
+        outputPantry = {
+            ...pantryItem,
+            ingredients: ingredientData.map((ingredient) => {
+                const combineIngredient = ingredients.find((ingredientData) => {
+                    return ingredientData.id == ingredient.id
+                })
+                return {
+                    amount: combineIngredient?.amount || 0,
+                    ...ingredient
+                }
+            })
+        }
     }
-    return {statusCode: 200, body: JSON.stringify(pantryItem)};
+    return {statusCode: 200, body: JSON.stringify(outputPantry)};
 }    
 
 export const updatePantry: APIGatewayProxyHandler = async (event) => {

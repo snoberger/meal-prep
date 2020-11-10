@@ -6,7 +6,22 @@ import { v4 as uuidv4 } from 'uuid';
 import { Ingredient, IngredientData } from "./ingredient.types";
 
 
-
+export function determineIngredientResponseFields(data: Record<string, unknown>[]): string  {
+    if(data && Array.isArray(data)){
+        for( const ingredient of data) {
+            if(!ingredient
+                || !ingredient.name
+                || !ingredient.metric) {
+                return "Ingredient in body malformed";
+            }
+        }
+    }
+    
+    return "";
+}
+export function isIngredientResponse(data: Record<string, unknown>[]): data is IngredientTableEntry[] {
+    return !determineIngredientResponseFields(data);
+}
 export interface IngredientTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     id: string,
     name: string,
@@ -33,7 +48,6 @@ function determineIngredientRequestBodyFields(data: Record<string, unknown>): st
     }  
     return "";
 }
-
 
 export const createIngredient: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
