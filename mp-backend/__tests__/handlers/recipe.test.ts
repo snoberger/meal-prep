@@ -44,7 +44,7 @@ describe('createRecipe', () => {
     });
 
     it('should return 200 and success message when putting a new recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         
         const result = await createRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode: false).toBe(201);

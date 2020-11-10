@@ -237,10 +237,12 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': recipeId
             },
-            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, name = :n, description = :d",
             ExpressionAttributeValues:{
                 ":s":recipeRequest.steps,
                 ":i":ingredients,
+                ":d":recipeRequest.description,
+                ":n":recipeRequest.name,
                 ":t": Date.now()
             },
             ReturnValues:"UPDATED_NEW"
