@@ -3,40 +3,66 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
+import { OptionalRequestBody, PantryIngredient, PantryIngredientData, PantryRequestBody, PantryTableEntry } from './pantry.types';
+import { IngredientTableEntry, isIngredientResponse, updateIngredients } from './ingredient';
 
-type Timestamp = number;
-type Uuid = string;
-
-type IngredientId = Uuid;
-interface PantryTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
-  id: Uuid,
-  userId: Uuid,
-  ingredientId: IngredientId,
-  quantity: string,
-  createTs: Timestamp,
-  updateTs: Timestamp
-}
-
-type PantryId = Uuid;
-interface PantryRequest {
-    pantryId: PantryId,
-    ingredientId: IngredientId,
-    quantity: string
-}
-
-type PantryRequestBodyArray = Array<PantryRequest>
-
-export interface PantryRequestBody extends Record<string, string | PantryRequestBodyArray> {
-    ingredientId: IngredientId,
-    quantity: string
-}
 
 function determinePantryRequestBodyFields(data: Record<string, unknown>): string  {
-    if(!('ingredientId' in data)) {
-        return "Ingredient not specified";
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
+    if(ingredients && Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !ingredient.amount
+                || !ingredient.name
+                || !ingredient.metric) {
+                return "Ingredient in body malformed";
+            }
+        }
+    } else {
+        return "Ingredients not specified";
     }
-    if(!('quantity' in data)) {
-        return "Quantity not specified";
+    
+    return "";
+}
+
+function determinePantryResponseFields(data: Record<string, unknown>): string  {
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
+    if(!("id" in data)) {
+        return "id not specified";
+    }
+    if(!("userId" in data)) {
+        return "userId not specified"
+    }
+    if(ingredients && Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !ingredient.amount
+                || !ingredient.id) {
+                return "Ingredient in body malformed";
+            }
+        }
+    }
+    
+    return "";
+}
+function determinePantryUpdateRequestBodyFields(data: Record<string, unknown>): string  {
+    
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
+    
+    if(ingredients && Array.isArray(ingredients) && ingredients.length !== 0){
+        for( const ingredient of ingredients) {
+            if(ingredient.id){
+                if(!ingredient.amount){
+                    return "Ingredient in body malformed";
+                }
+            } else {
+                if(!ingredient.amount
+                    || !ingredient.name
+                    || !ingredient.metric) {
+                    return "Ingredient in body malformed";
+                }
+            }
+        }
+    } else {
+        return "Ingredients not specified";
     }
     return "";
 }
@@ -45,14 +71,15 @@ function isPantryRequestBody(data: Record<string, unknown>): data is PantryReque
     return !determinePantryRequestBodyFields(data);
 }
 
-export const createPantry: APIGatewayProxyHandler = async (event) => {
+function isPantryRequestUpdateBody(data: Record<string, unknown>): data is PantryRequestBody {
+    return !determinePantryUpdateRequestBodyFields(data);
+}
 
-    // if(!event || !event.pathParameters || !event.pathParameters.ingredientId || !event.pathParameters.quantity || !event.pathParameters.userId) {
-    //     return {
-    //         statusCode: 400,
-    //         body: JSON.stringify({message: `Malformed event body`})
-    //     }
-    // }
+function isPantryResponseBody(data: Record<string, unknown>): data is PantryTableEntry<PantryIngredientData> {
+    return !determinePantryResponseFields(data);
+}
+
+export const createPantry: APIGatewayProxyHandler = async (event) => {
 
     let data: Record<string, unknown>;
     if (event && event.body) {
@@ -93,31 +120,40 @@ export const createPantry: APIGatewayProxyHandler = async (event) => {
         }
     }
 
-    const ingredientId = recipeRequest.ingredientId;
-    const quantity = recipeRequest.quantity;
-
-    const newPantry: PantryTableEntry = {
-        'id': uuidv4(),
-        'userId': userId,
-        'ingredientId': ingredientId,
-        'quantity': quantity,
-        'createTs': Date.now(),
-        'updateTs': Date.now()
-    }
-
-    const params: DynamoDB.DocumentClient.PutItemInput = {
-        TableName: 'pantry',
-        Item: newPantry,
-    }
-
+    const ingredients = recipeRequest.ingredients;
+    
     try {
-        await dynamoLib.put(params);
-    } catch (e) {
+        const ingredientData = await updateIngredients(ingredients)
+
+        const newPantry: PantryTableEntry = {
+            'id': uuidv4(),
+            'userId': userId,
+            'ingredients': ingredientData,
+            'createTs': Date.now(),
+            'updateTs': Date.now()
+        }
+
+        const params: DynamoDB.DocumentClient.PutItemInput = {
+            TableName: 'pantry',
+            Item: newPantry,
+        }
+
+        try {
+            await dynamoLib.put(params);
+        } catch (e) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error'})
+            }
+        }
+    }
+    catch (e) {
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
+    
 
     return {
         statusCode: 201,
@@ -165,14 +201,6 @@ export const getAllPantry: APIGatewayProxyHandler = async (event) => {
 }
 
 export const getPantry: APIGatewayProxyHandler = async (event) => {
-    if(!event || !event.pathParameters || !event.pathParameters.userId || !event.pathParameters.pantryId) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({message: 'Malformed event body'})
-        }
-    }
-    
-    const pathParameters = event.pathParameters;
     let userId: string;
     try {
         userId = getPrincipleId(event);
@@ -182,6 +210,13 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
+    if(!event || !event.pathParameters || !event.pathParameters.userId || !event.pathParameters.pantryId) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+    const pathParameters = event.pathParameters;
     const pantryId = pathParameters.pantryId;
 
     const params: DynamoDB.DocumentClient.GetItemInput = {
@@ -191,27 +226,78 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
             'id': pantryId
         }
     };
-    let data;
+    let pantryItem: PantryTableEntry<PantryIngredientData> | undefined = undefined;
+    
+    let outputPantry: PantryTableEntry<PantryIngredient> | undefined = undefined;
     try {
-        data = await dynamoLib.get(params);
+        const resp = await dynamoLib.get(params);
+        
+        if(resp.Item) {
+            if(!isPantryResponseBody(resp.Item)) {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Pantry item is malformed: ' + determinePantryResponseFields(resp.Item)})}
+            }
+            pantryItem = resp.Item
+        }
+        
     } catch (e) {
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Item)};
+    if(pantryItem) {
+        const ingredients = pantryItem.ingredients
+        let ingredientData: IngredientTableEntry[] = []
+        try {
+            const params: DynamoDB.DocumentClient.BatchGetItemInput = {
+                RequestItems:  {
+                    "ingredient": {
+                        Keys: ingredients.map((item) => {
+                            return {
+                                "id": item.id,
+                            }
+                        })
+                    }
+                }
+            };
+        
+            const response = await dynamoLib.batchGet(params);
+            const responses = response.Responses
+            if(responses && isIngredientResponse(responses['ingredient'])) {
+                ingredientData = responses['ingredient']
+            }
+            else {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Malformed Ingredient in database'})
+                }
+            }
+            
+        } catch (e) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error'})
+            }
+        }
+        outputPantry = {
+            ...pantryItem,
+            ingredients: ingredientData.map((ingredient) => {
+                const combineIngredient = ingredients.find((ingredientData) => {
+                    return ingredientData.id == ingredient.id
+                })
+                return {
+                    amount: combineIngredient?.amount || 0,
+                    ...ingredient
+                }
+            })
+        }
+    }
+    return {statusCode: 200, body: JSON.stringify(outputPantry)};
 }    
 
 export const updatePantry: APIGatewayProxyHandler = async (event) => {
-
-    if(!event || !event.pathParameters || !event.pathParameters.pantryId || !event.pathParameters.quantity || !event.pathParameters.userId) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({message: 'Malformed event body'})
-        }
-    }
-    
     let userId: string;
     try {
         userId = getPrincipleId(event);
@@ -221,25 +307,67 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
+    if(!event || !event.pathParameters || !event.pathParameters.userId) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+    let data: Record<string, unknown>;
+    if (event && event.body) {
+        try {
+            data = JSON.parse(event.body) as Record<string, unknown>;
+        } catch(e) {
+            return {
+                // TODO: correct status code
+                statusCode: 400,
+                body: JSON.stringify({message: 'Malformed event body'})
+            }
+        }
+    } else {
+        return {
+            // TODO: correct status code
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
 
-    const params: DynamoDB.DocumentClient.UpdateItemInput = {
-        TableName: 'pantry',
-        Key: {
-            'userId': userId,
-            'id': event.pathParameters.pantryId
-        },
-        UpdateExpression: "set quantity = :q, updateTs = :t",
-        ExpressionAttributeValues:{
-            ":q": event.pathParameters.quantity,
-            ":t": Date.now()
-        },
-        ReturnValues:"UPDATED_NEW"
-        
-    };
+    if(!isPantryRequestUpdateBody(data)) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: `Malformed event body: ${determinePantryUpdateRequestBodyFields(data)}`})
+        }
+    }
+    const pantryRequest: PantryRequestBody = data;
+
     let updatedData;
     try {
-        updatedData = await dynamoLib.update(params);
-    } catch (e) {
+        
+        await updateIngredients(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(!ingredient.id)))
+            
+        const params: DynamoDB.DocumentClient.UpdateItemInput = {
+            TableName: 'pantry',
+            Key: {
+                'userId': userId,
+                'id': event.pathParameters.pantryId
+            },
+            UpdateExpression: "set ingredient = :i, updateTs = :t",
+            ExpressionAttributeValues:{
+                ":i": pantryRequest.ingredients,
+                ":t": Date.now()
+            },
+            ReturnValues:"UPDATED_NEW"
+            
+        };
+        try {
+            updatedData = await dynamoLib.update(params);
+        } catch (e) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error'})
+            }
+        }
+    } catch(e) {
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
