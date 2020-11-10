@@ -1,34 +1,30 @@
-.recipes-title {
-    height: 100px;
-    text-align: left;
+.recipe-title-text {
+    width: 100%;
+    padding-bottom: 10px;
+    text-align: initial;
+    padding-left: 5%;
 }
 
-.ingredients-text {
-    font-weight: 200 !important;
-    margin: 80px 0px 0px 0px !important;
-    text-align: left;
+.recipe-display {
+    width: 65%;
+    padding: 2% 0% 0% 4%;
+    overflow-y: scroll;
 }
 
-.name-text {
-    font-weight: 200 !important;
-    margin: 80px 0px 0px 100px !important;
-    text-align: left;
+.recipe-display::-webkit-scrollbar {
+    display: none;
 }
 
-.amount-text {
-    font-weight: 200 !important;
-    margin: 20px 0px 0px 20px !important;
-    text-align: left;
+.recipe-container {
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
 }
 
-.metric-text {
-    font-weight: 200 !important;
-    margin: 20px 0px 0px 20px !important;
-    text-align: left;
+.recipe-background {
+    background-color: #e0d3af !important;
 }
 
-.steps-text {
-    font-weight: 200 !important;
-    margin: 80px 0px 0px 0px !important;
-    text-align: left;
+.secondary-container {
+    height: 90%
 }

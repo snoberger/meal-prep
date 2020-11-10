@@ -22,7 +22,8 @@ export  interface State {
       alert: boolean
     },
     recipes: {
-      recipeList: Array<Recipe> 
+      recipeList: Array<Recipe>,
+      displayRecipe: Recipe
     }
 }
 

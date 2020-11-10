@@ -1,15 +1,15 @@
-import { Accordion, AccordionSummary, Grid, IconButton, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import { RouteComponentProps } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import "./Recipes.css";
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { State } from "../../store/rootReducer";
-import Recipe from "../Recipe/Recipe";
-import { Add } from "@material-ui/icons";
 import { getRecipeList } from "../../store/recipes/reducers/recipes";
 import { handleFetchRecipeList } from "../../store/recipes/actions/recipes";
 import { getUserId } from "../../store/auth/reducers/auth";
+import RecipeNameList from "./RecipeNameList/RecipeNameList";
+import DisplayRecipe from "./DisplayRecipe/DisplayRecipe";
 
 interface IRecipesProps extends RouteComponentProps<any> {
 
@@ -40,42 +40,39 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 type RecipesCombinedProps = PropsFromRedux & IRecipesProps;
 
-const makeRecipe = (recipe: any) => {
-    return(
-        <React.Fragment key={recipe.id}>
-                <Typography variant="h2">
-                    My Recipes
-                </Typography>
-                <Accordion style={{ backgroundColor: "#cbd3f6", margin: ' 10px 30px 0px 30px' }}>
-                    <AccordionSummary>
-                        <Typography variant="h5">{"Recipe 1"}</Typography>
-                        
-                    </AccordionSummary>                    
-                    <Recipe recipeData={recipe} />
-                </Accordion>
-        </React.Fragment>
-    );
-};
-const setupViewRecipes = (recipes: any[]) => {
-    return recipes.map((recipe) => {
-        return makeRecipe(recipe);
-    });
-};
 export class Recipes extends React.Component<RecipesCombinedProps,IRecipesState> {
     async componentDidMount () {
-        console.log(await this.props.fetchRecipeList(this.props.userId))
+        await this.props.fetchRecipeList(this.props.userId);
     }
     render() {
-      return (
-        <div>
-              {/* {setupViewRecipes()} */}
-              <Grid key="add" item xs={1} className="recipe-container">
-                  <IconButton color="primary" className="add-recipe-icon" component="span">
-                      <Add fontSize="large" />
-                  </IconButton>
-              </Grid>
-        </div>
-              
+        return (
+            <Grid container justify="center" alignItems="center">
+                <Grid 
+                    item
+                    container 
+                    className="main-container" 
+                    justify="center"
+                    direction={'row'} 
+                    xs={1}
+                    spacing={0} 
+                    alignItems="center"
+                    >
+                        <Grid item xs={12} align-items="flex-start" className="secondary-container">
+                                <Typography variant="h6" className="recipe-title-text">
+                                    My Recipes
+                                </Typography>
+                                <Paper className="recipe-container recipe-background"> 
+                                    <div className="recipe-list recipe-background MuiPaper-rounded">
+                                        <RecipeNameList recipeList={this.props.recipeList} userId={this.props.userId}/>
+                                    </div>
+                                    <Paper className="recipe-display recipe-background" elevation={0}>
+                                        <DisplayRecipe/>
+                                    </Paper>
+                                </Paper>
+                               
+                        </Grid>
+                </Grid>
+            </Grid>      
         );
     }
 }

@@ -1,0 +1,14 @@
+.ingredient-list-item {
+    height: 20px;
+}
+
+.primary-list-text {
+    float: left;
+    width: 75%;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.display-recipe-card {
+    background-color: #c7c7c7;
+}
