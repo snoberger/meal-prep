@@ -4,6 +4,7 @@ import auth from './auth/reducers/auth';
 import user from './user/reducers/user';
 import pantry, { Ingredient } from './pantry/reducers/pantry';
 import { InfoMessage } from '../Components/InfoComponent/InfoComponent';
+import { Recipes } from '../Components/Recipes/Recipes';
 
 export  interface State {
     auth: {
@@ -17,6 +18,9 @@ export  interface State {
     user: {
       signUpDetails: CreateUserItem,
       alert: boolean
+    },
+    recipes: {
+      recipes: Array<Recipes> 
     }
 }
 
