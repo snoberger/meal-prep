@@ -211,10 +211,16 @@ describe('authenticateJWT endpoint', () => {
         message: string
     }
 
-    it('always returns success', async () => {
-        const event = {};
+    it('returns the userid obtained from event.principalId', async () => {
+        const event = {principalId: '1234'};
         const result = await authenticateToken(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(200);
-        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("success");
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("1234");
+    });
+    it('fails if no principalId', async () => {
+        const event = {};
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(401);
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Not authorized");
     });
 });

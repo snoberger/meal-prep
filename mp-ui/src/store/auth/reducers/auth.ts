@@ -1,5 +1,5 @@
 import {
-    SET_AUTH_TOKEN,
+    SET_AUTH,
     REQUEST_AUTH_TOKEN,
     INVALID_LOGIN_CRED,
     INVALID_TOKEN
@@ -8,16 +8,18 @@ import { State } from '../../rootReducer';
 
 const initialState = {
     authToken: '',
+    userId: '',
     alert: undefined
 };
 
 const auth = (state = initialState, action: any) => {
     
     switch (action.type) {
-        case SET_AUTH_TOKEN:
+        case SET_AUTH:
             return {
                 ...state,
                 authToken: action.authToken,
+                userId: action.userId,
                 alert: undefined
             };
         case REQUEST_AUTH_TOKEN:
@@ -39,6 +41,10 @@ const auth = (state = initialState, action: any) => {
   
 export const getAuthToken = (state: State) => {
     return state.auth.authToken;
+};
+
+export const getUserId = (state: State) => {
+    return state.auth.userId;
 };
 
 export const getAuthAlert = (state: State) => {
