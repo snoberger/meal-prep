@@ -17,6 +17,12 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
     if(!('steps' in data)) {
         return "Steps not specified";
     }
+    if(!('name' in data)) {
+        return "Name not specified";
+    }
+    if(!('description' in data)) {
+        return "Description not specified";
+    }
     return "";
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
@@ -68,6 +74,8 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
         const newRecipe: RecipeTableEntry = {
             'id': uuidv4(),
             'userId': userId,
+            'name': recipeRequest.name,
+            'description':recipeRequest.description,
             'steps': recipeRequest.steps,
             'ingredients': ingredients,
             'createTs': Date.now(),
