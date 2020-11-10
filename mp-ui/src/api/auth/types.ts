@@ -1,7 +1,8 @@
 export interface AuthenticateResponse {
     config: {},
     data: {
-        message: string
+        authToken: string,
+        userId: string
     },
     headers: {},
     request: XMLHttpRequest,

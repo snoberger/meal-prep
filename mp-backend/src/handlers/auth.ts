@@ -2,6 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { authLib } from '../libs/authentication';
+import { getPrincipleId } from '../middleware/validation';
 
 interface AuthEventBody extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     username: string,
@@ -156,13 +157,22 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     return {
         statusCode: 200,
-        body: JSON.stringify({message: JWTToken})
+        body: JSON.stringify({authToken: JWTToken, userId: userId})
     }
 };
 
-export const authenticateToken: APIGatewayProxyHandler = () => {
+export const authenticateToken: APIGatewayProxyHandler = async (event) => {
+    let userId: string;
+    try {
+        userId = getPrincipleId(event);
+    } catch {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({message: 'Not authorized'})
+        }
+    }
     return Promise.resolve({
         statusCode: 200,
-        body: JSON.stringify({message: "success"})
+        body: JSON.stringify({message: userId })
     });
 }
