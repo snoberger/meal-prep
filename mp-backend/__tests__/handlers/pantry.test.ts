@@ -297,7 +297,26 @@ describe('get pantry', () => {
         expect(ingredients[0].name).toBe('test')
         expect(dynamoDb.batchGet).toBeCalled();
     });
-    it('should return error on malformed pantry', async () => {
+    it('should return a pantry with ingredients from request if ingredient not found from pantry based on its ID', async () => {
+        event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
+        dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: {
+            ...PantryTable.pantry,
+            ingredients: []
+        } });
+        dynamoDb.batchGet = jest.fn().mockResolvedValueOnce({ Responses:{
+            ingredient: [{
+                name: "test",
+                metric: 'stuff',
+                id: "2d314782-26ba-461f-b091-74b39cd628cb"
+            }]
+        } });
+        const result = await getPantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(200);
+        const ingredients = result ? (<PantryTableEntry<PantryIngredient>>JSON.parse(result.body)).ingredients : []
+        expect(ingredients.length).toBe(1)
+        expect(dynamoDb.batchGet).toBeCalled();
+    });
+    it('should return error on malformed pantry, pantry empty', async () => {
         event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
         dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: {}});
         dynamoDb.batchGet = jest.fn().mockResolvedValueOnce({ Responses:{
@@ -311,6 +330,21 @@ describe('get pantry', () => {
         expect(result ? result.statusCode : false).toBe(500);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Pantry item is malformed:")
     });
+    it('should throw error on pantry ingredients undefined', async () => {
+        event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
+        dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: {
+            createTs: PantryTable.pantry.createTs,
+            updateTs: PantryTable.pantry.updateTs,
+            id: PantryTable.pantry.id,
+            userId: PantryTable.pantry.userId
+        }});
+        dynamoDb.batchGet = jest.fn().mockResolvedValueOnce({ Responses:{
+            ingredient: []
+        } });
+        const result = await getPantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Internal server error")
+    });
     it('should return error on malformed pantry request ingredients', async () => {
         event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
         dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: {
@@ -322,6 +356,20 @@ describe('get pantry', () => {
         const result = await getPantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(500);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Ingredient in body malformed")
+        expect(dynamoDb.get).toBeCalled();
+    });
+    it('should return on empty pantry request ingredients', async () => {
+        event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
+        dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: {
+            ...PantryTable.pantry,
+            ingredients: []
+        }});
+        dynamoDb.batchGet = jest.fn().mockResolvedValueOnce({ Responses:{
+            ingredient: {}
+        } });
+        const result = await getPantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Malformed Ingredient in database")
         expect(dynamoDb.get).toBeCalled();
     });
     it('should return error on malformed pantry request id', async () => {
@@ -350,7 +398,7 @@ describe('get pantry', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("userId not specified")
         expect(dynamoDb.get).toBeCalled();
     });
-    
+
     it('should return error on malformed pantry ingredients', async () => {
         event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
         dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: PantryTable.pantry});

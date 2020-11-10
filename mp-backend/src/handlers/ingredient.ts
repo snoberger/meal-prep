@@ -16,6 +16,9 @@ export function determineIngredientResponseFields(data: Record<string, unknown>[
             }
         }
     }
+    else {
+        return "Ingredient in body malformed"
+    }
     
     return "";
 }
