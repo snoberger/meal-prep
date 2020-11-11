@@ -49,10 +49,10 @@ export class DisplayRecipe extends React.Component<DisplayRecipeCombinedProps,ID
                 <Grid container xs={12} spacing={5} justify="center" className="display-recipe-container recipe-background">
                     <Grid item xs={7} justify={'flex-start'}>
                         <Typography variant="h6" className="display-recipe-title-text">
-                            {this.props.recipe.id}  
+                            {this.props.recipe.name}  
                         </Typography>
                         <Typography variant="body2" className="display-recipe-title-text">
-                            {"This will be a description"}  
+                            {this.props.recipe.description}  
                         </Typography>
                     </Grid>
                     <Grid item xs={5} justify={'flex-end'}>
