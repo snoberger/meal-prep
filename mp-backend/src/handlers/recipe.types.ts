@@ -12,6 +12,8 @@ export interface RecipeStep {
 }
 export interface RecipeRequestBody extends Record<string, string | RecipeRequestBodyArray>{
     userId: Uuid,
+    name: string,
+    description: string,
     steps: Steps,
     ingredients: Ingredients
 }
@@ -19,6 +21,8 @@ export type Steps = RecipeStep[]
 export interface RecipeTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
   id: Uuid,
   userId: Uuid,
+  name: string,
+  description: string,
   ingredients: IngredientData[],
   steps: Steps
   createTs: Timestamp,

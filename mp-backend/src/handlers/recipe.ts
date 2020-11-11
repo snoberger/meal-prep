@@ -17,6 +17,12 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
     if(!('steps' in data)) {
         return "Steps not specified";
     }
+    if(!('name' in data)) {
+        return "Name not specified";
+    }
+    if(!('description' in data)) {
+        return "Description not specified";
+    }
     return "";
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
@@ -68,6 +74,8 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
         const newRecipe: RecipeTableEntry = {
             'id': uuidv4(),
             'userId': userId,
+            'name': recipeRequest.name,
+            'description':recipeRequest.description,
             'steps': recipeRequest.steps,
             'ingredients': ingredients,
             'createTs': Date.now(),
@@ -229,10 +237,12 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': recipeId
             },
-            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, name = :n, description = :d",
             ExpressionAttributeValues:{
                 ":s":recipeRequest.steps,
                 ":i":ingredients,
+                ":d":recipeRequest.description,
+                ":n":recipeRequest.name,
                 ":t": Date.now()
             },
             ReturnValues:"UPDATED_NEW"

@@ -44,7 +44,7 @@ describe('createRecipe', () => {
     });
 
     it('should return 200 and success message when putting a new recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         
         const result = await createRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode: false).toBe(201);
@@ -68,7 +68,7 @@ describe('createRecipe', () => {
     });
 
     it('should return status code 400 and Malformed event body: "Steps not specified if the event does not have a steps field', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'ingredients': []});
         
 
         const result = await createRecipe(createEvent(event), Context(), () => {return});
@@ -77,16 +77,32 @@ describe('createRecipe', () => {
     });
 
     it('should return status code 400 and Malformed event body: "Ingredients not specified if the event does not have a Ingredients field', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': []});
         
 
         const result = await createRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Ingredients not specified")
     });
+    it('should return status code 400 and Malformed event body: "name not specified if the event does not have a name field', async () => {
+        event.body = JSON.stringify({'userId': '1234', 'description': 'desc', 'steps': [],  'ingredients': []});
+        
+
+        const result = await createRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Name not specified")
+    });
+    it('should return status code 400 and Malformed event body: "Description not specified if the event does not have a steps field', async () => {
+        event.body = JSON.stringify({'userId': '1234','name': 'test',  'steps': [], 'ingredients': []});
+        
+
+        const result = await createRecipe(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Description not specified")
+    });
 
     it('should return status code 500 and Internal server error if dynamoDB.put fails', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         dynamoDb.put = jest.fn().mockRejectedValueOnce({'error': 'Test Error'});
         
         const result = await createRecipe(createEvent(event), Context(), () => {return});
@@ -95,7 +111,7 @@ describe('createRecipe', () => {
     });
 
     it('should return Not authorized and status code 401 if no prinicpalId', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         event.principalId = undefined;
 
         const result = await createRecipe(createEvent(event), Context(), () => {return});
@@ -104,7 +120,7 @@ describe('createRecipe', () => {
     });
     
     it('should create ingredient on create recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': [{
             name: "testName",
             id: 'ingredient1234',
             metric: 'testMetric',
@@ -118,7 +134,7 @@ describe('createRecipe', () => {
         expect(dynamoDb.put).toHaveBeenCalledTimes(2)
     });
     it('should attach existing ingredient on create recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': [{
             name: "testName",
             id: 'ingredient1234',
             metric: 'testMetric',
@@ -133,7 +149,7 @@ describe('createRecipe', () => {
         expect(dynamoDb.put).toHaveBeenCalledTimes(1)
     });
     it('should throw error on create ingredient error on create recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': [{
             name: "testName",
             id: 'ingredient1234',
             metric: 'testMetric',
@@ -313,7 +329,7 @@ describe('updateRecipe', () => {
     });
 
     it('should return 200 and success message when putting a new recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc', 'steps': [], 'ingredients': []});
         event.pathParameters = {'userId': '1234', 'recipeId': '1'};
         
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
@@ -355,7 +371,7 @@ describe('updateRecipe', () => {
     });
 
     it('should return status code 400 and Malformed event body: "Steps not specified if the event does not have a steps field', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'ingredients': []});
         
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
@@ -363,7 +379,7 @@ describe('updateRecipe', () => {
     });
 
     it('should return status code 400 and Malformed event body: "Ingredients not specified if the event does not have a Ingredients field', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': []});
         
 
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
@@ -378,7 +394,7 @@ describe('updateRecipe', () => {
     });
 
     it('should return status code 400 and Malformed event body if the path parameters does not have userId', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         event.pathParameters = {'recipeId': '1'};
 
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
@@ -387,7 +403,7 @@ describe('updateRecipe', () => {
     });
 
     it('should return status code 500 and Internal server error if dynamoDB.update fails', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         event.pathParameters = {'userId': '1234', 'recipeId': '1'};
         dynamoDb.update = jest.fn().mockRejectedValueOnce({'error': 'Test Error'});
         
@@ -397,7 +413,7 @@ describe('updateRecipe', () => {
     });
 
     it('should return Not authorized and status code 401 if no prinicpalId', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': []});
+        event.body = JSON.stringify({'userId': '1234', 'name': 'test', 'description': 'desc',  'steps': [], 'ingredients': []});
         event.pathParameters = {'userId': '1234', 'recipeId': '1'};
         event.principalId = undefined;
 
@@ -407,7 +423,7 @@ describe('updateRecipe', () => {
     });
 
     it('should update ingredient on update recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': [{
             name: "testName",
             id: 'ingredient1234',
             metric: 'testMetric',
@@ -421,7 +437,7 @@ describe('updateRecipe', () => {
         expect(dynamoDb.update).toHaveBeenCalled()
     });
     it('should create ingredient on update recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 'ingredients': [{
             name: "testName",
             id: 'ingredient1234',
             metric: 'testMetric',
@@ -438,7 +454,7 @@ describe('updateRecipe', () => {
         expect(dynamoDb.put).toHaveBeenCalledTimes(1)
     });
     it('should attach existing ingredient on update recipe', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'steps': [], 'ingredients': [{
+        event.body = JSON.stringify({'userId': '1234', 'name': 'test', 'description': 'desc', 'steps': [], 'ingredients': [{
             name: "testName",
             id: 'ingredient1234',
             metric: 'testMetric',
