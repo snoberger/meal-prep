@@ -1,6 +1,6 @@
 
 import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { Ingredient, IngredientData, Ingredients } from './ingredient.types';
+import { Ingredient, Ingredients } from './ingredient.types';
 export type Timestamp = number;
 export type Uuid = string;
 export interface RecipeStep {
@@ -16,7 +16,14 @@ export interface RecipiesResponseBody extends Record<string, string>{
   name: string,
   description: string
 }
+export interface RecipeIngredientData {
+  id: Uuid,
+  amount: number
+}
 
+export interface RecipeIngredient extends Ingredient {
+  amount: number
+}
 
 
 export interface RecipeRequestBody extends Record<string, string | RecipeRequestBodyArray>{
@@ -27,12 +34,12 @@ export interface RecipeRequestBody extends Record<string, string | RecipeRequest
     ingredients: Ingredients
 }
 export type Steps = RecipeStep[]
-export interface RecipeTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
+export interface RecipeTableEntry<I = RecipeIngredientData> extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
   id: Uuid,
   userId: Uuid,
   name: string,
   description: string,
-  ingredients: IngredientData[],
+  ingredients: I[],
   steps: Steps
   createTs: Timestamp,
   updateTs: Timestamp

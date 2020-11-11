@@ -50,13 +50,13 @@ function determinePantryUpdateRequestBodyFields(data: Record<string, unknown>): 
     if(ingredients && Array.isArray(ingredients) && ingredients.length !== 0){
         for( const ingredient of ingredients) {
             if(ingredient.id){
-                if(!ingredient.amount){
+                if(!Object.keys(ingredient).includes('amount')){
                     return "Ingredient in body malformed";
                 }
             } else {
-                if(!ingredient.amount
-                    || !ingredient.name
-                    || !ingredient.metric) {
+                if(!Object.keys(ingredient).includes('amount')
+                    || !Object.keys(ingredient).includes('name')
+                    || !Object.keys(ingredient).includes('metric')) {
                     return "Ingredient in body malformed";
                 }
             }
