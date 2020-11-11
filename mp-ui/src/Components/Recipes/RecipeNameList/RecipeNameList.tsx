@@ -51,6 +51,7 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
                 this.props.displayRecipe(this.props.ownProps.userId, id);
             } else {
                 //TODO: add recipe
+                console.log("Add recipe")
             }
             
     }
@@ -74,10 +75,10 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
                     <ListItem
                         button
                         onClick={() => this.handleClickListItem(null, '')}>
-                        <ListItemIcon>
+                        <ListItemIcon >
                             <Add />
                         </ListItemIcon>
-                        <ListItemText primary="Add a Recipe" />
+                        <ListItemText  primary="Add a Recipe" />
                     </ListItem>
                 </List>
             </Paper>
