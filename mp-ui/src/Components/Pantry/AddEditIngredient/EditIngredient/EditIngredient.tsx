@@ -64,7 +64,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
     }
     
     componentDidUpdate(prevState: any) {
-        if(prevState.currentIngredient.name != this.props.currentIngredient.name) {
+        if(prevState.currentIngredient.name !== this.props.currentIngredient.name) {
             this.setState({
                 name: this.props.currentIngredient.name,
                 amount: this.props.currentIngredient.amount,

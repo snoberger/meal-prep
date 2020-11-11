@@ -84,10 +84,8 @@ export class IngredientComponent extends React.Component<IngredientCombinedProps
                 onAnimationEnd ={this.handleAnimationEnd}
                 onClick={this.props.toggleEditIngredientDialogue}
             >
-                {!this.state.isHovering && myIngredient
-                    ||
-                    hoveredIngredient
-                }
+                {!this.state.isHovering && myIngredient }
+                {this.state.isHovering && hoveredIngredient}
             </Grid>
         );
     }

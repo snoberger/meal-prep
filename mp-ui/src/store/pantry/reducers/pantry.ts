@@ -77,7 +77,7 @@ const pantry = (state = initialState, action: any) => {
         case EDIT_PANTRY_INGREDIENT:
             ingredients = state.ingredients;
             ingredients.forEach(i => {
-                if(i.name == action.ingredient.name) {
+                if(i.name === action.ingredient.name) {
                     i.amount = action.ingredient.amount;
                     i.metric = action.ingredient.metric;
                 }
