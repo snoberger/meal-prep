@@ -12,11 +12,11 @@ export type OptionalRequestBody = {
 
 export interface PantryIngredientData {
     id: Uuid,
-    amount: number
+    amount: string
 }
 
 export interface PantryIngredient extends Ingredient {
-    amount: number
+    amount: string
 }
 
 export interface PantryRequestBody extends Record<string, string | PantryRequestBodyArray> {

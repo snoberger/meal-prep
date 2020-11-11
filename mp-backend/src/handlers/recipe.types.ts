@@ -18,11 +18,11 @@ export interface RecipiesResponseBody extends Record<string, string>{
 }
 export interface RecipeIngredientData {
   id: Uuid,
-  amount: number
+  amount: string
 }
 
 export interface RecipeIngredient extends Ingredient {
-  amount: number
+  amount: string
 }
 
 

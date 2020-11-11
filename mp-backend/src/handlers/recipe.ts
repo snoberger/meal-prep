@@ -299,7 +299,7 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
                     return ingredientData.id == ingredient.id
                 })
                 const newIngredient: RecipeIngredient = {
-                    amount: combineIngredient?.amount || 0,
+                    amount: combineIngredient?.amount || "",
                     ...ingredient
                 }
                 return newIngredient

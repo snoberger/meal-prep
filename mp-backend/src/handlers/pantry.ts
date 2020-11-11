@@ -34,8 +34,8 @@ function determinePantryResponseFields(data: Record<string, unknown>): string  {
     }
     if(ingredients && Array.isArray(ingredients)){
         for( const ingredient of ingredients) {
-            if(!ingredient || !ingredient.amount
-                || !ingredient.id) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount') 
+                || !Object.keys(ingredient).includes('id') ) {
                 return "Ingredient in body malformed";
             }
         }
@@ -288,7 +288,7 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
                     return ingredientData.id == ingredient.id
                 })
                 return {
-                    amount: combineIngredient?.amount || 0,
+                    amount: combineIngredient?.amount || '',
                     ...ingredient
                 }
             })
