@@ -4,7 +4,7 @@ import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
 import { updateIngredients } from './ingredient';
-import {  RecipeRequestBody, RecipeTableEntry } from './recipe.types'
+import {  RecipeRequestBody, RecipeTableEntry, RecipiesResponseBody } from './recipe.types'
 
 
 function determineRecipeRequestBodyFields(data: Record<string, unknown>): string  {
@@ -27,6 +27,26 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
     return !determineRecipeRequestBodyFields(data);
+}
+function determineRecipiesResponseBodyFields(data: Record<string, unknown>[]): string  {
+    if(data && Array.isArray(data)) {
+        for(const recipe of data) {
+
+            if(!('id' in recipe)) {
+                return "Id not specified";
+            }
+            if(!('name' in recipe)) {
+                return "Name not specified";
+            }
+            if(!('description' in recipe)) {
+                return "Description not specified";
+            }
+        }
+    }
+    return "";
+}
+function isRecipiesResponseBody(data: Record<string, unknown>[]): data is RecipiesResponseBody[] {
+    return !determineRecipiesResponseBodyFields(data);
 }
 
 export const createRecipe: APIGatewayProxyHandler = async (event) => {
@@ -127,16 +147,30 @@ export const getAllRecipes: APIGatewayProxyHandler = async (event) => {
             ':userId': userId
         }
     };
-    let data;
+    const data: RecipiesResponseBody[] = [];
     try {
-        data = await dynamoLib.query(params);
+        const response = await dynamoLib.query(params);
+        const items = response.Items || []
+        if(!isRecipiesResponseBody(items)) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Recipe in database is invalid: ' + determineRecipiesResponseBodyFields(items)})
+            }
+        }
+        items.forEach((item: RecipiesResponseBody) => {
+            data.push({
+                name: item.name,
+                description: item.description,
+                id: item.id
+            })
+        })
     } catch (e) {
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Items)};
+    return {statusCode: 200, body: JSON.stringify(data)};
 }
 
 export const getRecipe: APIGatewayProxyHandler = async (event) => {

@@ -4,6 +4,8 @@ import { Event, createEvent } from  "../utils/event.handler";
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
 import { getAllRecipes, getRecipe, createRecipe, updateRecipe, deleteRecipe } from "../../src/handlers/recipe";
+import dynamodbLib from "../../src/libs/dynamodb-lib";
+import { RecipiesResponseBody } from "../../src/handlers/recipe.types";
 
 
 interface LambdaBody {
@@ -239,6 +241,67 @@ describe('getAllRecipes', () => {
         const result = await getAllRecipes(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(401);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
+    });
+    
+    it('should return error on missing id', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamodbLib.query = jest.fn().mockResolvedValueOnce({Items: [
+            {
+                name: 'testName',
+                description: 'testDesc'
+            }
+        ]});
+        const result = await getAllRecipes(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Id not specified");
+    });
+    it('should return error on missing name', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamodbLib.query = jest.fn().mockResolvedValueOnce({Items: [
+            {
+                id: 'recipeId1',
+                description: 'testDesc'
+            }
+        ]});
+        const result = await getAllRecipes(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Name not specified");
+    });
+    it('should return error on missing description', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamodbLib.query = jest.fn().mockResolvedValueOnce({Items: [
+            {
+                id: 'recipeId1',
+                name: 'testName',
+            }
+        ]});
+        const result = await getAllRecipes(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Description not specified");
+    });
+    it('should throw error on no list', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamodbLib.query = jest.fn().mockResolvedValueOnce({Items: {}});
+        const result = await getAllRecipes(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Internal server error");
+  
+    });
+    it('should return', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamodbLib.query = jest.fn().mockResolvedValueOnce({Items: [
+            {
+                id: 'recipeId1',
+                name: 'testName',
+                description: 'description'
+            }
+        ]});
+        const result = await getAllRecipes(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        const recipies = result ? (<RecipiesResponseBody[]>JSON.parse(result.body)) : [];
+        expect(recipies[0].id).toBe('recipeId1')
+        expect(recipies[0].name).toBe('testName')
+        expect(recipies[0].description).toBe('description')
     });
 
 

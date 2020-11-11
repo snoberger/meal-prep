@@ -10,6 +10,15 @@ export interface RecipeStep {
     time: number,
     order: number
 }
+
+export interface RecipiesResponseBody extends Record<string, string>{
+  id: Uuid,
+  name: string,
+  description: string
+}
+
+
+
 export interface RecipeRequestBody extends Record<string, string | RecipeRequestBodyArray>{
     userId: Uuid,
     name: string,
