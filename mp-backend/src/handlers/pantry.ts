@@ -351,7 +351,7 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': event.pathParameters.pantryId
             },
-            UpdateExpression: "set ingredient = :i, updateTs = :t",
+            UpdateExpression: "set ingredients = :i, updateTs = :t",
             ExpressionAttributeValues:{
                 ":i": pantryRequest.ingredients,
                 ":t": Date.now()

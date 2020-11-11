@@ -19,7 +19,8 @@ function determineRecipeRequestBodyFields(data: Record<string, unknown>): string
     if(ingredients && Array.isArray(ingredients)){
         for( const ingredient of ingredients) {
             if(!ingredient || !Object.keys(ingredient).includes('amount')
-                || !Object.keys(ingredient).includes('id')) {
+                || !Object.keys(ingredient).includes('name') 
+                || !Object.keys(ingredient).includes('metric')) {
                 return "Ingredient in body malformed";
             }
         }
@@ -373,13 +374,16 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': recipeId
             },
-            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, name = :n, description = :d",
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, #name = :n, description = :d",
             ExpressionAttributeValues:{
                 ":s":recipeRequest.steps,
                 ":i":ingredients,
                 ":d":recipeRequest.description,
                 ":n":recipeRequest.name,
                 ":t": Date.now()
+            },
+            ExpressionAttributeNames: {
+                '#name': 'name'
             },
             ReturnValues:"UPDATED_NEW"
             
