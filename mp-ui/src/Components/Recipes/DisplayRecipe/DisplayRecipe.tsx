@@ -46,8 +46,8 @@ export class DisplayRecipe extends React.Component<DisplayRecipeCombinedProps,ID
         };
         if(this.props.recipe && this.props.recipe.id !== undefined){
             return (
-                <Grid container xs={12} spacing={5} justify="center" className="display-recipe-container recipe-background">
-                    <Grid item xs={7} justify={'flex-start'}>
+                <Grid container spacing={5} justify="center" className="display-recipe-container recipe-background">
+                    <Grid item xs={6}>
                         <Typography variant="h6" className="display-recipe-title-text">
                             {this.props.recipe.name}  
                         </Typography>
@@ -55,7 +55,7 @@ export class DisplayRecipe extends React.Component<DisplayRecipeCombinedProps,ID
                             {this.props.recipe.description}  
                         </Typography>
                     </Grid>
-                    <Grid item xs={5} justify={'flex-end'}>
+                    <Grid item xs={6}>
                         <RecipeIngredientsList {...ingredientsListProps}/>
                     </Grid>
                     <Grid item xs={12}>
