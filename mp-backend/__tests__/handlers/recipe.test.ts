@@ -6,7 +6,6 @@ import Context from 'aws-lambda-mock-context';
 import { getAllRecipes, getRecipe, createRecipe, updateRecipe, deleteRecipe } from "../../src/handlers/recipe";
 import dynamodbLib from "../../src/libs/dynamodb-lib";
 import { RecipeIngredient, RecipeTableEntry, RecipiesResponseBody } from "../../src/handlers/recipe.types";
-import { JsonWebTokenError } from "jsonwebtoken";
 
 
 interface LambdaBody {
@@ -153,17 +152,27 @@ describe('createRecipe', () => {
     });
     
     it('should succeed on empty ingredient', async () => {
-        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 
-        'ingredients': [{
-        }]});
+        event.body = JSON.stringify({
+            'userId': '1234',
+            'name': 'test', 
+            'description': 'desc',
+            'steps': [], 
+            'ingredients': [{
+            }]
+        });
         const result = await createRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Ingredient in body malformed");
 
     });
     it('should suceed on empty ingredients', async () => {
-        event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'steps': [], 
-        'ingredients': {}});
+        event.body = JSON.stringify({
+            'userId': '1234',
+            'name': 'test', 
+            'description': 'desc',
+            'steps': [], 
+            'ingredients': {}
+        });
         const result = await createRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(201);
     });
