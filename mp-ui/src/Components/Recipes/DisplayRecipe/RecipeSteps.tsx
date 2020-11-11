@@ -38,7 +38,7 @@ export class RecipeSteps extends React.Component<RecipeStepsCombinedProps,IRecip
         let listItemElements: Array<any> = [];
         this.props.steps.forEach((step:RecipeStep)=> {
             listItemElements.push(
-                <ListItem className="recipe-list-item">
+                <ListItem key={step.order} className="recipe-list-item">
                     <ListItemIcon>
                         <CheckIcon/>
                     </ListItemIcon>
@@ -49,25 +49,21 @@ export class RecipeSteps extends React.Component<RecipeStepsCombinedProps,IRecip
                                         component="span"
                                         variant="body2"
                                         color="textPrimary"
-                                        className="primary-list-text"
+                                        className="step-description"
                                     >
                                         {step.description}
                                     </Typography>
                                 </React.Fragment>
                             }
-                        secondary={
-                                <React.Fragment>
-                                    <Typography
-                                        component="span"
-                                        variant="body2"
-                                        color="textPrimary"
-                                        style={{float: 'right'}}
-                                    >
-                                        {step.time}
-                                    </Typography>
-                                </React.Fragment>
-                            }
                     />
+                    <Typography
+                        component="span"
+                        variant="body2"
+                        color="textPrimary"
+                        style={{float: 'right'}}
+                    >
+                        {step.time}
+                    </Typography>
                 </ListItem>
                 );
         });

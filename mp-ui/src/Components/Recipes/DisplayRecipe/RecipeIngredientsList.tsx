@@ -34,16 +34,10 @@ type RecipeIngredientsListCombinedProps = PropsFromRedux & IRecipeIngredientsLis
 
 export class RecipeIngredientsList extends React.Component<RecipeIngredientsListCombinedProps,IRecipeIngredientsListState> {
     render() {
-        let periodString='';
-        for(let i = 0; i < 100; i++){
-            periodString += '.';
-        }
         let listItemElements: Array<any> = [];
         this.props.ingredients.forEach((ingredient:Ingredient)=> {
-            ingredient.metric = 'test';
-            ingredient.name = 'name';
             listItemElements.push(
-                <ListItem className="ingredient-list-item">
+                <ListItem key={ingredient.name + 'item'} className="ingredient-list-item">
                     <ListItemText 
                         primary={
                                 <React.Fragment>
@@ -53,17 +47,18 @@ export class RecipeIngredientsList extends React.Component<RecipeIngredientsList
                                         color="textPrimary"
                                         className="primary-list-text"
                                     >
-                                        {`${ingredient.amount} ${ingredient.metric}${periodString}`}
+                                        {`${ingredient.amount} ${ingredient.metric}`}
                                     </Typography>
-                                </React.Fragment>
-                            }
-                        secondary={
-                                <React.Fragment>
+                                    {/* <Typography 
+                                        component="span"
+                                        variant="body2"
+                                        color="textPrimary"
+                                        className="period-styling">{periodString}</Typography> */}
                                     <Typography
                                         component="span"
                                         variant="body2"
                                         color="textPrimary"
-                                        style={{float: 'right'}}
+                                        className="secondary-list-text"
                                     >
                                         {ingredient.name}
                                     </Typography>
