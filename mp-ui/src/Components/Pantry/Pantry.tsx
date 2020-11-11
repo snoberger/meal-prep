@@ -1,13 +1,15 @@
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, IconButton, Paper, Typography } from "@material-ui/core";
 import { RouteComponentProps } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import "./Pantry.css";
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux';
-import { getIngredients} from '../../store/pantry/reducers/pantry';
+import { getIngredients } from '../../store/pantry/reducers/pantry';
 import { State } from "../../store/rootReducer";
 import Closet from "./Closet/Closet";
 import AddIngredient from "./AddIngredient/AddIngredient";
+import DeleteIngredient from "./DeleteIngredient/DeleteIngredient"
+
 
 interface IPantryProps extends RouteComponentProps<any> {
 }
@@ -32,38 +34,39 @@ const mapDispatchToProps = (/*dispatch: any*/) => {
 const connector = connect(
     mapStateToProps,
     mapDispatchToProps
-  );
+);
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 type PantryCombinedProps = PropsFromRedux & IPantryProps;
 
-export class Pantry extends React.Component<PantryCombinedProps,IPantryState> {
+export class Pantry extends React.Component<PantryCombinedProps, IPantryState> {
     render() {
-      return (
-        <Grid container justify="center" alignItems="center">
-            <AddIngredient ></AddIngredient>
-            <Grid 
-                item
-                container 
-                className="main-container" 
-                justify="center"
-                direction={'row'} 
-                xs={8}
-                spacing={0} 
-                alignItems="flex-start"
+        return (
+            <Grid container justify="center" alignItems="center">
+                <AddIngredient ></AddIngredient>
+                <Grid
+                    item
+                    container
+                    className="main-container"
+                    justify="center"
+                    direction={'row'}
+                    xs={8}
+                    spacing={0}
+                    alignItems="flex-start"
                 >
-                    <Grid item xs={12} style={{height: "90%"}}>
-                        <div style={{paddingLeft: "318px", height: "90%"}}>
+                    <Grid item xs={12} style={{ height: "90%" }}>
+                        <div style={{ paddingLeft: "318px", height: "90%" }}>
                             <Paper className="pantry-title">
                                 <Typography variant="h6" className="pantry-title-text">
                                     My Pantry
                                 </Typography>
                             </Paper>
-                            <Closet ingredients={this.props.ingredients}/>
+                            <Closet ingredients={this.props.ingredients} />
+                            <DeleteIngredient />
                         </div>
                     </Grid>
-              </Grid>
-          </Grid>
+                </Grid>
+            </Grid>
         );
     }
 }
