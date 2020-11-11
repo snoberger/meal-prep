@@ -10,8 +10,8 @@ export function determineIngredientResponseFields(data: Record<string, unknown>[
     if(data && Array.isArray(data)){
         for( const ingredient of data) {
             if(!ingredient
-                || !ingredient.name
-                || !ingredient.metric) {
+                ||!Object.keys(ingredient).includes('name') 
+                || !Object.keys(ingredient).includes('metric') ) {
                 return "Ingredient in body malformed";
             }
         }

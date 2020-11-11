@@ -3,16 +3,27 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
-import { updateIngredients } from './ingredient';
-import {  RecipeRequestBody, RecipeTableEntry, RecipiesResponseBody } from './recipe.types'
+import { IngredientTableEntry, isIngredientResponse, updateIngredients } from './ingredient';
+import {  RecipeIngredient, RecipeIngredientData, RecipeRequestBody, RecipeTableEntry, RecipiesResponseBody } from './recipe.types'
+import { OptionalRequestBody } from './pantry.types';
 
 
 function determineRecipeRequestBodyFields(data: Record<string, unknown>): string  {
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
     if(!('userId' in data)) {
         return "UserId not specified";
     }
     if(!('ingredients' in data)) {
         return "Ingredients not specified";
+    }
+    if(ingredients && Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount')
+                || !Object.keys(ingredient).includes('name') 
+                || !Object.keys(ingredient).includes('metric')) {
+                return "Ingredient in body malformed";
+            }
+        }
     }
     if(!('steps' in data)) {
         return "Steps not specified";
@@ -47,6 +58,35 @@ function determineRecipiesResponseBodyFields(data: Record<string, unknown>[]): s
 }
 function isRecipiesResponseBody(data: Record<string, unknown>[]): data is RecipiesResponseBody[] {
     return !determineRecipiesResponseBodyFields(data);
+}
+function determineRecipeResponseFields(data: Record<string, unknown>): string  {
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
+    if(!("id" in data)) {
+        return "id not specified";
+    }
+    if(!("userId" in data)) {
+        return "userId not specified"
+    }
+    
+    if(!("ingredients" in data)) {
+        return "Ingredients not specified"
+    }
+    if(Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount')
+                || !Object.keys(ingredient).includes('id')) {
+                return "Ingredient in body malformed";
+            }
+        }
+    }
+    else {
+        return "Ingredients is not an array"
+    }
+    
+    return "";
+}
+function isRecipeResponseBody(data: Record<string, unknown>): data is RecipeTableEntry<RecipeIngredientData> {
+    return !determineRecipeResponseFields(data);
 }
 
 export const createRecipe: APIGatewayProxyHandler = async (event) => {
@@ -200,9 +240,71 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
             'id': recipeId
         }
     };
-    let data;
+    let recipeItem: RecipeTableEntry<RecipeIngredientData> | undefined = undefined;
+    
+    let outputRecipe: RecipeTableEntry<RecipeIngredient> | undefined = undefined;
     try {
-        data = await dynamoLib.get(params);
+        const resp = await dynamoLib.get(params);
+        if(resp.Item) {
+            if(!isRecipeResponseBody(resp.Item)) {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Recipe item is malformed: ' + determineRecipeResponseFields(resp.Item)})}
+            }
+            recipeItem = resp.Item
+        }
+        else {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error 2'})
+            }
+        }
+        
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error 2'})
+        }
+    }
+    const ingredients = recipeItem.ingredients
+    let ingredientData: IngredientTableEntry[] = []
+    try {
+        const params: DynamoDB.DocumentClient.BatchGetItemInput = {
+            RequestItems:  {
+                "ingredient": {
+                    Keys: ingredients.map((item) => {
+                        return {
+                            "id": item.id,
+                        }
+                    })
+                }
+            }
+        };
+    
+        const response = await dynamoLib.batchGet(params);
+        const responses = response.Responses
+        if(responses && isIngredientResponse(responses['ingredient'])) {
+            ingredientData = responses['ingredient']
+        }
+        else {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Malformed Ingredient in database'})
+            }
+        }
+        outputRecipe = {
+            ...recipeItem,
+            ingredients: ingredientData.map((ingredient) => {
+                const combineIngredient = ingredients.find((ingredientData: RecipeIngredientData) => {
+                    return ingredientData.id == ingredient.id
+                })
+                const newIngredient: RecipeIngredient = {
+                    amount: combineIngredient?.amount || "",
+                    ...ingredient
+                }
+                return newIngredient
+            })
+        }
         
     } catch (e) {
         return {
@@ -210,7 +312,8 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Item)};
+    
+    return {statusCode: 200, body: JSON.stringify(outputRecipe)};
 }    
 
 export const updateRecipe: APIGatewayProxyHandler = async (event) => {
@@ -271,13 +374,16 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': recipeId
             },
-            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, name = :n, description = :d",
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, #name = :n, description = :d",
             ExpressionAttributeValues:{
                 ":s":recipeRequest.steps,
                 ":i":ingredients,
                 ":d":recipeRequest.description,
                 ":n":recipeRequest.name,
                 ":t": Date.now()
+            },
+            ExpressionAttributeNames: {
+                '#name': 'name'
             },
             ReturnValues:"UPDATED_NEW"
             
