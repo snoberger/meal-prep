@@ -13,7 +13,9 @@ export  interface State {
     },
     pantry: {
       ingredients: Array<Ingredient>,
-      displayAddIngredientDiaglogue: boolean
+      displayAddIngredientDiaglogue: boolean,
+      displayEditIngredientDialogue: boolean,
+      currentIngredient: Ingredient
     },
     user: {
       signUpDetails: CreateUserItem,
