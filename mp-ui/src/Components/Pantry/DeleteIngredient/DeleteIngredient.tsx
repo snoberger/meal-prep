@@ -3,7 +3,6 @@ import { connect, ConnectedProps } from "react-redux";
 import { toggleDeleteIngredientDisplay, handleDeleteIngredient } from "../../../store/pantry/actions/pantry";
 import { State } from "../../../store/rootReducer";
 import { Button, Card, CardContent, Dialog, DialogTitle, IconButton, Paper, TextField } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { Ingredient, getDeleteIngredientViewOpen } from '../../../store/pantry/reducers/pantry';
 import "./DeleteIngredient.css";
 import { Close, Delete, Done } from "@material-ui/icons";
@@ -67,7 +66,7 @@ class DeleteIngredient extends React.Component<DeleteIngredientCombinedProps, ID
 
     render() {
         let button;
-        if (this.props.open) {
+        if (!this.props.open) {
             button = <IconButton color="primary" className="delete-ingredient-icon" component="span" onClick={this.props.toggleDeleteIngredientDisplay}>
                 <Delete fontSize="small" />
             </IconButton>;

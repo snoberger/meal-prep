@@ -79,9 +79,9 @@ const pantry = (state = initialState, action: any) => {
                 displayDeleteIngredientView: !state.displayDeleteIngredientView,
             };
         case DELETE_PANTRY_INGREDIENT:
-            ingredients = state.ingredients,
-                index = ingredients.indexOf(action.ingredients), //Only does one ingredient right now
-                ingredients.splice(index, 1);
+            ingredients = state.ingredients;
+            index = ingredients.indexOf(action.ingredients); //Only does one ingredient right now
+            ingredients.splice(index, 1);
             return {
                 ...state,
                 ingredients: ingredients
