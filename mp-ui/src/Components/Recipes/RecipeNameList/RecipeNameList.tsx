@@ -63,7 +63,7 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
                     button
                     selected={this.state.selectedIndex === index}
                     onClick={() => this.handleClickListItem(index, recipe.id)}>
-                    <ListItemText primary={recipe.id} secondary={"This will be a description"}/>
+                    <ListItemText primary={recipe.name} secondary={recipe.description}/>
                 </ListItem>
             );
         });

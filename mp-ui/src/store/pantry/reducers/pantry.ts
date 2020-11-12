@@ -1,6 +1,8 @@
 import {
     ADD_PANTRY_INGREDIENT,
+    EDIT_PANTRY_INGREDIENT,
     TOGGLE_ADDDIALOGUE,
+    TOGGLE_EDITDIALOGUE,
     TOGGLE_PANTRYERROR,
     UPDATE_INGREDIENTS,
 } from '../actionTypes';
@@ -11,8 +13,9 @@ export type Ingredient = {
     amount: string,
     metric: string
 }
+
 const ingreds = [];
-for(let i = 0; i < 4; i++){
+for(let i = 0; i < 1; i++){
     ingreds.push({
         name: 'flour',
         amount: '2',
@@ -40,7 +43,9 @@ for(let i = 0; i < 4; i++){
 const initialState = {
     // eslint-disable-next-line
     ingredients: process.env.NODE_ENV === 'test' ? [] : ingreds,
+    currentIngredient: {name: '', amount: '', metric: ''},
     displayAddIngredientDiaglogue: false,
+    displayEditIngredientDialogue: false,
     alert: false,
 };
 
@@ -56,9 +61,28 @@ const pantry = (state = initialState, action: any) => {
                 ...state,
                 displayAddIngredientDiaglogue: !state.displayAddIngredientDiaglogue,
             };
+        case TOGGLE_EDITDIALOGUE:
+            state.currentIngredient = action.ingredient;
+            return {
+                ...state,
+                displayEditIngredientDialogue: !state.displayEditIngredientDialogue
+            };
         case ADD_PANTRY_INGREDIENT:
             ingredients = state.ingredients;
             ingredients.push(action.ingredient);
+            return {
+                ...state,
+                ingredients: ingredients
+            };
+        case EDIT_PANTRY_INGREDIENT:
+            ingredients = state.ingredients;
+            ingredients.forEach(i => {
+                if(i.name === action.ingredient.name) {
+                    i.amount = action.ingredient.amount;
+                    i.metric = action.ingredient.metric;
+                }
+            });
+            
             return {
                 ...state,
                 ingredients: ingredients
@@ -80,6 +104,10 @@ export const getIngredients = (state: State) => {
 
 export const getAddIngredientDialogueOpen = (state: State) => {
     return state.pantry.displayAddIngredientDiaglogue;
+};
+
+export const getEditIngredientDialogueOpen = (state: State) => {
+    return state.pantry.displayEditIngredientDialogue;
 };
 
 

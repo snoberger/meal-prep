@@ -8,11 +8,23 @@ export const RECIPE_ENDPOINT = `${ENDPOINT}/pantry`;
 /* eslint-disable */
 //@ts-ignore
 export async function createPantryIngredient(ingredient: Ingredient): Promise {
-    console.log(typeof ingredient.amount);
     try {
         return await axios.post(RECIPE_ENDPOINT, JSON.stringify({ingredients: [ingredient]}), getConfig());
     }
     catch(error) {  
         return error.response;
     }
+
+/* eslint-disable */
+//@ts-ignore
+export async function editPantryIngredientApi(ingredient: Ingredient): Promise {
+    return new Promise((resolve,reject) => {
+        resolve(
+            {
+                status: 200,
+                data: {
+                    message: "success"
+            }
+        });
+    });
 }

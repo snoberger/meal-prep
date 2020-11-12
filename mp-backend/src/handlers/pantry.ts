@@ -34,8 +34,8 @@ function determinePantryResponseFields(data: Record<string, unknown>): string  {
     }
     if(ingredients && Array.isArray(ingredients)){
         for( const ingredient of ingredients) {
-            if(!ingredient || !ingredient.amount
-                || !ingredient.id) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount') 
+                || !Object.keys(ingredient).includes('id') ) {
                 return "Ingredient in body malformed";
             }
         }
@@ -50,13 +50,13 @@ function determinePantryUpdateRequestBodyFields(data: Record<string, unknown>): 
     if(ingredients && Array.isArray(ingredients) && ingredients.length !== 0){
         for( const ingredient of ingredients) {
             if(ingredient.id){
-                if(!ingredient.amount){
+                if(!Object.keys(ingredient).includes('amount')){
                     return "Ingredient in body malformed";
                 }
             } else {
-                if(!ingredient.amount
-                    || !ingredient.name
-                    || !ingredient.metric) {
+                if(!Object.keys(ingredient).includes('amount')
+                    || !Object.keys(ingredient).includes('name')
+                    || !Object.keys(ingredient).includes('metric')) {
                     return "Ingredient in body malformed";
                 }
             }
@@ -288,7 +288,7 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
                     return ingredientData.id == ingredient.id
                 })
                 return {
-                    amount: combineIngredient?.amount || 0,
+                    amount: combineIngredient?.amount || '',
                     ...ingredient
                 }
             })
@@ -351,7 +351,7 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': event.pathParameters.pantryId
             },
-            UpdateExpression: "set ingredient = :i, updateTs = :t",
+            UpdateExpression: "set ingredients = :i, updateTs = :t",
             ExpressionAttributeValues:{
                 ":i": pantryRequest.ingredients,
                 ":t": Date.now()
