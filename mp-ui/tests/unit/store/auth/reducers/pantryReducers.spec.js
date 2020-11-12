@@ -12,7 +12,9 @@ describe('pantry reducer handlers', () => {
       {
         alert: false,
         displayAddIngredientDiaglogue: false,
-        ingredients: []
+        displayEditIngredientDialogue: false,
+        ingredients: [],
+        currentIngredient: {name: '', metric: '', amount: ''}
       }
     );
     // eslint-disable-next-line no-undef

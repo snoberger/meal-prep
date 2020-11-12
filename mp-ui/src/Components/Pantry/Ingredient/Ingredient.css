@@ -39,3 +39,53 @@
 .absolute {
     position: absolute;
 }
+
+.createIcon {
+    padding-top: 2vh;
+    width: 43px;
+    left: 25%;
+    top: 30%;
+}
+
+.editText {
+    margin: 0;
+    padding-top: 10%;
+}
+
+.edit-ingredient {
+    cursor: pointer;
+}
+
+.fade-in {
+    opacity: 1;
+    animation-name: fadeInOpactiy;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 0.25s;
+}
+
+@keyframes fadeInOpactiy {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.fade-out {
+    opacity: 0;
+    animation-name: fadeOutOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+    animation-duration: 0.25s;
+}
+
+@keyframes fadeOutOpacity {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
