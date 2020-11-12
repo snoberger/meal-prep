@@ -14,7 +14,7 @@ export async function createPantryIngredient(ingredient: Ingredient): Promise {
     catch(error) {  
         return error.response;
     }
-
+}
 /* eslint-disable */
 //@ts-ignore
 export async function editPantryIngredientApi(ingredient: Ingredient): Promise {
