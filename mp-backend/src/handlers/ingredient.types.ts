@@ -5,14 +5,14 @@ export type Uuid = string;
 export type IngredientId = Uuid;
 export interface IngredientData {
     id: Uuid,
-    amount: number
+    amount: string
 } 
 
 export type Ingredients = Ingredient[]
 
 export interface Ingredient {
     id?: Uuid,
-    amount: number,
+    amount: string,
     name: string,
     metric: string
 }
