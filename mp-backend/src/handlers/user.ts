@@ -134,7 +134,6 @@ export const create: APIGatewayProxyHandler = async (event) => {
     try {
         await dynamoLib.put(params);
 
-        const pantryId = uuidv4();
         const newPantry: PantryTableEntry = {
             'id': pantryId,
             'userId': userId,

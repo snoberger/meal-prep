@@ -1,14 +1,6 @@
-import { createPantryIngredient, editPantryIngredientApi } from '../../../api/pantry';
-import { ADD_PANTRY_INGREDIENT, TOGGLE_ADDDIALOGUE, TOGGLE_PANTRYERROR, UPDATE_INGREDIENTS, TOGGLE_EDITDIALOGUE, EDIT_PANTRY_INGREDIENT } from '../actionTypes';
-import { Ingredient } from '../reducers/pantry';
-
-
-
-export const updateIngredients = () => {
-  return {
-    type: UPDATE_INGREDIENTS,
-  };
-};
+import { createPantryIngredient, editPantryIngredientApi, fetchPantry } from '../../../api/pantry';
+import { ADD_PANTRY_INGREDIENT, TOGGLE_ADDDIALOGUE, TOGGLE_PANTRYERROR, TOGGLE_EDITDIALOGUE, EDIT_PANTRY_INGREDIENT, SET_PANTRY, FETCH_PANTRY_ERROR } from '../actionTypes';
+import { Ingredient, PantryObject } from '../reducers/pantry';
 
 export const createdPantryIngredient = (ingredient: Ingredient) => {
   return {
@@ -37,6 +29,34 @@ export const editPantryIngredientError = () => {
   };
 };
 
+export const fetchPantryError = () => {
+  return {
+    type: FETCH_PANTRY_ERROR
+  };
+};
+
+export const setPantry = (pantry: PantryObject) => {
+  return {
+    type: SET_PANTRY,
+    pantry
+  };
+};
+
+export function handleFetchPantry(userId: string, pantryId: string) {
+  return async (dispatch: any) => {
+    try{
+      return await fetchPantry(userId, pantryId).then((response: any) => {
+        console.log(response);
+        if(response.status === 200 && response.data) {
+          return dispatch(setPantry(response.data));
+        }
+        return dispatch(fetchPantryError());
+      });
+    } catch(e) {
+      return dispatch(fetchPantryError());
+    }
+  };
+}
 
 export function handleCreateIngredient(ingredient: Ingredient) {
   return async (dispatch: any) => {

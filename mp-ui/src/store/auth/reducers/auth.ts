@@ -9,6 +9,7 @@ import { State } from '../../rootReducer';
 const initialState = {
     authToken: '',
     userId: '',
+    pantryId: '',
     alert: undefined
 };
 
@@ -20,6 +21,7 @@ const auth = (state = initialState, action: any) => {
                 ...state,
                 authToken: action.authToken,
                 userId: action.userId,
+                pantryId: action.pantryId,
                 alert: undefined
             };
         case REQUEST_AUTH_TOKEN:
@@ -45,6 +47,10 @@ export const getAuthToken = (state: State) => {
 
 export const getUserId = (state: State) => {
     return state.auth.userId;
+};
+
+export const getPantryId = (state: State) => {
+    return state.auth.pantryId;
 };
 
 export const getAuthAlert = (state: State) => {
