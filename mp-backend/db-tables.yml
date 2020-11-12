@@ -18,6 +18,7 @@ authTable:
       Projection:
         NonKeyAttributes:
         - userId
+        - pantryId
         ProjectionType: INCLUDE
       ProvisionedThroughput:
           ReadCapacityUnits: 1

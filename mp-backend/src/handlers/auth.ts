@@ -94,6 +94,7 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     const user: DynamoDB.AttributeMap = result.Items[0];
     let userId: string;
+    let pantryId: string;
     if(user && user.id) {
         userId = user.id as string;
     } else {
@@ -102,7 +103,15 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-
+    if(user && user.pantryId) {
+        pantryId = user.pantryId as string;
+    } else {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    
     let userpassResult: DynamoDB.GetItemOutput;
     try {
         userpassResult = await getUserpassAndSalt(userId);
@@ -157,7 +166,7 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     return {
         statusCode: 200,
-        body: JSON.stringify({authToken: JWTToken, userId: userId})
+        body: JSON.stringify({authToken: JWTToken, userId: userId, pantryId: pantryId})
     }
 };
 
