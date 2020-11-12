@@ -62,7 +62,6 @@ export function fetchLogin(loginDetails: AuthenticateItem) {
     dispatch(requestAuthToken(loginDetails));
     try{
       return await loginUser(loginDetails).then((response) => {
-        console.log(response);
         if(response.status === 200 && response.data.authToken && response.data.userId && response.data.pantryId) {
             sessionStorage.setItem('token', response.data.authToken);
             return dispatch(setAuth(response.data));

@@ -17,7 +17,7 @@ describe('pantry reducer handlers', () => {
               createTs: '',
               updateTs: ''
           },
-          currentIngredient: {name: '', amount: '', metric: ''},
+          currentIngredient: {index: -1, name: '', amount: '', metric: ''},
           displayAddIngredientDiaglogue: false,
           displayEditIngredientDialogue: false,
           alert: false,
