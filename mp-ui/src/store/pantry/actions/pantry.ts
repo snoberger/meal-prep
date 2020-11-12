@@ -1,29 +1,15 @@
-import { createPantryIngredient, editPantryIngredientApi, fetchPantry } from '../../../api/pantry';
-import { ADD_PANTRY_INGREDIENT, TOGGLE_ADDDIALOGUE, TOGGLE_PANTRYERROR, TOGGLE_EDITDIALOGUE, EDIT_PANTRY_INGREDIENT, SET_PANTRY, FETCH_PANTRY_ERROR } from '../actionTypes';
+import { editPantry, fetchPantry } from '../../../api/pantry';
+import { TOGGLE_ADDDIALOGUE, TOGGLE_PANTRYERROR, TOGGLE_EDITDIALOGUE, EDIT_PANTRY_INGREDIENT, SET_PANTRY, FETCH_PANTRY_ERROR } from '../actionTypes';
 import { Ingredient, PantryObject } from '../reducers/pantry';
 
-export const createdPantryIngredient = (ingredient: Ingredient) => {
-  return {
-    type: ADD_PANTRY_INGREDIENT,
-    ingredient: ingredient,
-  };
-};
-
-export const editPantryIngredient = (ingredient: Ingredient) => {
+export const editedPantryIngredients = (ingredients: Ingredient[]) => {
   return {
     type: EDIT_PANTRY_INGREDIENT,
-    ingredient: ingredient,
+    ingredients: ingredients,
   };
 };
 
-
-export const createdPantryIngredientError = () => {
-  return {
-    type: TOGGLE_PANTRYERROR
-  };
-};
-
-export const editPantryIngredientError = () => {
+export const editPantryIngredientsError = () => {
   return {
     type: TOGGLE_PANTRYERROR
   };
@@ -46,8 +32,16 @@ export function handleFetchPantry(userId: string, pantryId: string) {
   return async (dispatch: any) => {
     try{
       return await fetchPantry(userId, pantryId).then((response: any) => {
-        console.log(response);
         if(response.status === 200 && response.data) {
+          let indexedArray = response.data.ingredients.map((ingredient: any, index: number)=> {
+              return{
+                name: ingredient.name,
+                amount: ingredient.amount,
+                metric: ingredient.metric,
+                index: index
+              };
+          });
+          response.data.ingredients = indexedArray;
           return dispatch(setPantry(response.data));
         }
         return dispatch(fetchPantryError());
@@ -58,34 +52,40 @@ export function handleFetchPantry(userId: string, pantryId: string) {
   };
 }
 
-export function handleCreateIngredient(ingredient: Ingredient) {
+export function handleEditPantry(userId: string, pantryId: string, ingredients: Ingredient[], ingredient: Ingredient) {
   return async (dispatch: any) => {
     try{
-      return await createPantryIngredient(ingredient).then((response: any) => {
-        if(response.status === 200 && response.data.message) {
-          
-          return dispatch(createdPantryIngredient(ingredient));
+      ingredients[ingredient.index] = ingredient;
+      const unindexedIngredients = ingredients.map((ingred: Ingredient)=> {
+        return {
+          name: ingred.name,
+          amount: ingred.amount,
+          metric: ingred.metric
+        };
+      }); 
+      return await editPantry(userId, pantryId, unindexedIngredients).then((response: any) => {
+        if(response.status === 200) {
+          return dispatch(editedPantryIngredients(ingredients));
         }
-        return dispatch(createdPantryIngredientError());
+        return dispatch(editPantryIngredientsError());
       });
     } catch(e) {
-      return dispatch(createdPantryIngredientError());
+      return dispatch(editPantryIngredientsError());
     }
   };
 }
 
-export function handleEditIngredient(ingredient: Ingredient) {
+export function handleCreatePantry(userId: string, pantryId: string, ingredients: Ingredient[]) {
   return async (dispatch: any) => {
     try{
-      return await editPantryIngredientApi(ingredient).then((response: any) => {
-        if(response.status === 200 && response.data.message) {
-          
-          return dispatch(editPantryIngredient(ingredient));
+      return await editPantry(userId, pantryId, ingredients).then((response: any) => {
+        if(response.status === 200) {
+          return dispatch(editedPantryIngredients(ingredients));
         }
-        return dispatch(editPantryIngredientError());
+        return dispatch(editPantryIngredientsError());
       });
     } catch(e) {
-      return dispatch(editPantryIngredientError());
+      return dispatch(editPantryIngredientsError());
     }
   };
 }

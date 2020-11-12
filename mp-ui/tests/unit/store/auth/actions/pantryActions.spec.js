@@ -22,17 +22,26 @@ describe("Synchronous Actions", () => {
       updateTs: 'now'
     })).toEqual(expectedAction);
   });
-  it('should send  ADD_PANTRY_INGREDIENT with  ADD_PANTRY_INGREDIENT action', () => {
+  it('should send EDIT_PANTRY_INGREDIENT with EDIT_PANTRY_INGREDIENT action', () => {
     const expectedAction = {
-      type: types.ADD_PANTRY_INGREDIENT,
-      ingredient: {
+      type: types.EDIT_PANTRY_INGREDIENT,
+      ingredients: [{
+        index: 0, 
         name: "name",
         amount: "amount",
         metric: "metric"
-      }
+      }]
     };
 
-    expect(actions.createdPantryIngredient({name: "name", amount: "amount", metric: "metric"})).toEqual(expectedAction);
+    expect(actions.editedPantryIngredients([
+          {
+            index: 0, 
+            name: "name", 
+            amount: "amount", 
+            metric: "metric"
+          }
+        ]
+      )).toEqual(expectedAction);
 
   });
   it('should send TOGGLE_ADDDIALOGUE with toggleAddIngredientDialogue action', () => {  
@@ -43,12 +52,12 @@ describe("Synchronous Actions", () => {
     expect(actions.toggleAddIngredientDialogue()).toEqual(expectedAction);
   });
 
-  it('should send TOGGLE_PANTRYERROR with createdPantryIngredient action', () => {  
+  it('should send TOGGLE_PANTRYERROR with editPantryIngredientsError action', () => {  
     const expectedAction = {
       type: types.TOGGLE_PANTRYERROR
     };
 
-    expect(actions.createdPantryIngredientError()).toEqual(expectedAction);
+    expect(actions.editPantryIngredientsError()).toEqual(expectedAction);
   });
 });
 
