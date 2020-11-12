@@ -142,7 +142,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
                             <TextField
                                 id="name"
                                 error={!this.state.isNameValid}
-                                // onChange={this.setName}
+                                onChange={this.setName}
                                 value={this.state.name}
                                 multiline rowsMax={2}
                                 className="addingredient-input"
