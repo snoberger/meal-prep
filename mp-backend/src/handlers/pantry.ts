@@ -342,7 +342,7 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
     let updatedData;
     try {
         
-        await updateIngredients(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(!ingredient.id)))
+        const mappedIngredients = await updateIngredients(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(!ingredient.id)))
             
         const params: DynamoDB.DocumentClient.UpdateItemInput = {
             TableName: 'pantry',
@@ -352,7 +352,7 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
             },
             UpdateExpression: "set ingredients = :i, updateTs = :t",
             ExpressionAttributeValues:{
-                ":i": pantryRequest.ingredients,
+                ":i": Array.prototype.concat(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(ingredient.id)), mappedIngredients),
                 ":t": Date.now()
             },
             ReturnValues:"UPDATED_NEW"

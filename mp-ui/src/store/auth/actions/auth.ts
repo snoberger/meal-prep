@@ -46,8 +46,8 @@ export const handleCheckAuthToken = () => {
     try{
       return await checkAuthToken().then((response: any) => {
           const authToken = sessionStorage.getItem('token');
-          if(response.status === 200 && response.data.message && authToken) {
-              return dispatch(setAuth({authToken: authToken, userId: response.data.message}));
+          if(response.status === 200 && response.data.userId && response.data.pantryId && authToken) {
+              return dispatch(setAuth({authToken: authToken, userId: response.data.userId, pantryId: response.data.pantryId}));
           }
           return dispatch(invalidToken("Failed to authenticate", "Invalid Token"));
       });
@@ -62,7 +62,8 @@ export function fetchLogin(loginDetails: AuthenticateItem) {
     dispatch(requestAuthToken(loginDetails));
     try{
       return await loginUser(loginDetails).then((response) => {
-        if(response.status === 200 && response.data.authToken && response.data.userId) {
+        console.log(response);
+        if(response.status === 200 && response.data.authToken && response.data.userId && response.data.pantryId) {
             sessionStorage.setItem('token', response.data.authToken);
             return dispatch(setAuth(response.data));
         }

@@ -46,8 +46,9 @@ export function handleFetchPantry(userId: string, pantryId: string) {
   return async (dispatch: any) => {
     try{
       return await fetchPantry(userId, pantryId).then((response: any) => {
+        console.log(response);
         if(response.status === 200 && response.data) {
-          return dispatch(setPantry(response.data[0]));
+          return dispatch(setPantry(response.data));
         }
         return dispatch(fetchPantryError());
       });

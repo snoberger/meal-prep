@@ -217,16 +217,54 @@ describe('authenticate endpoint', () => {
 
 describe('authenticateJWT endpoint', () => {
 
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
     interface LambdaResponse {
-        message: string
+        userId: string,
+        pantryId: string,
+        message?: string
     }
 
-    it('returns the userid obtained from event.principalId', async () => {
+    it('returns the userid and pantryId obtained from event.principalId', async () => {
         const event = {principalId: '1234'};
+        dynamoDb.get = jest.fn().mockImplementationOnce(()=> {
+            return{
+                Item: {
+                    'id': '1',
+                    'username': 'iexist',
+                    'pantryId': 'testpantryId',
+                    'salt': 'ilikesalt',
+                    'userpass': 'hashedresult'
+                }
+            }
+        });
         const result = await authenticateToken(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(200);
-        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("1234");
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).userId : false).toBe("1234");
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).pantryId : false).toBe("testpantryId");
+
     });
+
+    it('fails if no user by the id', async () => {
+        const event = {principalId: '1234'};
+        dynamoDb.get = jest.fn().mockImplementationOnce(() => {return{
+            data: {}
+        }});
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);        
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Internal server error");
+    });
+
+    it('fails dynamoDb get fails', async () => {
+        const event = {principalId: '1234'};
+        dynamoDb.get = jest.fn().mockImplementationOnce(() => { throw 'error'});
+        const result = await authenticateToken(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);        
+        expect(result ? (<LambdaResponse>JSON.parse(result.body)).message : false).toBe("Internal server error");
+    });
+
     it('fails if no principalId', async () => {
         const event = {};
         const result = await authenticateToken(createEvent(event), Context(), () => {return});
