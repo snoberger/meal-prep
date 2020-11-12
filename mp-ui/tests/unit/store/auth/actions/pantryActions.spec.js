@@ -2,12 +2,25 @@ import * as actions from '../../../../../src/store/pantry/actions/pantry';
 import * as types from '../../../../../src/store/pantry/actionTypes';
 
 describe("Synchronous Actions", () => {
-  it('should send UPDATE_INGREDIENTS with updateIngredients action', () => {  
+  it('should send SET_PANTRY with updateIngredients action', () => {  
     const expectedAction = {
-      type: types.UPDATE_INGREDIENTS
+      type: types.SET_PANTRY,
+      pantry: {
+        id: '1234',
+        userId: '12341234',
+        ingredients: [{name: 'test', amount: '1', metric: 'cups'}],
+        createTs: 'now',
+        updateTs: 'now'
+      }
     };
 
-    expect(actions.updateIngredients()).toEqual(expectedAction);
+    expect(actions.setPantry({
+      id: '1234',
+      userId: '12341234',
+      ingredients: [{name: 'test', amount: '1', metric: 'cups'}],
+      createTs: 'now',
+      updateTs: 'now'
+    })).toEqual(expectedAction);
   });
   it('should send  ADD_PANTRY_INGREDIENT with  ADD_PANTRY_INGREDIENT action', () => {
     const expectedAction = {

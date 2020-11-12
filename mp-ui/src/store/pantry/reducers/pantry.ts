@@ -1,10 +1,10 @@
 import {
     ADD_PANTRY_INGREDIENT,
     EDIT_PANTRY_INGREDIENT,
+    SET_PANTRY,
     TOGGLE_ADDDIALOGUE,
     TOGGLE_EDITDIALOGUE,
     TOGGLE_PANTRYERROR,
-    UPDATE_INGREDIENTS,
 } from '../actionTypes';
 import { State } from '../../rootReducer';
 
@@ -12,6 +12,14 @@ export type Ingredient = {
     name: string,
     amount: string,
     metric: string
+}
+
+export type PantryObject = {
+    id: string,
+    userId: string,
+    ingredients: Array<Ingredient>,
+    createTs: string,
+    updateTs: string
 }
 
 const ingreds = [];
@@ -38,11 +46,23 @@ for(let i = 0; i < 1; i++){
     });
 }
 // if we are testing return a default initial state since this will go away when we hook to DB
-
+type PantryState = {
+    pantry: PantryObject,
+    displayAddIngredientDiaglogue: boolean,
+    displayEditIngredientDialogue: boolean,
+    currentIngredient: Ingredient,
+    alert: boolean
+}
 /* istanbul ignore next */
-const initialState = {
+const initialState: PantryState = {
     // eslint-disable-next-line
-    ingredients: process.env.NODE_ENV === 'test' ? [] : ingreds,
+    pantry: {
+        id: '',
+        userId: '',
+        ingredients: [],
+        createTs: '',
+        updateTs: ''
+    },
     currentIngredient: {name: '', amount: '', metric: ''},
     displayAddIngredientDiaglogue: false,
     displayEditIngredientDialogue: false,
@@ -52,9 +72,10 @@ const initialState = {
 const pantry = (state = initialState, action: any) => {
     let ingredients;
     switch (action.type) {
-        case UPDATE_INGREDIENTS:
+        case SET_PANTRY:
             return {
-                ...state
+                ...state,
+                pantry: action.pantry
             };
         case TOGGLE_ADDDIALOGUE:
             return {
@@ -68,14 +89,14 @@ const pantry = (state = initialState, action: any) => {
                 displayEditIngredientDialogue: !state.displayEditIngredientDialogue
             };
         case ADD_PANTRY_INGREDIENT:
-            ingredients = state.ingredients;
+            ingredients = state.pantry.ingredients;
             ingredients.push(action.ingredient);
             return {
                 ...state,
                 ingredients: ingredients
             };
         case EDIT_PANTRY_INGREDIENT:
-            ingredients = state.ingredients;
+            ingredients = state.pantry.ingredients;
             ingredients.forEach(i => {
                 if(i.name === action.ingredient.name) {
                     i.amount = action.ingredient.amount;
@@ -99,7 +120,11 @@ const pantry = (state = initialState, action: any) => {
 };
   
 export const getIngredients = (state: State) => {
-    return state.pantry.ingredients;
+    return state.pantry.pantry.ingredients;
+};
+
+export const getPantryId = (state: State) => {
+    return state.pantry.pantry.id;
 };
 
 export const getAddIngredientDialogueOpen = (state: State) => {

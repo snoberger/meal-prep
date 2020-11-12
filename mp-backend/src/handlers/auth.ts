@@ -180,8 +180,30 @@ export const authenticateToken: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
-    return Promise.resolve({
-        statusCode: 200,
-        body: JSON.stringify({message: userId })
-    });
+
+    const params: DynamoDB.DocumentClient.GetItemInput = {
+        TableName: 'user',
+        Key: {
+            'id': userId
+        }
+    };
+    let data;
+    try {
+        data = await dynamoLib.get(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    if(data.Item) {
+        return Promise.resolve({
+            statusCode: 200,
+            body: JSON.stringify({userId: userId, pantryId: data.Item.pantryId })
+        });
+    }
+    return {
+        statusCode: 500,
+        body: JSON.stringify({message: 'Internal server error'})
+    }
 }
