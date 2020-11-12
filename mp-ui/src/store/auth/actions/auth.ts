@@ -8,6 +8,7 @@ export const setAuth = (auth: any) => {
     type: SET_AUTH,
     authToken: auth.authToken,
     userId: auth.userId,
+    pantryId: auth.pantryId
   };
 };
 
@@ -63,7 +64,7 @@ export function fetchLogin(loginDetails: AuthenticateItem) {
       return await loginUser(loginDetails).then((response) => {
         if(response.status === 200 && response.data.authToken && response.data.userId) {
             sessionStorage.setItem('token', response.data.authToken);
-            return dispatch(setAuth({ authToken: response.data.authToken, userId: response.data.userId }));
+            return dispatch(setAuth(response.data));
         }
         return dispatch(invalidLoginCredentials({
           header: "Failed to login",

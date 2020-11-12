@@ -66,9 +66,9 @@ export class IngredientComponent extends React.Component<IngredientCombinedProps
     render() {
         const myIngredient =
             <div className={this.state.isFading ? "fade-out ingredient-combined" : "ingredient-combined"}>
-                <span className="absolute ingredient-name">{this.props.ingredient.name.toLocaleUpperCase()}</span>
+                <span className="absolute ingredient-name">{"TEST"}</span>
                 <img className="ingredient-image absolute" src={jarImg} alt="ingredient" />
-                <span className="absolute ingredient-amount">{this.props.ingredient.amount.toLocaleUpperCase() + ' ' + this.props.ingredient.metric.toLocaleUpperCase()}</span>
+                <span className="absolute ingredient-amount">{"CUPS"}</span>
             </div>;
 
         const hoveredIngredient = 
