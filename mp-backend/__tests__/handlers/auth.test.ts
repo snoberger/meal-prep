@@ -45,7 +45,7 @@ describe('authenticate endpoint', () => {
         const event = {
             body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
         }
-        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1'}]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1', 'pantryId': 'p1'}]});
         dynamoDb.get = jest.fn().mockResolvedValueOnce({Item: userTable.user});
         authLib.getHashedCredentials = jest.fn().mockResolvedValueOnce('hashedresult');
 
@@ -78,7 +78,7 @@ describe('authenticate endpoint', () => {
         const event = {
             body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
         }
-        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1'}]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1', 'pantryId': 'p1'}]});
         dynamoDb.get = jest.fn().mockResolvedValueOnce({Item: userTable.user});
         authLib.getHashedCredentials = jest.fn().mockResolvedValueOnce('invalidHash');
 
@@ -131,13 +131,23 @@ describe('authenticate endpoint', () => {
         expect(result ? result.statusCode: false).toBe(401);
         expect(dynamoDb.query).toBeCalled();
     });
+    it('returns internal server error if there is no pantry corresponding to a username', async () => {
+        const event = {
+            body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
+        }
+
+        dynamoDb.query = jest.fn().mockResolvedValue({Count: 1, Items: [{'id': 1}]});
+        const result = await authenticate(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode: false).toBe(500);
+        expect(dynamoDb.query).toBeCalled();
+    });
 
     it('returns internal server error if gettingUserpassAndSalt fails', async () => {
         const event = {
             body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
         }
 
-        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1'}]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1', 'pantryId': 'p1'}]});
         dynamoDb.get = jest.fn().mockRejectedValueOnce({'error': 'testError'});
 
         const result = await authenticate(createEvent(event), Context(), () => {return});
@@ -150,7 +160,7 @@ describe('authenticate endpoint', () => {
             body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
         }
 
-        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1'}]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1', 'pantryId': 'p1'}]});
         dynamoDb.get = jest.fn().mockResolvedValueOnce({NoItem: 'NoItemHere!'});
 
         const result = await authenticate(createEvent(event), Context(), () => {return});
@@ -163,7 +173,7 @@ describe('authenticate endpoint', () => {
             body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
         }
 
-        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1'}]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1', 'pantryId': 'p1'}]});
         dynamoDb.get = jest.fn().mockResolvedValueOnce({Item: userTable.user});
         authLib.getHashedCredentials = jest.fn().mockRejectedValueOnce({'error': 'testError'});
 
@@ -178,7 +188,7 @@ describe('authenticate endpoint', () => {
             body: JSON.stringify({'username': 'iexist', 'password': 'yay'})
         }
         
-        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1'}]});
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Count: 1, Items: [{'id': '1', 'pantryId': 'p1'}]});
         dynamoDb.get = jest.fn().mockResolvedValueOnce({Item: userTable.user});
         authLib.getHashedCredentials = jest.fn().mockResolvedValueOnce('hashedresult');
         authLib.generateJWT = jest.fn().mockImplementationOnce(() => {throw new Error()});
