@@ -14,18 +14,13 @@ export async function fetchPantry(userId: string, pantryId: string): Promise<Fet
 /* eslint-disable */
 //@ts-ignore
 export async function createPantryIngredient(ingredient: Ingredient): Promise {
-    return  new Promise((resolve,reject) => {
-        resolve(
-            {
-                status: 200,
-                data: {
-                    message: "success"
-            }
-        });
-       
-    })
+    try {
+        return await axios.post(PANTRY_ENDPOINT, JSON.stringify({ingredients: [ingredient]}), getConfig());
+    }
+    catch(error) {  
+        return error.response;
+    }
 }
-
 /* eslint-disable */
 //@ts-ignore
 export async function editPantryIngredientApi(ingredient: Ingredient): Promise {
