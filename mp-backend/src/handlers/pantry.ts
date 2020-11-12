@@ -121,12 +121,11 @@ export const createPantry: APIGatewayProxyHandler = async (event) => {
     }
 
     const ingredients = recipeRequest.ingredients;
-    
+    const pantryId =  uuidv4();
     try {
         const ingredientData = await updateIngredients(ingredients)
-
         const newPantry: PantryTableEntry = {
-            'id': uuidv4(),
+            'id': pantryId,
             'userId': userId,
             'ingredients': ingredientData,
             'createTs': Date.now(),
@@ -157,7 +156,7 @@ export const createPantry: APIGatewayProxyHandler = async (event) => {
 
     return {
         statusCode: 201,
-        body: JSON.stringify({ message: 'success' }),
+        body: JSON.stringify({ message: 'success', id: pantryId }),
     };
 };
 
