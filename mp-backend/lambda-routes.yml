@@ -125,7 +125,7 @@ updatePantryEntry:
     handler: src/handlers/pantry.updatePantry
     events:
         - http:
-            path: api/pantry/{userId}/{pantryId}/{quantity}
+            path: api/pantry/{userId}/{pantryId}
             method: put
             cors: true
             authorizer: authenticateJWT

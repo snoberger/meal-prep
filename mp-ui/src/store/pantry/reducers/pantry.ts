@@ -1,8 +1,9 @@
 import {
-    ADD_PANTRY_INGREDIENT,
+    EDIT_PANTRY_INGREDIENT,
+    SET_PANTRY,
     TOGGLE_ADDDIALOGUE,
+    TOGGLE_EDITDIALOGUE,
     TOGGLE_PANTRYERROR,
-    UPDATE_INGREDIENTS,
     TOGGLE_DELETE_DISPLAY,
     TOGGLE_DELETE_ERROR,
     DELETE_PANTRY_INGREDIENT,
@@ -10,63 +11,71 @@ import {
 import { State } from '../../rootReducer';
 
 export type Ingredient = {
+    index: number,
     name: string,
     amount: string,
-    metric: string
+    metric: string,
+    // checked: boolean
 }
-const ingreds = [];
-for (let i = 0; i < 4; i++) {
-    ingreds.push({
-        name: 'flour',
-        amount: '2',
-        metric: 'bags'
-    });
-    ingreds.push({
-        name: 'sugar',
-        amount: '2',
-        metric: 'cups'
-    });
-    ingreds.push({
-        name: 'Corn Starch',
-        amount: '16',
-        metric: 'oz'
-    });
-    ingreds.push({
-        name: 'milk',
-        amount: '1',
-        metric: 'gallon'
-    });
+
+export type PantryObject = {
+    id: string,
+    userId: string,
+    ingredients: Array<Ingredient>,
+    createTs: string,
+    updateTs: string
 }
 // if we are testing return a default initial state since this will go away when we hook to DB
-
+type PantryState = {
+    pantry: PantryObject,
+    displayAddIngredientDiaglogue: boolean,
+    displayEditIngredientDialogue: boolean,
+    displayDeleteIngredientView: boolean,
+    currentIngredient: Ingredient,
+    alert: boolean
+}
 /* istanbul ignore next */
-const initialState = {
+const initialState: PantryState = {
     // eslint-disable-next-line
-    ingredients: process.env.NODE_ENV === 'test' ? [] : ingreds,
+    pantry: {
+        id: '',
+        userId: '',
+        ingredients: [],
+        createTs: '',
+        updateTs: ''
+    },
+    currentIngredient: { index: -1, name: '', amount: '', metric: '' },
     displayAddIngredientDiaglogue: false,
     displayDeleteIngredientView: false,
+    displayEditIngredientDialogue: false,
     alert: false,
 };
 
 const pantry = (state = initialState, action: any) => {
-    let ingredients;
-    let index;
     switch (action.type) {
-        case UPDATE_INGREDIENTS:
+        case SET_PANTRY:
             return {
-                ...state
+                ...state,
+                pantry: action.pantry
             };
         case TOGGLE_ADDDIALOGUE:
             return {
                 ...state,
                 displayAddIngredientDiaglogue: !state.displayAddIngredientDiaglogue,
             };
-        case ADD_PANTRY_INGREDIENT:
-            ingredients = state.ingredients;
-            ingredients.push(action.ingredient);
+        case TOGGLE_EDITDIALOGUE:
+            state.currentIngredient = action.ingredient;
             return {
                 ...state,
-                ingredients: ingredients
+                displayEditIngredientDialogue: !state.displayEditIngredientDialogue
+            };
+        case EDIT_PANTRY_INGREDIENT:
+            return {
+                ...state,
+                pantry: {
+                    ...state.pantry,
+                    ingredients: action.ingredients
+                }
             };
         case TOGGLE_PANTRYERROR:
             return {
@@ -79,12 +88,12 @@ const pantry = (state = initialState, action: any) => {
                 displayDeleteIngredientView: !state.displayDeleteIngredientView,
             };
         case DELETE_PANTRY_INGREDIENT:
-            ingredients = state.ingredients;
-            index = ingredients.indexOf(action.ingredients); //Only does one ingredient right now
-            ingredients.splice(index, 1);
             return {
                 ...state,
-                ingredients: ingredients
+                pantry: {
+                    ...state.pantry,
+                    ingredients: action.ingredients
+                }
             };
         case TOGGLE_DELETE_ERROR:
             return {
@@ -97,7 +106,11 @@ const pantry = (state = initialState, action: any) => {
 };
 
 export const getIngredients = (state: State) => {
-    return state.pantry.ingredients;
+    return state.pantry.pantry.ingredients;
+};
+
+export const getPantryId = (state: State) => {
+    return state.pantry.pantry.id;
 };
 
 export const getAddIngredientDialogueOpen = (state: State) => {
@@ -108,6 +121,10 @@ export const getDeleteIngredientViewOpen = (state: State) => {
     return state.pantry.displayDeleteIngredientView;
 };
 
+
+export const getEditIngredientDialogueOpen = (state: State) => {
+    return state.pantry.displayEditIngredientDialogue;
+};
 
 
 export default pantry;

@@ -2,7 +2,7 @@
 import { AWSError } from "aws-sdk";
 import  DynamoDB, { GetItemInput, PutItemInput, QueryInput, UpdateItemInput, DeleteItemInput, 
         ScanInput, GetItemOutput, PutItemOutput, QueryOutput, UpdateItemOutput, 
-        ScanOutput, DeleteItemOutput } from "aws-sdk/clients/dynamodb";
+        ScanOutput, DeleteItemOutput, BatchGetItemOutput, BatchGetItemInput } from "aws-sdk/clients/dynamodb";
 import { PromiseResult } from "aws-sdk/lib/request";
 /* eslint-enable */
 
@@ -24,6 +24,7 @@ export class DynamoDBLib {
   }
 
   get = (params: GetItemInput): Promise<PromiseResult<GetItemOutput, AWSError>> => this.client.get(params).promise();
+  batchGet = (params: BatchGetItemInput): Promise<PromiseResult<BatchGetItemOutput, AWSError>> => this.client.batchGet(params).promise();
   put =  (params: PutItemInput): Promise<PromiseResult<PutItemOutput, AWSError>> => this.client.put(params).promise();
   query = (params: QueryInput): Promise<PromiseResult<QueryOutput, AWSError>> => this.client.query(params).promise();
   update = (params: UpdateItemInput): Promise<PromiseResult<UpdateItemOutput, AWSError>> => this.client.update(params).promise();

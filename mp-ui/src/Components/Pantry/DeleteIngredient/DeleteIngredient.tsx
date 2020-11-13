@@ -13,11 +13,11 @@ interface IDeleteIngredientProps {
 
 
 interface IDeleteIngredientState {
-    // id: string,
-    // name: string;
-    // amount: string;
-    // metric: string;
-    ingredChecked: boolean
+    index: number,
+    name: string;
+    amount: string;
+    metric: string;
+    // ingredChecked: boolean
 }
 
 const mapStateToProps = (state: State /*, ownProps*/) => ({
@@ -29,7 +29,8 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         toggleDeleteIngredientDisplay: () => dispatch(toggleDeleteIngredientDisplay()),
         //I think where the checkbox over every item handling would happen
-        handleDeleteIngredient: (ingredients: Ingredient) => dispatch(handleDeleteIngredient(ingredients))
+        handleDeleteIngredient: (userId: string, pantryId: string, ingredients: Ingredient[], deleteIngred: Ingredient) =>
+            dispatch(handleDeleteIngredient(userId, pantryId, ingredients, deleteIngred))
     };
 };
 
@@ -43,7 +44,11 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type DeleteIngredientCombinedProps = PropsFromRedux & IDeleteIngredientProps;
 
 const initialState = {
-    ingredChecked: false
+    // ingredChecked: false
+    index: -1,
+    name: "",
+    amount: "",
+    metric: "",
 };
 class DeleteIngredient extends React.Component<DeleteIngredientCombinedProps, IDeleteIngredientState> {
     constructor(props: any) {
@@ -54,11 +59,19 @@ class DeleteIngredient extends React.Component<DeleteIngredientCombinedProps, ID
     }
 
     async handleSubmit() {
-        // var deletions
+        var deleteIngred: Ingredient = {
+            index: this.state.index,
+            name: this.state.name,
+            amount: this.state.amount,
+            metric: this.state.metric,
+        }
         // this.props.handleDeleteIngredient(deletions);
         // if(this.state.ingredChecked){
         //     this.props.handleDeleteIngredient()
         // }
+        this.props.handleDeleteIngredient(this.props.auth.userId,
+            this.props.auth.pantryId,
+            this.props.pantry.pantry.ingredients, deleteIngred);
         this.props.toggleDeleteIngredientDisplay();
 
         this.setState(initialState);

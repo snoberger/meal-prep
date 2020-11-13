@@ -14,10 +14,11 @@ const mockStore = configureMockStore(middlewares)
 describe("Synchronous Actions", () => {
   it('should create setAuthToken action', () => {
     const expectedAction = {
-      type: types.SET_AUTH_TOKEN,
-      authToken: 'dummyToken'
+      type: types.SET_AUTH,
+      authToken: 'dummyToken',
+      userId: '1234'
     };
-    expect(actions.setAuthToken('dummyToken')).toEqual(expectedAction);
+    expect(actions.setAuth({authToken: 'dummyToken', userId: '1234'})).toEqual(expectedAction);
   });
   it('should create invalidLoginCredentials action', () => {
     const expectedAction = {
@@ -34,14 +35,16 @@ describe("Asynchronous Actions", () => {
       return Promise.resolve({
         status: 200,
         data: {
-          message: 'dummyToken'
+          authToken: 'dummyToken',
+          userId: '1234',
+          pantryId: 'pantryId'
         }
       });
     });
 
     const expectedActions = [
       { type: types.REQUEST_AUTH_TOKEN },
-      { type: types.SET_AUTH_TOKEN, authToken: 'dummyToken' }
+      { type: types.SET_AUTH, authToken: 'dummyToken', userId:'1234', pantryId: 'pantryId' }
     ]
     const store = mockStore({ auth: { authToken: '' } })
     expect.assertions(1);

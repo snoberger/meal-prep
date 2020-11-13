@@ -6,6 +6,7 @@ import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom
 import Home from "./Components/Home/Home";
 import Pantry from "./Components/Pantry/Pantry";
 import SignUp from "./Components/SignUp/SignUp";
+import Recipes from "./Components/Recipes/Recipes";
 
 export enum AppScreens {
   HOME = '/',
@@ -42,6 +43,11 @@ class Routes extends React.Component<IRouteProps,IRouteState> {
             exact={true}
             path={AppScreens.PANTRY}
             component={Pantry}
+        />
+        <PrivateRoute
+            exact={true}
+            path={AppScreens.RECIPES}
+            component={Recipes}
         />
         <PrivateRoute
             exact={true}

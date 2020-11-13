@@ -1,5 +1,4 @@
 import { Grid, IconButton, Paper } from "@material-ui/core";
-import { RouteComponentProps } from 'react-router-dom';
 import "./Shelf.css";
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux';
@@ -9,7 +8,7 @@ import IngredientComponent from "../Ingredient/Ingredient";
 import { Add } from "@material-ui/icons";
 import { toggleAddIngredientDialogue } from "../../../store/pantry/actions/pantry";
 
-interface IShelfProps extends RouteComponentProps<any> {
+interface IShelfProps {
     shelfItems: Array<Ingredient>;
     isAddShelf: boolean;
 }

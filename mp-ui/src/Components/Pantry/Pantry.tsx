@@ -7,9 +7,11 @@ import { connect, ConnectedProps } from 'react-redux';
 import { getIngredients } from '../../store/pantry/reducers/pantry';
 import { State } from "../../store/rootReducer";
 import Closet from "./Closet/Closet";
-import AddIngredient from "./AddIngredient/AddIngredient";
-import DeleteIngredient from "./DeleteIngredient/DeleteIngredient"
-
+import AddIngredient from "./AddEditIngredient/AddIngredient/AddIngredient"
+import DeleteIngredient from "./DeleteIngredient/DeleteIngredient";
+import EditIngredient from "./AddEditIngredient/EditIngredient/EditIngredient";
+import { handleFetchPantry } from "../../store/pantry/actions/pantry";
+import { getPantryId, getUserId } from "../../store/auth/reducers/auth";
 
 interface IPantryProps extends RouteComponentProps<any> {
 }
@@ -22,13 +24,16 @@ interface IPantryState {
 const mapStateToProps = (state: State /*, ownProps*/) => {
     return {
         ...state,
-        ingredients: getIngredients(state)
+        ingredients: getIngredients(state),
+        userId: getUserId(state),
+        pantryId: getPantryId(state)
     };
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (/*dispatch: any*/) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
+        handleFetchPantry: (userId: string, pantryId: string) => (dispatch(handleFetchPantry(userId, pantryId)))
     };
 };
 const connector = connect(
@@ -40,10 +45,14 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type PantryCombinedProps = PropsFromRedux & IPantryProps;
 
 export class Pantry extends React.Component<PantryCombinedProps, IPantryState> {
+    async componentDidMount() {
+        await this.props.handleFetchPantry(this.props.userId, this.props.pantryId);
+    }
     render() {
         return (
             <Grid container justify="center" alignItems="center">
                 <AddIngredient ></AddIngredient>
+                <EditIngredient ></EditIngredient>
                 <Grid
                     item
                     container

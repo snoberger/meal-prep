@@ -1,0 +1,38 @@
+.recipe-title-text {
+    width: 100%;
+    padding-bottom: 10px;
+    text-align: initial;
+    padding-left: 5%;
+}
+
+.recipe-display {
+    width: 65%;
+    padding: 2% 0% 0% 4%;
+    overflow-y: scroll;
+}
+
+.recipe-display::-webkit-scrollbar {
+    display: none;
+}
+
+.recipe-container {
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
+}
+
+.recipe-background {
+    background-color: #e0d3af !important;
+}
+
+.secondary-container {
+    height: 90%
+}
+
+.recipe-list {
+    width: 30%
+}
+
+.step-description {
+    width: 30%
+}

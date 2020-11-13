@@ -7,7 +7,10 @@ describe('auth reducer handlers', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {})).toEqual(
       {
-        authToken: ''
+        authToken: '',
+        userId: '',
+        pantryId: '',
+        alert: undefined
       }
     );
   });
@@ -15,12 +18,14 @@ describe('auth reducer handlers', () => {
   it('should handle SET_AUTH_TOKEN', () => {
     expect(
       reducer([], {
-        type: types.SET_AUTH_TOKEN,
-        authToken: 'dummyToken'
+        type: types.SET_AUTH,
+        authToken: 'dummyToken',
+        userId: '1234'
       })
     ).toEqual(
       {
-        authToken: 'dummyToken'
+        authToken: 'dummyToken',
+        userId: '1234'
       }
     )
   })

@@ -9,6 +9,9 @@ jest.mock('aws-sdk/clients/dynamodb', ()=> {
             get = () => {
                 return {promise: mockPromise}
             }
+            batchGet = () => {
+                return {promise: mockPromise}
+            }
             put = () => {
                 return {promise: mockPromise}
             }
@@ -35,6 +38,10 @@ describe('non-local calls', ()=>{
     });
     test('get calls client promise function', async () => {
         await dynamoLib.get({ TableName:'test', Key: {}});
+        expect(mockPromise).toHaveBeenCalled();
+    })
+    test('batchGet calls client promise function', async () => {
+        await dynamoLib.batchGet({ RequestItems: {}});
         expect(mockPromise).toHaveBeenCalled();
     })
     test('put calls client promise function', async () => {
@@ -106,6 +113,11 @@ describe('non-local calls', ()=>{
     test('get calls client promise function', async () => {
         process.env.IS_OFFLINE = 'true';
         await dynamoLib.get({ TableName:'test', Key: {}});
+        expect(mockPromise).toHaveBeenCalled();
+    })
+    test('batchGet calls client promise function', async () => {
+        process.env.IS_OFFLINE = 'true';
+        await dynamoLib.batchGet({ RequestItems:{}});
         expect(mockPromise).toHaveBeenCalled();
     })
     test('put calls client promise function', async () => {

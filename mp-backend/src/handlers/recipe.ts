@@ -3,91 +3,92 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { v4 as uuidv4 } from 'uuid';
 import { getPrincipleId } from '../middleware/validation';
-import { IngredientTableEntry } from './ingredient';
-import { Ingredient, IngredientData, Ingredients, RecipeRequestBodyArray, RecipeTableEntry, Steps, Uuid } from './recipe.types'
+import { IngredientTableEntry, isIngredientResponse, updateIngredients } from './ingredient';
+import {  RecipeIngredient, RecipeIngredientData, RecipeRequestBody, RecipeTableEntry, RecipiesResponseBody } from './recipe.types'
+import { OptionalRequestBody } from './pantry.types';
 
 
-export interface RecipeRequestBody extends Record<string, string | RecipeRequestBodyArray>{
-    userId: Uuid,
-    steps: Steps,
-    ingredients: Ingredients
-}
 function determineRecipeRequestBodyFields(data: Record<string, unknown>): string  {
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
     if(!('userId' in data)) {
         return "UserId not specified";
     }
     if(!('ingredients' in data)) {
         return "Ingredients not specified";
     }
+    if(ingredients && Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount')
+                || !Object.keys(ingredient).includes('name') 
+                || !Object.keys(ingredient).includes('metric')) {
+                return "Ingredient in body malformed";
+            }
+        }
+    }
     if(!('steps' in data)) {
         return "Steps not specified";
+    }
+    if(!('name' in data)) {
+        return "Name not specified";
+    }
+    if(!('description' in data)) {
+        return "Description not specified";
     }
     return "";
 }
 function isRecipeRequestBody(data: Record<string, unknown>): data is RecipeRequestBody {
     return !determineRecipeRequestBodyFields(data);
 }
-export async function updateIngredients(ingredients: Ingredient[]): Promise<IngredientData[]> {
-    const ingredientReturn: IngredientData[] = []
-    for(let i = 0; i < ingredients.length; i++) {
-        const queryParams: DynamoDB.DocumentClient.QueryInput = {
-            TableName: 'ingredient',
-            Select: 'ALL_PROJECTED_ATTRIBUTES',
-            IndexName: 'nameToId',
-            KeyConditionExpression: '#name = :namePlaceholder',
-            ExpressionAttributeNames: {
-                '#name':'name'
-            },
-            ExpressionAttributeValues: {
-                ':namePlaceholder' : ingredients[i].name
-            },
-        };
-        let data;
-        try {
+function determineRecipiesResponseBodyFields(data: Record<string, unknown>[]): string  {
+    if(data && Array.isArray(data)) {
+        for(const recipe of data) {
 
-            data = await dynamoLib.query(queryParams);
-            // Update existing
-            if(data && data.Items && data.Items.length > 0){
-                const oldIngredient = data.Items[0]
-                ingredientReturn.push({
-                    id: String(oldIngredient.id),
-                    amount: ingredients[i].amount
-                })
-                continue
+            if(!('id' in recipe)) {
+                return "Id not specified";
             }
-            // Create new
-            const newIngredient: IngredientTableEntry = {
-                'id': uuidv4(),
-                'name': ingredients[i].name,
-                'metric': ingredients[i].metric,
-                'createTs': Date.now()
+            if(!('name' in recipe)) {
+                return "Name not specified";
             }
-            const params: DynamoDB.DocumentClient.PutItemInput = {
-                TableName: 'ingredient',
-                Item: newIngredient
-            }
-        
-            try {
-                await dynamoLib.put(params);
-                ingredientReturn.push({
-                    id: newIngredient.id,
-                    amount: ingredients[i].amount
-                })
-            } catch (e) {
-                throw {
-                    statusCode: 500,
-                    body: JSON.stringify({message: 'Internal server error'})
-                }
-            }
-        } catch (e) {
-            throw {
-                statusCode: 500,
-                body: JSON.stringify({message: 'Internal server error'})
+            if(!('description' in recipe)) {
+                return "Description not specified";
             }
         }
     }
-    return ingredientReturn
+    return "";
 }
+function isRecipiesResponseBody(data: Record<string, unknown>[]): data is RecipiesResponseBody[] {
+    return !determineRecipiesResponseBodyFields(data);
+}
+function determineRecipeResponseFields(data: Record<string, unknown>): string  {
+    const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
+    if(!("id" in data)) {
+        return "id not specified";
+    }
+    if(!("userId" in data)) {
+        return "userId not specified"
+    }
+    
+    if(!("ingredients" in data)) {
+        return "Ingredients not specified"
+    }
+    if(Array.isArray(ingredients)){
+        for( const ingredient of ingredients) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount')
+                || !Object.keys(ingredient).includes('id')) {
+                return "Ingredient in body malformed";
+            }
+        }
+    }
+    else {
+        return "Ingredients is not an array"
+    }
+    
+    return "";
+}
+function isRecipeResponseBody(data: Record<string, unknown>): data is RecipeTableEntry<RecipeIngredientData> {
+    return !determineRecipeResponseFields(data);
+}
+
 export const createRecipe: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
@@ -133,6 +134,8 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
         const newRecipe: RecipeTableEntry = {
             'id': uuidv4(),
             'userId': userId,
+            'name': recipeRequest.name,
+            'description':recipeRequest.description,
             'steps': recipeRequest.steps,
             'ingredients': ingredients,
             'createTs': Date.now(),
@@ -184,16 +187,30 @@ export const getAllRecipes: APIGatewayProxyHandler = async (event) => {
             ':userId': userId
         }
     };
-    let data;
+    const data: RecipiesResponseBody[] = [];
     try {
-        data = await dynamoLib.query(params);
+        const response = await dynamoLib.query(params);
+        const items = response.Items || []
+        if(!isRecipiesResponseBody(items)) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Recipe in database is invalid: ' + determineRecipiesResponseBodyFields(items)})
+            }
+        }
+        items.forEach((item: RecipiesResponseBody) => {
+            data.push({
+                name: item.name,
+                description: item.description,
+                id: item.id
+            })
+        })
     } catch (e) {
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Items)};
+    return {statusCode: 200, body: JSON.stringify(data)};
 }
 
 export const getRecipe: APIGatewayProxyHandler = async (event) => {
@@ -223,16 +240,80 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
             'id': recipeId
         }
     };
-    let data;
+    let recipeItem: RecipeTableEntry<RecipeIngredientData> | undefined = undefined;
+    
+    let outputRecipe: RecipeTableEntry<RecipeIngredient> | undefined = undefined;
     try {
-        data = await dynamoLib.get(params);
+        const resp = await dynamoLib.get(params);
+        if(resp.Item) {
+            if(!isRecipeResponseBody(resp.Item)) {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Recipe item is malformed: ' + determineRecipeResponseFields(resp.Item)})}
+            }
+            recipeItem = resp.Item
+        }
+        else {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error 2'})
+            }
+        }
+        
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error 2'})
+        }
+    }
+    const ingredients = recipeItem.ingredients
+    let ingredientData: IngredientTableEntry[] = []
+    try {
+        const params: DynamoDB.DocumentClient.BatchGetItemInput = {
+            RequestItems:  {
+                "ingredient": {
+                    Keys: ingredients.map((item) => {
+                        return {
+                            "id": item.id,
+                        }
+                    })
+                }
+            }
+        };
+    
+        const response = await dynamoLib.batchGet(params);
+        const responses = response.Responses
+        if(responses && isIngredientResponse(responses['ingredient'])) {
+            ingredientData = responses['ingredient']
+        }
+        else {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Malformed Ingredient in database'})
+            }
+        }
+        outputRecipe = {
+            ...recipeItem,
+            ingredients: ingredientData.map((ingredient) => {
+                const combineIngredient = ingredients.find((ingredientData: RecipeIngredientData) => {
+                    return ingredientData.id == ingredient.id
+                })
+                const newIngredient: RecipeIngredient = {
+                    amount: combineIngredient?.amount || "",
+                    ...ingredient
+                }
+                return newIngredient
+            })
+        }
+        
     } catch (e) {
         return {
             statusCode: 500,
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Item)};
+    
+    return {statusCode: 200, body: JSON.stringify(outputRecipe)};
 }    
 
 export const updateRecipe: APIGatewayProxyHandler = async (event) => {
@@ -293,11 +374,16 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
                 'userId': userId,
                 'id': recipeId
             },
-            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t",
+            UpdateExpression: "set steps = :s, ingredients = :i, updateTs = :t, #name = :n, description = :d",
             ExpressionAttributeValues:{
                 ":s":recipeRequest.steps,
                 ":i":ingredients,
+                ":d":recipeRequest.description,
+                ":n":recipeRequest.name,
                 ":t": Date.now()
+            },
+            ExpressionAttributeNames: {
+                '#name': 'name'
             },
             ReturnValues:"UPDATED_NEW"
             
