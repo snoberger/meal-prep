@@ -26,7 +26,10 @@ export  interface State {
     },
     recipes: {
       recipeList: Array<Recipe>,
-      displayRecipe: Recipe
+      displayRecipe: Recipe,
+      addStepDialogue: boolean,
+      addIngredientDialogue: boolean,
+      componentState: string
     }
 }
 

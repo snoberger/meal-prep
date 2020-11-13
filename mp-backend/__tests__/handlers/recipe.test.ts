@@ -60,15 +60,6 @@ describe('createRecipe', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
     });
 
-    it('should return status code 400 and Malformed event body: "UserId not specified if the event does not have a userId', async () => {
-        event.body = JSON.stringify({'steps': [], 'ingredients': []})
-        
-
-        const result = await createRecipe(createEvent(event), Context(), () => {return});
-        expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: UserId not specified")
-    });
-
     it('should return status code 400 and Malformed event body: "Steps not specified if the event does not have a steps field', async () => {
         event.body = JSON.stringify({'userId': '1234','name': 'test', 'description': 'desc',  'ingredients': []});
         
@@ -693,15 +684,6 @@ describe('updateRecipe', () => {
         const result = await updateRecipe(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
-    });
-
-    it('should return status code 400 and Malformed event body: "UserId not specified if the event does not have a userId', async () => {
-        event.body = JSON.stringify({'steps': [], 'ingredients': []})
-        
-
-        const result = await updateRecipe(createEvent(event), Context(), () => {return});
-        expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: UserId not specified")
     });
 
     it('should return status code 400 and Malformed event body: "Steps not specified if the event does not have a steps field', async () => {
