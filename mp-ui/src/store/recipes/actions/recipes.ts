@@ -160,7 +160,7 @@ export function handleEditRecipe(userId: string, recipe: Recipe) {
   return async (dispatch: any) => {
     try{
       if(!recipe.id){
-        throw 'missing recipeId';
+        throw new Error('missing recipeId');
       }
       return await editRecipe(userId, recipe.id, recipe).then((response: any) => {
         if(response.status === 200 && response.data.message) {
