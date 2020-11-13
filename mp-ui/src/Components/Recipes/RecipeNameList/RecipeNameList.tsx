@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { State } from "../../../store/rootReducer";
 import { Recipe } from "../../../store/recipes/reducers/recipes";
 import { Add } from "@material-ui/icons";
-import { handleFetchRecipe } from "../../../store/recipes/actions/recipes";
+import { handleFetchRecipe, setComponentState } from "../../../store/recipes/actions/recipes";
 
 interface IRecipeNameListProps  {
     recipeList: Array<Recipe>,
@@ -26,7 +26,8 @@ const mapStateToProps = (state: State, ownProps: any) => {
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        displayRecipe: (userId: string, recipeId: string) => (dispatch(handleFetchRecipe(userId, recipeId)))
+        displayRecipe: (userId: string, recipeId: string) => (dispatch(handleFetchRecipe(userId, recipeId))),
+        setComponentState: (componentState: string) => (dispatch(setComponentState(componentState)))
     };
 };
 
@@ -48,9 +49,10 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
     handleClickListItem (index: number | null, id: string) {
             this.setState({selectedIndex: index});
             if(index !== null && id !== ''){
+                this.props.setComponentState('view')
                 this.props.displayRecipe(this.props.ownProps.userId, id);
             } else {
-                //TODO: add recipe
+                this.props.setComponentState('add')
             }
             
     }

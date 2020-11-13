@@ -1,26 +1,33 @@
-import { Card, CardContent, List, ListItem, ListItemText, Typography } from "@material-ui/core";
+import { Card, CardContent, IconButton, List, ListItem, ListItemText, Typography } from "@material-ui/core";
 import "./RecipeIngredientsList.css";
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import { Ingredient } from "../../../store/pantry/reducers/pantry";
+import { Add } from "@material-ui/icons";
+import { State } from "../../../store/rootReducer";
+import { getComponentState } from "../../../store/recipes/reducers/recipes";
+import { toggleAddRecipeIngredientDialogue } from "../../../store/recipes/actions/recipes";
 
 interface IRecipeIngredientsListProps {
-    ingredients: Array<Ingredient>
+    ingredients: Array<Ingredient>,
+    componentState: string
 }
 
 interface IRecipeIngredientsListState {
 }
 // this function will not run in test
 /* istanbul ignore next */
-const mapStateToProps = (/*state: State, */ownProps: any) => {
+const mapStateToProps = (state: State, ownProps: any) => {
     return {
+        componentState: getComponentState(state),
         ...ownProps
     };
 };
 // this function will not run in test
 /* istanbul ignore next */
-const mapDispatchToProps = (/*dispatch: any*/) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
+        toggleAddIngredientDialogue: () => dispatch(toggleAddRecipeIngredientDialogue()),
     };
 };
 
@@ -35,6 +42,7 @@ type RecipeIngredientsListCombinedProps = PropsFromRedux & IRecipeIngredientsLis
 export class RecipeIngredientsList extends React.Component<RecipeIngredientsListCombinedProps,IRecipeIngredientsListState> {
     render() {
         let listItemElements: Array<any> = [];
+        console.log(this.props.ingredients)
         this.props.ingredients.forEach((ingredient:Ingredient)=> {
             listItemElements.push(
                 <ListItem key={ingredient.name + 'item'} className="ingredient-list-item">
@@ -68,18 +76,38 @@ export class RecipeIngredientsList extends React.Component<RecipeIngredientsList
                 </ListItem>
                 );
         });
-        return (
-            <Card className="display-recipe-card">
-                <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
-                        Ingredients
-                    </Typography>
-                    <List>
-                        {listItemElements}
-                    </List>
-                </CardContent>
-            </Card>
-        );
+        if(this.props.componentState === 'view'){
+            return (
+                <Card className="display-recipe-card">
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            Ingredients
+                        </Typography>
+                        <List>
+                            {listItemElements}
+                        </List>
+                    </CardContent>
+                </Card>
+            );
+        } else if(this.props.componentState === 'edit' || this.props.componentState === 'add') {
+            listItemElements.push(
+                <ListItem key={'add-item'} className="ingredient-list-item">
+                    <IconButton onClick={this.props.toggleAddIngredientDialogue}><Add/></IconButton>
+                </ListItem>)
+            return (
+                <Card className="display-recipe-card">
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            Ingredients
+                        </Typography>
+                        <List>
+                            {listItemElements}
+                        </List>
+                    </CardContent>
+                </Card>
+            );
+        }
+        
     }
         
 }
