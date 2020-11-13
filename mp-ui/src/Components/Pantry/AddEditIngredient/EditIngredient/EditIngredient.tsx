@@ -129,7 +129,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
             this.props.auth.userId, 
             this.props.auth.pantryId, 
             this.props.pantry.pantry.ingredients,
-            this.state.index)
+            this.state.index);
         this.props.toggleEditIngredientDialogue();
         await this.setState(initialState);
     }
