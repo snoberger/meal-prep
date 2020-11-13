@@ -57,6 +57,8 @@ export class AddIngredient extends React.Component<AddIngredientCombinedProps,IA
         this.setAmount = this.setAmount.bind(this);
         this.setMetric = this.setMetric.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+
         this.state = initialState;   
     }
 

@@ -1,12 +1,12 @@
-import { Card, CardContent, IconButton, List, ListItem, ListItemText, Typography } from "@material-ui/core";
+import { Card, CardContent, Hidden, IconButton, List, ListItem, ListItemText, Typography } from "@material-ui/core";
 import "./RecipeIngredientsList.css";
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import { Ingredient } from "../../../store/pantry/reducers/pantry";
-import { Add } from "@material-ui/icons";
+import { Add, Delete } from "@material-ui/icons";
 import { State } from "../../../store/rootReducer";
 import { getComponentState } from "../../../store/recipes/reducers/recipes";
-import { toggleAddRecipeIngredientDialogue } from "../../../store/recipes/actions/recipes";
+import { removeIngredientAtIndex, toggleAddRecipeIngredientDialogue } from "../../../store/recipes/actions/recipes";
 
 interface IRecipeIngredientsListProps {
     ingredients: Array<Ingredient>,
@@ -27,6 +27,7 @@ const mapStateToProps = (state: State, ownProps: any) => {
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch: any) => {
     return {
+        removeIngredientAtIndex: (index:number) => (dispatch(removeIngredientAtIndex(index))),
         toggleAddIngredientDialogue: () => dispatch(toggleAddRecipeIngredientDialogue()),
     };
 };
@@ -40,10 +41,16 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type RecipeIngredientsListCombinedProps = PropsFromRedux & IRecipeIngredientsListProps;
 
 export class RecipeIngredientsList extends React.Component<RecipeIngredientsListCombinedProps,IRecipeIngredientsListState> {
+    constructor(props: any) {
+        super(props);
+        this.handleRemoveIngredientAtIndex = this.handleRemoveIngredientAtIndex.bind(this);
+    }
+    handleRemoveIngredientAtIndex (index: number) {
+        this.props.removeIngredientAtIndex(index);
+    }
     render() {
         let listItemElements: Array<any> = [];
-        console.log(this.props.ingredients)
-        this.props.ingredients.forEach((ingredient:Ingredient)=> {
+        this.props.ingredients.forEach((ingredient:Ingredient, index:number)=> {
             listItemElements.push(
                 <ListItem key={ingredient.name + 'item'} className="ingredient-list-item">
                     <ListItemText 
@@ -73,6 +80,10 @@ export class RecipeIngredientsList extends React.Component<RecipeIngredientsList
                                 </React.Fragment>
                             }
                     />
+                    <Hidden xsUp={this.props.componentState === 'view'}>
+                        <IconButton onClick={()=>(this.handleRemoveIngredientAtIndex(index))}><Delete/></IconButton>
+                    </Hidden>
+                    
                 </ListItem>
                 );
         });
@@ -93,7 +104,7 @@ export class RecipeIngredientsList extends React.Component<RecipeIngredientsList
             listItemElements.push(
                 <ListItem key={'add-item'} className="ingredient-list-item">
                     <IconButton onClick={this.props.toggleAddIngredientDialogue}><Add/></IconButton>
-                </ListItem>)
+                </ListItem>);
             return (
                 <Card className="display-recipe-card">
                     <CardContent>

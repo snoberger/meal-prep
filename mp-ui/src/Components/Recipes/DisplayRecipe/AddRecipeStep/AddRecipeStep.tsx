@@ -73,17 +73,18 @@ export class AddRecipeStep extends React.Component<AddRecipeStepCombinedProps,IA
 
   setType(e: React.ChangeEvent<{
       name?: string | undefined;
-      value: unknown;
+      value: any;
     }>) {
-      this.setState({type: (e.target.value as string)});
+        // eslint-disable-next-line
+      this.setState({type: e.target.value});
       this.setState({isTypeValid: true});
   }
   
   setResources(e: React.ChangeEvent<{
       name?: string | undefined;
-      value: unknown;
+      value: any;
     }>) {
-      this.setState({resources: (e.target.value as string[])});
+      this.setState({resources: e.target.value});
   }
 
   setTime(e: React.ChangeEvent<HTMLInputElement>) {

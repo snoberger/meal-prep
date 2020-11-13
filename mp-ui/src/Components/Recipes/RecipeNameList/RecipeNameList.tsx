@@ -4,6 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { State } from "../../../store/rootReducer";
 import { Recipe } from "../../../store/recipes/reducers/recipes";
 import { Add } from "@material-ui/icons";
+import './RecipeNameList.css';
 import { handleFetchRecipe, setComponentState } from "../../../store/recipes/actions/recipes";
 
 interface IRecipeNameListProps  {
@@ -49,10 +50,10 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
     handleClickListItem (index: number | null, id: string) {
             this.setState({selectedIndex: index});
             if(index !== null && id !== ''){
-                this.props.setComponentState('view')
+                this.props.setComponentState('view');
                 this.props.displayRecipe(this.props.ownProps.userId, id);
             } else {
-                this.props.setComponentState('add')
+                this.props.setComponentState('add');
             }
             
     }
@@ -71,7 +72,7 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
         });
         return (
             <Paper className="recipe-list-container recipe-background" elevation={0}>
-                <List component="nav" aria-label="main mailbox folders">
+                <List component="nav" className="name-list" aria-label="main mailbox folders">
                     {recipeListElements}
                     <ListItem
                         button

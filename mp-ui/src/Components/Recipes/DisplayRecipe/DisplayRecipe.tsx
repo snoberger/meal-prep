@@ -63,16 +63,18 @@ export class DisplayRecipe extends React.Component<DisplayRecipeCombinedProps,ID
         this.props.editDisplayDescription(e.target.value);
     }
     async handleSubmit() {
-        if(this.props.componentState === 'edit'){
-            await this.props.handleEditRecipe(this.props.auth.userId, this.props.recipe)
-        } else if(this.props.componentState === 'add') {
-            await this.props.handleCreateRecipe(this.props.recipe)
+        if(this.props.recipe.ingredients.length !== 0 && this.props.recipe.steps.length !== 0){
+            if(this.props.componentState === 'edit'){
+                await this.props.handleEditRecipe(this.props.auth.userId, this.props.recipe);
+            } else if(this.props.componentState === 'add') {
+                await this.props.handleCreateRecipe(this.props.recipe);
+            }
+            await this.props.fetchRecipeList(this.props.auth.userId);
+            this.props.setComponentState('view');
         }
-        await this.props.fetchRecipeList(this.props.auth.userId);
-        this.props.setComponentState('view')
     }
     handleSetEdit() {
-        this.props.setComponentState('edit')
+        this.props.setComponentState('edit');
     }
     render() {
         const ingredientsListProps ={
