@@ -47,7 +47,7 @@ function determinePantryUpdateRequestBodyFields(data: Record<string, unknown>): 
     
     const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
     
-    if(ingredients && Array.isArray(ingredients) && ingredients.length !== 0){
+    if(ingredients && Array.isArray(ingredients)){
         for( const ingredient of ingredients) {
             if(ingredient.id){
                 if(!Object.keys(ingredient).includes('amount')){

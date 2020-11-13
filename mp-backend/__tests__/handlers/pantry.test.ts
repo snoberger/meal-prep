@@ -530,14 +530,13 @@ describe('update pantry entry', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Ingredient in body malformed")
     });
 
-    it('should return status code 400 and Malformed event body if an ingredientslist is empty', async () => {
+    it('should return status code 200 if an ingredientslist is empty', async () => {
         event.pathParameters = { 'pantryId': '1', 'userId':'1234'};
         event.body = JSON.stringify({
             "ingredients": []
         });
         const result = await updatePantry(createEvent(event), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Ingredients not specified")
+        expect(result ? result.statusCode : false).toBe(200);
     });
     it('should return status code 400 and Malformed event body if an ingredientslist is undefined', async () => {
         event.pathParameters = { 'pantryId': '1', 'userId':'1234'};

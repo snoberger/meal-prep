@@ -8,6 +8,12 @@
   float: right;
 }
 
+.deleteingredient-button {
+  margin: 15px !important;
+  float: right;
+  background-color: #ffc285 !important;
+}
+
 .close-icon {
   margin: -10px !important;
   float: right;

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
-import { handleEditPantry, toggleEditIngredientDialogue } from "../../../../store/pantry/actions/pantry";
+import { handleDeleteEditPantry, handleEditPantry, toggleEditIngredientDialogue } from "../../../../store/pantry/actions/pantry";
 import { State } from "../../../../store/rootReducer";
 import { Button, Card, CardContent, Dialog, DialogTitle, IconButton, TextField } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -31,7 +31,8 @@ const mapStateToProps = (state: State /*, ownProps*/) => ({
 const mapDispatchToProps = (dispatch: any) => {
     return {
         toggleEditIngredientDialogue: () => dispatch(toggleEditIngredientDialogue({ index: -1, name: '', amount: '', metric: '' })),
-        handleEditIngredient: (userId: string, pantryId: string, ingredients: Ingredient[], newIngredient: Ingredient) => dispatch(handleEditPantry(userId, pantryId, ingredients, newIngredient))
+        handleEditIngredient: (userId: string, pantryId: string, ingredients: Ingredient[], newIngredient: Ingredient) => dispatch(handleEditPantry(userId, pantryId, ingredients, newIngredient)),
+        handleDeleteEditIngredient: (userId: string, pantryId: string, ingredients: Ingredient[], index: number) => dispatch(handleDeleteEditPantry(userId, pantryId, ingredients, index))
     };
 };
 
@@ -61,6 +62,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
         this.setAmount = this.setAmount.bind(this);
         this.setMetric = this.setMetric.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.state = initialState;
     }
@@ -122,6 +124,16 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
 
     }
 
+    async handleDelete() {
+        this.props.handleDeleteEditIngredient(
+            this.props.auth.userId, 
+            this.props.auth.pantryId, 
+            this.props.pantry.pantry.ingredients,
+            this.state.index);
+        this.props.toggleEditIngredientDialogue();
+        await this.setState(initialState);
+    }
+
     async handleClose() {
         this.props.toggleEditIngredientDialogue();
         await this.setState(initialState);
@@ -169,6 +181,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
                                 variant="filled" />
                         </CardContent>
                         <Button onClick={this.handleSubmit} className="addingredient-button" variant="contained" color="primary">Edit Ingredient</Button>
+                        <Button onClick={this.handleDelete} className="deleteingredient-button" variant="contained">Delete Ingredient</Button>
                     </form>
                 </Card>
             </Dialog>
