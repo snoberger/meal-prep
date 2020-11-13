@@ -75,6 +75,29 @@ export function handleEditPantry(userId: string, pantryId: string, ingredients: 
   };
 }
 
+export function handleDeleteEditPantry(userId: string, pantryId: string, ingredients: Ingredient[], index: number) {
+  return async (dispatch: any) => {
+    try{
+      ingredients=ingredients.filter((ingred: Ingredient)=> (ingred.index !== index));
+      const unindexedIngredients = ingredients.map((ingred: Ingredient)=> {
+        return {
+          name: ingred.name,
+          amount: ingred.amount,
+          metric: ingred.metric
+        };
+      }); 
+      return await editPantry(userId, pantryId, unindexedIngredients).then((response: any) => {
+        if(response.status === 200) {
+          return dispatch(editedPantryIngredients(ingredients));
+        }
+        return dispatch(editPantryIngredientsError());
+      });
+    } catch(e) {
+      return dispatch(editPantryIngredientsError());
+    }
+  };
+}
+
 export function handleCreatePantry(userId: string, pantryId: string, ingredients: Ingredient[]) {
   return async (dispatch: any) => {
     try{
