@@ -17,6 +17,7 @@ interface IDeleteIngredientState {
     // name: string;
     // amount: string;
     // metric: string;
+    ingredChecked: boolean
 }
 
 const mapStateToProps = (state: State /*, ownProps*/) => ({
@@ -42,7 +43,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type DeleteIngredientCombinedProps = PropsFromRedux & IDeleteIngredientProps;
 
 const initialState = {
-
+    ingredChecked: false
 };
 class DeleteIngredient extends React.Component<DeleteIngredientCombinedProps, IDeleteIngredientState> {
     constructor(props: any) {
@@ -55,6 +56,9 @@ class DeleteIngredient extends React.Component<DeleteIngredientCombinedProps, ID
     async handleSubmit() {
         // var deletions
         // this.props.handleDeleteIngredient(deletions);
+        // if(this.state.ingredChecked){
+        //     this.props.handleDeleteIngredient()
+        // }
         this.props.toggleDeleteIngredientDisplay();
 
         this.setState(initialState);
