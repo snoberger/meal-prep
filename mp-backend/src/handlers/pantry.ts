@@ -47,7 +47,7 @@ function determinePantryUpdateRequestBodyFields(data: Record<string, unknown>): 
     
     const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
     
-    if(ingredients && Array.isArray(ingredients) && ingredients.length !== 0){
+    if(ingredients && Array.isArray(ingredients)){
         for( const ingredient of ingredients) {
             if(ingredient.id){
                 if(!Object.keys(ingredient).includes('amount')){
@@ -121,12 +121,11 @@ export const createPantry: APIGatewayProxyHandler = async (event) => {
     }
 
     const ingredients = recipeRequest.ingredients;
-    
+    const pantryId =  uuidv4();
     try {
         const ingredientData = await updateIngredients(ingredients)
-
         const newPantry: PantryTableEntry = {
-            'id': uuidv4(),
+            'id': pantryId,
             'userId': userId,
             'ingredients': ingredientData,
             'createTs': Date.now(),
@@ -157,7 +156,7 @@ export const createPantry: APIGatewayProxyHandler = async (event) => {
 
     return {
         statusCode: 201,
-        body: JSON.stringify({ message: 'success' }),
+        body: JSON.stringify({ message: 'success', id: pantryId }),
     };
 };
 
@@ -343,7 +342,7 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
     let updatedData;
     try {
         
-        await updateIngredients(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(!ingredient.id)))
+        const mappedIngredients = await updateIngredients(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(!ingredient.id)))
             
         const params: DynamoDB.DocumentClient.UpdateItemInput = {
             TableName: 'pantry',
@@ -353,7 +352,7 @@ export const updatePantry: APIGatewayProxyHandler = async (event) => {
             },
             UpdateExpression: "set ingredients = :i, updateTs = :t",
             ExpressionAttributeValues:{
-                ":i": pantryRequest.ingredients,
+                ":i": Array.prototype.concat(pantryRequest.ingredients.filter((ingredient: PantryIngredient)=>(ingredient.id)), mappedIngredients),
                 ":t": Date.now()
             },
             ReturnValues:"UPDATED_NEW"

@@ -11,15 +11,16 @@ authTable:
       - AttributeName: id
         KeyType: HASH
     GlobalSecondaryIndexes:
-      - IndexName: userToId
-        KeySchema:
-          - AttributeName: username
-            KeyType: HASH
-        Projection:
-          NonKeyAttributes:
-            - userId
-          ProjectionType: INCLUDE
-        ProvisionedThroughput:
+    - IndexName: userToId
+      KeySchema:
+        - AttributeName: username
+          KeyType: HASH
+      Projection:
+        NonKeyAttributes:
+        - userId
+        - pantryId
+        ProjectionType: INCLUDE
+      ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
     ProvisionedThroughput:

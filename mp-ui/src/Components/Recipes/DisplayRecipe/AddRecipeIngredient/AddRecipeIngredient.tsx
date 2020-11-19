@@ -1,11 +1,10 @@
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
-import { toggleAddIngredientDialogue, handleCreatePantry } from "../../../../store/pantry/actions/pantry";
+import { addIngredientDisplay, toggleAddRecipeIngredientDialogue} from "../../../../store/recipes/actions/recipes";
 import { State } from "../../../../store/rootReducer";
 import { Button, Card, CardContent, Dialog, DialogTitle, IconButton, TextField } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { Ingredient, getAddIngredientDialogueOpen } from '../../../../store/pantry/reducers/pantry';
-import "../AddIngredient.css";
+import { getAddRecipeIngredientDialogue } from "../../../../store/recipes/reducers/recipes";
 
 export interface IAddIngredientProps {
   
@@ -22,13 +21,13 @@ export interface IAddIngredientState {
 }
 const mapStateToProps = (state: State /*, ownProps*/) => ({
     ...state,
-    open: getAddIngredientDialogueOpen(state),
+    open: getAddRecipeIngredientDialogue(state),
 });
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        toggleAddIngredientDialogue: () => dispatch(toggleAddIngredientDialogue()),
-        handleCreateIngredient: (userId: string, pantryId: string, ingredients: Ingredient[]) => dispatch(handleCreatePantry(userId, pantryId, ingredients))
+        toggleAddRecipeIngredientDialogue: () => dispatch(toggleAddRecipeIngredientDialogue()),
+        addIngredientDisplay: (name: string, amount: string, metric: string) => dispatch(addIngredientDisplay(name, amount, metric))
     };
 };
 
@@ -59,6 +58,7 @@ export class AddIngredient extends React.Component<AddIngredientCombinedProps,IA
         this.setMetric = this.setMetric.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleClose = this.handleClose.bind(this);
+
         this.state = initialState;   
     }
 
@@ -87,18 +87,8 @@ export class AddIngredient extends React.Component<AddIngredientCombinedProps,IA
           await this.setState({isMetricValid: false});
       }
       if(this.state.isNameValid && this.state.isAmountValid && this.state.isMetricValid) {
-          //Update ingredient
-          var newIngredient: Ingredient = {
-              index: this.props.pantry.pantry.ingredients.length,
-              name: this.state.name,
-              amount: this.state.amount,
-              metric: this.state.metric,
-          };
-          let newIngredients = this.props.pantry.pantry.ingredients.slice();
-          newIngredients.push(newIngredient);
-          //Use newIngredient
-          this.props.handleCreateIngredient(this.props.auth.userId, this.props.auth.pantryId, newIngredients);
-          this.props.toggleAddIngredientDialogue();
+          this.props.addIngredientDisplay(this.state.name, this.state.amount, this.state.metric);
+          this.props.toggleAddRecipeIngredientDialogue();
           
           this.setState(initialState);
       }
@@ -106,7 +96,7 @@ export class AddIngredient extends React.Component<AddIngredientCombinedProps,IA
   }
   
   handleClose() {
-      this.props.toggleAddIngredientDialogue();
+      this.props.toggleAddRecipeIngredientDialogue();
   }
 
 

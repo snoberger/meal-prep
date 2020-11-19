@@ -2,7 +2,8 @@ export interface AuthenticateResponse {
     config: {},
     data: {
         authToken: string,
-        userId: string
+        userId: string,
+        pantryId: string
     },
     headers: {},
     request: XMLHttpRequest,

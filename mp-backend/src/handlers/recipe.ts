@@ -10,9 +10,6 @@ import { OptionalRequestBody } from './pantry.types';
 
 function determineRecipeRequestBodyFields(data: Record<string, unknown>): string  {
     const ingredients: Array<OptionalRequestBody> = (data.ingredients as Array<OptionalRequestBody>)
-    if(!('userId' in data)) {
-        return "UserId not specified";
-    }
     if(!('ingredients' in data)) {
         return "Ingredients not specified";
     }

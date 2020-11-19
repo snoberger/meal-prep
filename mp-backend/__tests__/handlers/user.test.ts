@@ -5,7 +5,10 @@ import { Event, createEvent } from "../utils/event.handler";
 import { authLib } from "../../src/libs/authentication";
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
-
+import { DynamoDB } from "aws-sdk";
+interface LambdaBody {
+    message: string
+}
 describe('create user', () => {
 
     beforeEach(() => {
@@ -73,16 +76,6 @@ describe('create user', () => {
 
     });
 
-    it('returns internal server error on database put failure', async () => {
-        const event = {
-            body: JSON.stringify({ 'username': 'test', 'password': 'test' })
-        };
-        dynamoDb.put = jest.fn().mockRejectedValueOnce({ 'error': 'testError' });
-        const result = await create(createEvent(event), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(500);
-        expect(dynamoDb.put).toHaveBeenCalled();
-    });
-
     it('returns internal server error on get user credentials error', async () => {
         const event = {
             body: JSON.stringify({ 'username': 'test', 'password': 'test' })
@@ -123,6 +116,36 @@ describe('create user', () => {
         };
         const result = await create(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(400);
+    });
+    
+    it('returns internal server error on create pantry error', async () => {
+        const event = {
+            body: JSON.stringify({ 'username': 'test', 'password': 'test' })
+        };
+        dynamoDb.put = jest.fn().mockImplementation((value:  DynamoDB.PutItemInput) => {
+            if(value.TableName == 'user') {
+                return Promise.resolve()
+            }
+            return Promise.reject({error: 'error'})});
+        const result = await create(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("failed to create pantry");
+    
+        expect(dynamoDb.put).toHaveBeenCalledTimes(2);
+    });
+    it('returns internal server error on create user error', async () => {
+        const event = {
+            body: JSON.stringify({ 'username': 'test', 'password': 'test' })
+        };
+        dynamoDb.put = jest.fn().mockImplementation((value: DynamoDB.PutItemInput) => {
+            if(value.TableName == 'user') {
+                return Promise.reject({error: 'error'})
+            }
+            return Promise.resolve()});
+        const result = await create(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("failed to create user");
+        expect(dynamoDb.put).toHaveBeenCalledTimes(1);
     });
 });
 
