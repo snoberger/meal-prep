@@ -1,6 +1,6 @@
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
-import { handleEditIngredient, toggleEditIngredientDialogue } from "../../../../store/pantry/actions/pantry";
+import { handleDeleteEditPantry, handleEditPantry, toggleEditIngredientDialogue } from "../../../../store/pantry/actions/pantry";
 import { State } from "../../../../store/rootReducer";
 import { Button, Card, CardContent, Dialog, DialogTitle, IconButton, TextField } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -13,6 +13,7 @@ export interface IEditIngredientProps {
 
 
 export interface IEditIngredientState {
+    index: number;
     name: string;
     amount: string;
     metric: string;
@@ -29,8 +30,9 @@ const mapStateToProps = (state: State /*, ownProps*/) => ({
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        toggleEditIngredientDialogue: () => dispatch(toggleEditIngredientDialogue({ name: '', amount: '', metric: '' })),
-        handleEditIngredient: (ingredient: Ingredient) => dispatch(handleEditIngredient(ingredient))
+        toggleEditIngredientDialogue: () => dispatch(toggleEditIngredientDialogue({ index: -1, name: '', amount: '', metric: '' })),
+        handleEditIngredient: (userId: string, pantryId: string, ingredients: Ingredient[], newIngredient: Ingredient) => dispatch(handleEditPantry(userId, pantryId, ingredients, newIngredient)),
+        handleDeleteEditIngredient: (userId: string, pantryId: string, ingredients: Ingredient[], index: number) => dispatch(handleDeleteEditPantry(userId, pantryId, ingredients, index))
     };
 };
 
@@ -43,6 +45,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type EditIngredientCombinedProps = PropsFromRedux & IEditIngredientProps;
 
 const initialState = {
+    index: -1,
     name: '',
     amount: '',
     metric: '',
@@ -59,6 +62,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
         this.setAmount = this.setAmount.bind(this);
         this.setMetric = this.setMetric.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.state = initialState;
     }
@@ -66,6 +70,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
     componentDidUpdate(prevState: any) {
         if(prevState.currentIngredient.name !== this.props.currentIngredient.name) {
             this.setState({
+                index: this.props.currentIngredient.index,
                 name: this.props.currentIngredient.name,
                 amount: this.props.currentIngredient.amount,
                 metric: this.props.currentIngredient.metric,
@@ -103,16 +108,30 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
         if (this.state.isNameValid && this.state.isAmountValid && this.state.isMetricValid) {
             //Update ingredient
             var newIngredient: Ingredient = {
+                index: this.state.index,
                 name: this.state.name,
                 amount: this.state.amount,
                 metric: this.state.metric,
             };
             //Use newIngredient
-            this.props.handleEditIngredient(newIngredient);
+            this.props.handleEditIngredient(
+                this.props.auth.userId, 
+                this.props.auth.pantryId, 
+                this.props.pantry.pantry.ingredients, newIngredient);
             this.props.toggleEditIngredientDialogue();
             await this.setState(initialState);
         }
 
+    }
+
+    async handleDelete() {
+        this.props.handleDeleteEditIngredient(
+            this.props.auth.userId, 
+            this.props.auth.pantryId, 
+            this.props.pantry.pantry.ingredients,
+            this.state.index);
+        this.props.toggleEditIngredientDialogue();
+        await this.setState(initialState);
     }
 
     async handleClose() {
@@ -135,7 +154,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
                             <TextField
                                 id="name"
                                 error={!this.state.isNameValid}
-                                // onChange={this.setName}
+                                onChange={this.setName}
                                 value={this.state.name}
                                 multiline rowsMax={2}
                                 className="addingredient-input"
@@ -162,6 +181,7 @@ class EditIngredient extends React.Component<EditIngredientCombinedProps, IEditI
                                 variant="filled" />
                         </CardContent>
                         <Button onClick={this.handleSubmit} className="addingredient-button" variant="contained" color="primary">Edit Ingredient</Button>
+                        <Button onClick={this.handleDelete} className="deleteingredient-button" variant="contained">Delete Ingredient</Button>
                     </form>
                 </Card>
             </Dialog>

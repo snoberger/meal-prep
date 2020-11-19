@@ -1,71 +1,114 @@
-import { createPantryIngredient, editPantryIngredientApi } from '../../../api/pantry';
-import { ADD_PANTRY_INGREDIENT, TOGGLE_ADDDIALOGUE, TOGGLE_PANTRYERROR, UPDATE_INGREDIENTS, TOGGLE_EDITDIALOGUE, EDIT_PANTRY_INGREDIENT } from '../actionTypes';
-import { Ingredient } from '../reducers/pantry';
+import { editPantry, fetchPantry } from '../../../api/pantry';
+import { TOGGLE_ADDDIALOGUE, TOGGLE_PANTRYERROR, TOGGLE_EDITDIALOGUE, EDIT_PANTRY_INGREDIENT, SET_PANTRY, FETCH_PANTRY_ERROR } from '../actionTypes';
+import { Ingredient, PantryObject } from '../reducers/pantry';
 
-
-
-export const updateIngredients = () => {
-  return {
-    type: UPDATE_INGREDIENTS,
-  };
-};
-
-export const createdPantryIngredient = (ingredient: Ingredient) => {
-  return {
-    type: ADD_PANTRY_INGREDIENT,
-    ingredient: ingredient,
-  };
-};
-
-export const editPantryIngredient = (ingredient: Ingredient) => {
+export const editedPantryIngredients = (ingredients: Ingredient[]) => {
   return {
     type: EDIT_PANTRY_INGREDIENT,
-    ingredient: ingredient,
+    ingredients: ingredients,
   };
 };
 
-
-export const createdPantryIngredientError = () => {
+export const editPantryIngredientsError = () => {
   return {
     type: TOGGLE_PANTRYERROR
   };
 };
 
-export const editPantryIngredientError = () => {
+export const fetchPantryError = () => {
   return {
-    type: TOGGLE_PANTRYERROR
+    type: FETCH_PANTRY_ERROR
   };
 };
 
+export const setPantry = (pantry: PantryObject) => {
+  return {
+    type: SET_PANTRY,
+    pantry
+  };
+};
 
-export function handleCreateIngredient(ingredient: Ingredient) {
+export function handleFetchPantry(userId: string, pantryId: string) {
   return async (dispatch: any) => {
     try{
-      return await createPantryIngredient(ingredient).then((response: any) => {
-        if(response.status === 200 && response.data.message) {
-          
-          return dispatch(createdPantryIngredient(ingredient));
+      return await fetchPantry(userId, pantryId).then((response: any) => {
+        if(response.status === 200 && response.data) {
+          let indexedArray = response.data.ingredients.map((ingredient: any, index: number)=> {
+              return{
+                name: ingredient.name,
+                amount: ingredient.amount,
+                metric: ingredient.metric,
+                index: index
+              };
+          });
+          response.data.ingredients = indexedArray;
+          return dispatch(setPantry(response.data));
         }
-        return dispatch(createdPantryIngredientError());
+        return dispatch(fetchPantryError());
       });
     } catch(e) {
-      return dispatch(createdPantryIngredientError());
+      return dispatch(fetchPantryError());
     }
   };
 }
 
-export function handleEditIngredient(ingredient: Ingredient) {
+export function handleEditPantry(userId: string, pantryId: string, ingredients: Ingredient[], ingredient: Ingredient) {
   return async (dispatch: any) => {
     try{
-      return await editPantryIngredientApi(ingredient).then((response: any) => {
-        if(response.status === 200 && response.data.message) {
-          
-          return dispatch(editPantryIngredient(ingredient));
+      ingredients[ingredient.index] = ingredient;
+      const unindexedIngredients = ingredients.map((ingred: Ingredient)=> {
+        return {
+          name: ingred.name,
+          amount: ingred.amount,
+          metric: ingred.metric
+        };
+      }); 
+      return await editPantry(userId, pantryId, unindexedIngredients).then((response: any) => {
+        if(response.status === 200) {
+          return dispatch(editedPantryIngredients(ingredients));
         }
-        return dispatch(editPantryIngredientError());
+        return dispatch(editPantryIngredientsError());
       });
     } catch(e) {
-      return dispatch(editPantryIngredientError());
+      return dispatch(editPantryIngredientsError());
+    }
+  };
+}
+
+export function handleDeleteEditPantry(userId: string, pantryId: string, ingredients: Ingredient[], index: number) {
+  return async (dispatch: any) => {
+    try{
+      ingredients=ingredients.filter((ingred: Ingredient)=> (ingred.index !== index));
+      const unindexedIngredients = ingredients.map((ingred: Ingredient)=> {
+        return {
+          name: ingred.name,
+          amount: ingred.amount,
+          metric: ingred.metric
+        };
+      }); 
+      return await editPantry(userId, pantryId, unindexedIngredients).then((response: any) => {
+        if(response.status === 200) {
+          return dispatch(editedPantryIngredients(ingredients));
+        }
+        return dispatch(editPantryIngredientsError());
+      });
+    } catch(e) {
+      return dispatch(editPantryIngredientsError());
+    }
+  };
+}
+
+export function handleCreatePantry(userId: string, pantryId: string, ingredients: Ingredient[]) {
+  return async (dispatch: any) => {
+    try{
+      return await editPantry(userId, pantryId, ingredients).then((response: any) => {
+        if(response.status === 200) {
+          return dispatch(editedPantryIngredients(ingredients));
+        }
+        return dispatch(editPantryIngredientsError());
+      });
+    } catch(e) {
+      return dispatch(editPantryIngredientsError());
     }
   };
 }

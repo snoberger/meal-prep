@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authLib } from '../libs/authentication';
 import crypto from 'crypto';
 import { getPrincipleId } from '../middleware/validation';
+import { PantryTableEntry } from './pantry.types';
 
 type SecureRandomString = string;
 type Timestamp = number;
@@ -14,6 +15,7 @@ interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMa
     id: Uuid,
     userpass: string,
     salt: SecureRandomString,
+    pantryId: Uuid,
     createTs: Timestamp,
     updateTs: Timestamp
 }
@@ -111,12 +113,15 @@ export const create: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({ message: 'Internal server error' })
         }
     }
+    const userId = uuidv4();
+    const pantryId = uuidv4();
 
     const newUser: UserTableEntry = {
-        'id': uuidv4(),
+        'id': userId,
         'username': userRequest.username,
         'userpass': userPassHash,
         'salt': salt,
+        'pantryId': pantryId,
         'createTs': Date.now(),
         'updateTs': Date.now()
     }
@@ -128,10 +133,32 @@ export const create: APIGatewayProxyHandler = async (event) => {
 
     try {
         await dynamoLib.put(params);
+
+        const newPantry: PantryTableEntry = {
+            'id': pantryId,
+            'userId': userId,
+            'ingredients': [],
+            'createTs': Date.now(),
+            'updateTs': Date.now()
+        }
+    
+        const pantryParams: DynamoDB.DocumentClient.PutItemInput = {
+            TableName: 'pantry',
+            Item: newPantry,
+        }
+    
+        try {
+            await dynamoLib.put(pantryParams);
+        } catch (e) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({message: 'Internal server error, failed to create pantry'})
+            }
+        }
     } catch (e) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Internal server error' })
+            body: JSON.stringify({ message: 'Internal server error, failed to create user' })
         }
     }
 

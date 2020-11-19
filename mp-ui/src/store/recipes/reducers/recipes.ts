@@ -1,4 +1,4 @@
-import { SET_DISPLAY_RECIPE, SET_RECIPE_LIST } from '../actionTypes';
+import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME } from '../actionTypes';
 import { State } from '../../rootReducer';
 import { Ingredient } from '../../pantry/reducers/pantry';
 
@@ -21,10 +21,22 @@ export type RecipeStep = {
 const initialState = {
     // eslint-disable-next-line
     recipeList: [],
-    displayRecipe: {}
+    // eslint-disable-next-line
+    displayRecipe: {
+        id: '',
+        name: '',
+        description: '',
+        ingredients: [],
+        steps: []
+    },
+    componentState: '',
+    addStepDialogue: false,
+    addIngredientDialogue: false
 };
 
 const recipes = (state = initialState, action: any) => {
+    let ingredients: Ingredient[];
+    let steps: RecipeStep[];
     switch (action.type) {
         case SET_RECIPE_LIST:
             return {
@@ -35,6 +47,86 @@ const recipes = (state = initialState, action: any) => {
             return {
                 ...state,
                 displayRecipe: action.recipe
+            };
+        case TOGGLE_ADDDIALOGUE:
+            return {
+                ...state,
+                addStepDialogue: !state.addStepDialogue
+            };
+        case TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE:
+            return {
+                ...state,
+                addIngredientDialogue: !state.addIngredientDialogue
+            };
+        case SET_COMPONENT_STATE:
+            return {
+                ...state,
+                componentState: action.componentState
+            };
+        case SET_COMPONENT_STATE_ADD:
+            return {
+                ...state,
+                displayRecipe: {...initialState.displayRecipe},
+                componentState: action.componentState
+            };
+        case UPDATE_DISPLAY_NAME:
+            return {
+                ...state,
+                displayRecipe: {
+                    ...state.displayRecipe,
+                    name: action.name
+                }
+            };
+        case UPDATE_DISPLAY_DESCRIPTION:
+            return {
+                ...state,
+                displayRecipe: {
+                    ...state.displayRecipe,
+                    description: action.description
+                }
+            };
+        case ADD_DISPLAY_INGREDIENT:
+            ingredients = state.displayRecipe.ingredients;
+            ingredients.push(action.ingredient);
+            return {
+                ...state,
+                displayRecipe: {
+                    ...state.displayRecipe,
+                    ingredients: ingredients.slice()
+                }
+            };
+        case REMOVE_INGREDIENT_AT_INDEX:
+            ingredients = state.displayRecipe.ingredients;
+            ingredients.splice(action.index, 1);
+            return {
+                ...state,
+                displayRecipe: {
+                    ...state.displayRecipe,
+                    ingredients: ingredients.slice()
+                }
+            };
+        case ADD_DISPLAY_STEP:
+            steps = state.displayRecipe.steps;
+            steps.push(action.step);
+            return {
+                ...state,
+                displayRecipe: {
+                    ...state.displayRecipe,
+                    steps: steps.slice()
+                }
+            };
+        case REMOVE_STEP_AT_INDEX:
+            steps = state.displayRecipe.steps;
+            steps.splice(action.index, 1);
+            steps.forEach((step: any, index:number)=>{
+                step.order = index;
+            });
+            return {
+                ...state,
+                displayRecipe: {
+                    ...state.displayRecipe,
+                    steps: steps.slice()
+                }
             };
         default:
             return {...state};
@@ -47,6 +139,19 @@ export const getRecipeList = (state: State) => {
 
 export const getDisplayRecipe = (state: State): Recipe => {
     return state.recipes.displayRecipe;
+};
+
+export const getAddRecipeStepDialogueOpen = (state: State): boolean => {
+    return state.recipes.addStepDialogue;
+};
+
+export const getAddRecipeIngredientDialogue = (state: State): boolean => {
+    return state.recipes.addIngredientDialogue;
+};
+
+
+export const getComponentState = (state: State): string => {
+    return state.recipes.componentState;
 };
 
 export default recipes;

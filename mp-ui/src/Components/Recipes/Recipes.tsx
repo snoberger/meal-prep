@@ -5,7 +5,7 @@ import "./Recipes.css";
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { State } from "../../store/rootReducer";
-import { getRecipeList } from "../../store/recipes/reducers/recipes";
+import { getComponentState, getRecipeList } from "../../store/recipes/reducers/recipes";
 import { handleFetchRecipeList } from "../../store/recipes/actions/recipes";
 import { getUserId } from "../../store/auth/reducers/auth";
 import RecipeNameList from "./RecipeNameList/RecipeNameList";
@@ -22,7 +22,8 @@ const mapStateToProps = (state: State /*, ownProps*/) => {
     return {
         ...state,
         recipeList: getRecipeList(state),
-        userId: getUserId(state)
+        userId: getUserId(state),
+        componentState: getComponentState(state)
     };
 };
 

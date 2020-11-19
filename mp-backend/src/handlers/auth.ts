@@ -94,6 +94,7 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     const user: DynamoDB.AttributeMap = result.Items[0];
     let userId: string;
+    let pantryId: string;
     if(user && user.id) {
         userId = user.id as string;
     } else {
@@ -102,7 +103,15 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-
+    if(user && user.pantryId) {
+        pantryId = user.pantryId as string;
+    } else {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    
     let userpassResult: DynamoDB.GetItemOutput;
     try {
         userpassResult = await getUserpassAndSalt(userId);
@@ -157,7 +166,7 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     return {
         statusCode: 200,
-        body: JSON.stringify({authToken: JWTToken, userId: userId})
+        body: JSON.stringify({authToken: JWTToken, userId: userId, pantryId: pantryId})
     }
 };
 
@@ -171,8 +180,30 @@ export const authenticateToken: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Not authorized'})
         }
     }
-    return Promise.resolve({
-        statusCode: 200,
-        body: JSON.stringify({message: userId })
-    });
+
+    const params: DynamoDB.DocumentClient.GetItemInput = {
+        TableName: 'user',
+        Key: {
+            'id': userId
+        }
+    };
+    let data;
+    try {
+        data = await dynamoLib.get(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    if(data.Item) {
+        return Promise.resolve({
+            statusCode: 200,
+            body: JSON.stringify({userId: userId, pantryId: data.Item.pantryId })
+        });
+    }
+    return {
+        statusCode: 500,
+        body: JSON.stringify({message: 'Internal server error'})
+    }
 }

@@ -1,0 +1,13 @@
+.recipe-list-container {
+    max-height: -webkit-fill-available;   
+    display: flex;
+    flex-direction: column;
+}
+.name-list {
+    height: 85%;
+    overflow-y: scroll;
+}
+
+.name-list::-webkit-scrollbar {
+    display: none;
+}

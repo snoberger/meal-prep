@@ -11,3 +11,14 @@ export interface FetchRecipeListResponse {
     status: number,
     statusText: string
 }
+
+export interface PostRecipeListResponse {
+    config: {},
+    data:  {
+        message: string
+    },
+    headers: {},
+    request: XMLHttpRequest,
+    status: number,
+    statusText: string
+}

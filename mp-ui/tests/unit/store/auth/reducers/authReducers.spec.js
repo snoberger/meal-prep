@@ -9,6 +9,7 @@ describe('auth reducer handlers', () => {
       {
         authToken: '',
         userId: '',
+        pantryId: '',
         alert: undefined
       }
     );
