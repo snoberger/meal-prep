@@ -15,7 +15,7 @@ export interface CalendarRequestBody extends Record<string, string | number>{
 export interface CalendarTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     id: Uuid,
     userId: Uuid,
-    time: Timestamp,
+    time: number,
     notify: string,
     description: string,
     createTs: Timestamp,
