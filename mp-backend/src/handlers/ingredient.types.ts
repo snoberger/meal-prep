@@ -10,7 +10,7 @@ export interface IngredientData {
 
 export type Ingredients = Ingredient[]
 
-export interface Ingredient {
+export interface Ingredient extends Record<string, unknown> {
     id?: Uuid,
     amount: string,
     name: string,

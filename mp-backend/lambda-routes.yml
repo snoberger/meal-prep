@@ -137,3 +137,11 @@ deletePantryEntry:
             method: delete
             cors: true
             authorizer: authenticateJWT
+generateGroceryList:
+    handler: src/handlers/grocery.generate
+    events:
+        - http:
+            path: api/grocery-list
+            method: post
+            cors: true
+            authorizer: authenticateJWT
