@@ -20,9 +20,12 @@ function determineCalendarRequestBodyFields(data: Record<string, unknown>): stri
     }
     return "";
 }
+
 function isCalendarRequestBody(data: Record<string, unknown>): data is CalendarRequestBody {
     return !determineCalendarRequestBodyFields(data);
 }
+
+
 export const createCalendar: APIGatewayProxyHandler = async (event) => {
     let data: Record<string, unknown>;
     if (event && event.body) {
@@ -92,3 +95,43 @@ export const createCalendar: APIGatewayProxyHandler = async (event) => {
         body: JSON.stringify({ message: 'success' }),
     };
 };
+
+export const getCalendar: APIGatewayProxyHandler = async (event) => {
+    if(!event || !event.pathParameters || !event.pathParameters.userId || !event.pathParameters.calendarId) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+    
+    const pathParameters = event.pathParameters;
+    let userId: string;
+    try {
+        userId = getPrincipleId(event);
+    } catch {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({message: 'Not authorized'})
+        }
+    }
+    const calendarId = pathParameters.calendarId;
+
+    const params: DynamoDB.DocumentClient.GetItemInput = {
+        TableName: 'calendar',
+        Key: {
+            'userId': userId,
+            'id': calendarId
+        }
+    };
+    let data;
+    try {
+        data = await dynamoLib.get(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    return {statusCode: 200, body: JSON.stringify(data.Item)};
+    
+}    

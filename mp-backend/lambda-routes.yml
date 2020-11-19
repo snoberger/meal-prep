@@ -145,3 +145,12 @@ createCalendar:
             method: post
             cors: true
             authorizer: authenticateJWT
+getCalendar:
+    handler: src/handlers/calendar.getCalendar
+    events:
+        - http:
+            path: api/calendar/{userId}/{calendarId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+    
