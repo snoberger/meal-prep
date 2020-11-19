@@ -137,3 +137,11 @@ deletePantryEntry:
             method: delete
             cors: true
             authorizer: authenticateJWT
+createCalendar:
+    handler: src/handlers/calendar.createCalendar
+    events:
+        - http:
+            path: api/calendar
+            method: post
+            cors: true
+            authorizer: authenticateJWT
