@@ -36,3 +36,6 @@
 .step-description {
     width: 30%
 }
+.main-container {
+    margin-bottom: 10vh !important;
+}

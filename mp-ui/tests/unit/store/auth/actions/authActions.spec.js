@@ -36,14 +36,15 @@ describe("Asynchronous Actions", () => {
         status: 200,
         data: {
           authToken: 'dummyToken',
-          userId: '1234'
+          userId: '1234',
+          pantryId: 'pantryId'
         }
       });
     });
 
     const expectedActions = [
       { type: types.REQUEST_AUTH_TOKEN },
-      { type: types.SET_AUTH, authToken: 'dummyToken', userId:'1234' }
+      { type: types.SET_AUTH, authToken: 'dummyToken', userId:'1234', pantryId: 'pantryId' }
     ]
     const store = mockStore({ auth: { authToken: '' } })
     expect.assertions(1);

@@ -10,11 +10,17 @@ describe('pantry reducer handlers', () => {
     process.env.TESTING = true;
     expect(reducer(undefined, {})).toEqual(
       {
-        alert: false,
-        displayAddIngredientDiaglogue: false,
-        displayEditIngredientDialogue: false,
-        ingredients: [],
-        currentIngredient: {name: '', metric: '', amount: ''}
+          pantry: {
+              id: '',
+              userId: '',
+              ingredients: [],
+              createTs: '',
+              updateTs: ''
+          },
+          currentIngredient: {index: -1, name: '', amount: '', metric: ''},
+          displayAddIngredientDiaglogue: false,
+          displayEditIngredientDialogue: false,
+          alert: false,
       }
     );
     // eslint-disable-next-line no-undef
