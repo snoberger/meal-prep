@@ -2,8 +2,10 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { getPrincipleId } from '../middleware/validation';
-import { RecipeTableEntry } from './recipe.types';
-import { getPantry, getAllPantry } from "../handlers/pantry";
+import { RecipeTableEntry, RecipeIngredientData } from './recipe.types';
+import { getAllPantry } from "../handlers/pantry";
+import { PantryIngredientData, PantryTableEntry } from "./pantry.types";
+import { Ingredient } from "./ingredient.types";
 
 type Uuid = string;
 type RecipeId = Uuid;
@@ -26,12 +28,32 @@ function isGroceryListRequestBody(data: Record<string, unknown>): data is Grocer
     return 'recipes' in data && data.recipes instanceof Array;
 }
 
-function ingredientMappingToString(map: IngredientMapping): string {
+// TOOD: this type guard could use somework
+function isPantryTableEntryArray(data: Record<string, unknown>[]): data is PantryTableEntry[] {
+    return data.length > 0 && 'ingredients' in data[0];
+}
+
+function ingredientMappingToString(recipeMap: IngredientMapping, pantryMap: IngredientMapping): string {
     let str = "";
 
-    map.forEach((metricMap, name) => {
+    recipeMap.forEach((metricMap, name) => {
         metricMap.forEach((amount, metric) => {
-            str += `${name} - ${amount} ${metric}\n`;
+            let ingredientsYouHave = "You have: ";
+            if(pantryMap.has(name)) {
+                const pantryMetricMap: Map<IngredientMetric, IngredientAmount> | undefined = pantryMap.get(name);
+                if(pantryMetricMap) {
+                    pantryMetricMap.forEach((amount, metric) => {
+                        if(ingredientsYouHave == 'You have: ')
+                            ingredientsYouHave += `${amount} ${metric}`
+                        else
+                            ingredientsYouHave += `, ${amount} ${metric}`
+                    });
+                }
+            }
+            if(ingredientsYouHave != 'You have: ')
+                str += `${name} - ${amount} ${metric} (${ingredientsYouHave})\n`;
+            else
+                str += `${name} - ${amount} ${metric}\n`;
         });
     });
 
@@ -40,20 +62,20 @@ function ingredientMappingToString(map: IngredientMapping): string {
 
 function fractionToDecimal(fraction: string): number {
     // We are already a number
-    if(!isNaN(+fraction) && !isNaN(parseFloat(fraction))) {
+    if (!isNaN(+fraction) && !isNaN(parseFloat(fraction))) {
         return parseFloat(fraction);
     }
 
-    if(fraction.includes("/")) {
+    if (fraction.includes("/")) {
         const parts = fraction.split('/');
         let numerator = 0;
         let denominator = 0;
-        if(!isNaN(+parts[0]) && !isNaN(parseFloat(parts[0]))) {
+        if (!isNaN(+parts[0]) && !isNaN(parseFloat(parts[0]))) {
             numerator = parseFloat(parts[0]);
         } else {
             throw new Error("Not a valid fraction");
         }
-        if(!isNaN(+parts[1]) && !isNaN(parseFloat(parts[1]))) {
+        if (!isNaN(+parts[1]) && !isNaN(parseFloat(parts[1]))) {
             denominator = parseFloat(parts[1]);
         } else {
             throw new Error("Not a valid fraction");
@@ -68,7 +90,7 @@ function fractionToDecimal(fraction: string): number {
 // If an amount is not parsable, it will not be added to the list.
 // This is because amounts should have been validated somewhere else, either in the backend
 // when creating a recipe/pantry item or on the frontend when the user in inputting data.
-function buildCollatedIngredients(ingredients: Array<CollatedIngredientEntry>, pantry: IngredientMapping): IngredientMapping {
+function buildCollatedIngredients(ingredients: Array<CollatedIngredientEntry>): IngredientMapping {
     const collatedIngredients: IngredientMapping = new Map<IngredientName, Map<IngredientMetric, IngredientAmount>>();
     for (const ingredient of ingredients) {
         if (collatedIngredients.has(ingredient.name.toLowerCase())) {
@@ -133,6 +155,24 @@ function generateGetIngredientParameters(ingredientId: Uuid) {
     return params;
 }
 
+async function collateIngredientData(ingredient: RecipeIngredientData | PantryIngredientData): Promise<CollatedIngredientEntry> {
+    const ingredientData = await dynamoLib.get(generateGetIngredientParameters(ingredient.id));
+
+    if (!ingredientData.Item) {
+        throw new Error('Could not lookup ingredient id');
+    }
+
+    const allIngredientData: Ingredient = <Ingredient>ingredientData.Item;
+
+    const collatedIngredient: CollatedIngredientEntry = {
+        'name': allIngredientData.name,
+        'metric': allIngredientData.metric,
+        'amount': ingredient.amount
+    }
+    
+    return collatedIngredient;
+}
+
 export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
     let userId: Uuid;
     try {
@@ -171,11 +211,46 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
     }
 
     // Build the ingredient mapping of ingredients that we already have
-    event.pathParameters = {};
+    event.pathParameters = event.pathParameters || {};
     event.pathParameters.userId = userId;
-    const pantryId = await getAllPantry(event, context, cb);
-    console.log(pantryId);
+    let pantryItemsResponse: {statusCode: number, body: string};
+    try {
+        pantryItemsResponse = await getAllPantry(event, context, cb) as { statusCode: number, body: string };
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Internal server error' })
+        }
+    }
     
+    let pantryEntries: PantryTableEntry[] | undefined;
+    try {
+        const temp: Record<string, unknown>[] = JSON.parse(pantryItemsResponse.body) as Record<string, unknown>[];
+        if(isPantryTableEntryArray(temp)) {
+            pantryEntries = temp;
+        }
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Internal server error' })
+        }
+    }
+
+    if(!pantryEntries) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Internal server error' })
+        }
+    }
+
+    const pantryIngredients: Array<CollatedIngredientEntry> = [];
+    for(const pantry of pantryEntries) {
+        for(const ingredient of pantry.ingredients) {
+            pantryIngredients.push(await collateIngredientData(ingredient));
+        }
+    }
+
+    const pantryMapping: IngredientMapping = buildCollatedIngredients(pantryIngredients);
 
     // Get the ingredients that are necessary
     const allRecipeIds: Array<RecipeId> = (<GroceryListRequestBody>data).recipes;
@@ -184,26 +259,16 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         try {
             const result = await dynamoLib.get(generateGetRecipeParameters(userId, id));
 
-            if(!result.Item) {
+            if (!result.Item) {
                 continue;
             }
 
-            const asEntry = <RecipeTableEntry>result.Item;
-            for(const ingredient of asEntry.ingredients) {
-                const ingredientData = await dynamoLib.get(generateGetIngredientParameters(ingredient.id));
-                if(!ingredientData.Item) {
-                    continue;
-                }
-                const ing: Ingredient = <Ingredient>ingredientData.Item;
 
-                const thisIngredient: CollatedIngredientEntry = {
-                    'name': ing.name,
-                    'metric': ing.metric,
-                    'amount': ingredient.amount
-                }
-                allIngredients.push(thisIngredient);
+            const asEntry = <RecipeTableEntry>result.Item;
+            for (const ingredient of asEntry.ingredients) {
+                allIngredients.push(await collateIngredientData(ingredient));
             }
-            
+
         } catch (e) {
             return {
                 statusCode: 400,
@@ -212,9 +277,10 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         }
     }
 
+    const recipeMapping: IngredientMapping = buildCollatedIngredients(allIngredients);
     let stringifiedIngredients = "";
     try {
-        stringifiedIngredients = ingredientMappingToString(buildCollatedIngredients(allIngredients));
+        stringifiedIngredients = ingredientMappingToString(recipeMapping, pantryMapping);
     } catch (e) {
         return {
             statusCode: 500,
