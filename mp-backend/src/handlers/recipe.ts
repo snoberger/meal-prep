@@ -70,12 +70,8 @@ function determineRecipeResponseFields(data: Record<string, unknown>): string  {
     }
     if(Array.isArray(ingredients)){
         for( const ingredient of ingredients) {
-            if(!ingredient 
-                || !Object.keys(ingredient).includes('amount')
-                || !Object.keys(ingredient).includes('id')
-                || !Object.keys(ingredient).includes('amount')
-                || !Object.keys(ingredient).includes('metric')
-            ) {
+            if(!ingredient || !Object.keys(ingredient).includes('amount')
+                || !Object.keys(ingredient).includes('id')) {
                 return "Ingredient in body malformed";
             }
         }
@@ -130,7 +126,7 @@ export const createRecipe: APIGatewayProxyHandler = async (event) => {
         }
     }
     try {
-        const ingredients = await updateIngredients(recipeRequest.ingredients);
+        const ingredients = await updateIngredients(data.ingredients)
         
         const newRecipe: RecipeTableEntry = {
             'id': uuidv4(),
@@ -367,7 +363,7 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
     const recipeId = pathParameters.recipeId;
     let updatedData;
     try {
-        const ingredients = await updateIngredients(recipeRequest.ingredients);
+        const ingredients = await updateIngredients(recipeRequest.ingredients)
 
         const params: DynamoDB.DocumentClient.UpdateItemInput = {
             TableName: 'recipe',
