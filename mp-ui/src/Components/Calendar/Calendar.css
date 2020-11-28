@@ -1,0 +1,7 @@
+.calendar-container {
+    display: inline-block;
+    padding: 10px
+}
+.react-calendar {
+    width: 50vw
+}

@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { getPrincipleId } from "../middleware/validation";
@@ -6,8 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { CalendarRequestBody, CalendarTableEntry } from "./calendar.types";
 
 function determineCalendarRequestBodyFields(data: Record<string, unknown>): string  {
-    if(!('time' in data)) {
-        return "Time not specified";
+    if(!('date' in data)) {
+        return "Date not specified";
     }
     if(!('notify' in data)) {
         return "Notify not specified";
@@ -68,7 +68,7 @@ export const createCalendar: APIGatewayProxyHandler = async (event) => {
         const newCalendarEntry: CalendarTableEntry = {
             'id': uuidv4(),
             'userId': userId,
-            'time': calendarRequest.time,
+            'date': calendarRequest.date,
             'notify': calendarRequest.notify,
             'description': calendarRequest.description,
             'createTs': Date.now(),
@@ -92,6 +92,45 @@ export const createCalendar: APIGatewayProxyHandler = async (event) => {
         body: JSON.stringify({ message: 'success' }),
     };
 };
+
+export const getAllCalendar: APIGatewayProxyHandler = async (event) => {
+    if(!event || !event.pathParameters || !event.pathParameters.userId) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+    
+    let userId: string;
+    try {
+        userId = getPrincipleId(event);
+    } catch {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({message: 'Not authorized'})
+        }
+    }
+    const params: DynamoDB.DocumentClient.QueryInput = {
+        TableName: 'calendar',
+        KeyConditionExpression: '#userId = :userId',
+        ExpressionAttributeNames: {
+            '#userId': 'userId'
+        },
+        ExpressionAttributeValues: {
+            ':userId': userId
+        }
+    };
+    let data;
+    try {
+        data = await dynamoLib.query(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    return {statusCode: 200, body: JSON.stringify(data.Items)};
+}
 
 export const getCalendar: APIGatewayProxyHandler = async (event) => {
     if(!event || !event.pathParameters || !event.pathParameters.userId || !event.pathParameters.calendarId) {
@@ -183,12 +222,12 @@ export const updateCalendar: APIGatewayProxyHandler = async (event) => {
             'userId': userId,
             'id': event.pathParameters.calendarId
         },
-        UpdateExpression: "set #t = :t, notify = :n, description = :d, updateTs = :u",
+        UpdateExpression: "set #d = :da, notify = :n, description = :d, updateTs = :u",
         ExpressionAttributeNames: {
-            "#t": "time"
+            "#d": "date"
         },
         ExpressionAttributeValues: {
-            ":t": calendarRequest.time,
+            ":da": calendarRequest.date,
             ":n": calendarRequest.notify,
             ":d": calendarRequest.description,
             ":u": Date.now()
@@ -201,7 +240,7 @@ export const updateCalendar: APIGatewayProxyHandler = async (event) => {
     } catch (e) {
         return {
             statusCode: 500,
-            body: JSON.stringify({message: 'Internal server error1'})
+            body: JSON.stringify({message: 'Internal server error'})
         }
     }
     
