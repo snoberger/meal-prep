@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyHandler } from "aws-lambda";
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import dynamoLib from '../libs/dynamodb-lib';
 import { getPrincipleId } from "../middleware/validation";
