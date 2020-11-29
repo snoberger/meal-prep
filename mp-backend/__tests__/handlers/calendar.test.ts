@@ -2,7 +2,9 @@ import { expect } from "@jest/globals";
 import { Event, createEvent } from "../utils/event.handler";
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
-import { createCalendar, deleteCalendar, getCalendar, updateCalendar } from "../../src/handlers/calendar";
+import { createCalendar, deleteCalendar, getAllCalendar, getCalendar, updateCalendar } from "../../src/handlers/calendar";
+import dynamodbLib from "../../src/libs/dynamodb-lib";
+import { CalendarRequestBody } from "../../src/handlers/calendar.types";
 
 
 interface LambdaBody {
@@ -44,7 +46,7 @@ describe('createCalendar', () => {
     });
 
     it('should return 200 and success message when putting a new calendar event', async () => {
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes', 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes', 'description': 'desc'});
         
         const result = await createCalendar(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode: false).toBe(201);
@@ -58,17 +60,17 @@ describe('createCalendar', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
     });
 
-    it('should return status code 400 and Malformed event body: "Time not specified if the event does not have a time field', async () => {
+    it('should return status code 400 and Malformed event body: "Date not specified if the event does not have a time field', async () => {
         event.body = JSON.stringify({'userId': '1234', 'notify': 'yes', 'description': 'desc'});
         
 
         const result = await createCalendar(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Time not specified")
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Date not specified")
     });
 
     it('should return status code 400 and Malformed event body: "Notify not specified if the event does not have a notify field', async () => {
-        event.body = JSON.stringify({'userId': '1234', 'time': 1, 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234', 'date': new Date(), 'description': 'desc'});
         
 
         const result = await createCalendar(createEvent(event), Context(), () => {return});
@@ -76,7 +78,7 @@ describe('createCalendar', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Notify not specified")
     });
     it('should return status code 400 and Malformed event body: "Description not specified if the event does not have a description field', async () => {
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes'});
         
 
         const result = await createCalendar(createEvent(event), Context(), () => {return});
@@ -86,7 +88,7 @@ describe('createCalendar', () => {
 
 
     it('should return status code 500 and Internal server error if dynamoDB.put fails', async () => {
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes', 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes', 'description': 'desc'});
         dynamoDb.put = jest.fn().mockRejectedValueOnce({'error': 'Test Error'});
         
         const result = await createCalendar(createEvent(event), Context(), () => {return});
@@ -95,7 +97,7 @@ describe('createCalendar', () => {
     });
 
     it('should return Not authorized and status code 401 if no prinicpalId', async () => {
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes', 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes', 'description': 'desc'});
         event.principalId = undefined;
 
         const result = await createCalendar(createEvent(event), Context(), () => {return});
@@ -104,13 +106,110 @@ describe('createCalendar', () => {
     });
     
 });
+describe('getAllCalendarEntries', () => {
+    const curDate = new Date(Date.now())
+    const calendarTable = {
+        calendar: {
+            'userId': '1234',
+            'id': '1',
+            'date': curDate,
+            'description': 'desc',
+            'notify': 'yes'
+
+        },
+        calendar2: {
+            'userId': '1234',
+            'id': '2',
+            'date':curDate,
+            'description': 'desc',
+            'notify': 'yes'
+
+
+        }
+    };
+    let event: Event;
+    beforeEach(() => {
+        jest.resetModules();
+        dynamoDb.query = jest.fn();
+        event = {
+            principalId: "1234",
+        };
+    });
+
+    afterAll(() => {
+        jest.resetAllMocks();
+        jest.resetModules();
+    });
+
+    it('should return all calendar events based on userId', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({Item: [calendarTable.calendar, calendarTable.calendar2]});
+        
+        const result = await getAllCalendar(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode: false).toBe(200);
+        expect(dynamoDb.query).toBeCalled();
+    });
+
+    
+    it('should return status code 400 and Malformed event body if the event does not have pathParameters', async () => {
+
+        const result = await getAllCalendar(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    it('should return status code 400 and Malformed event body if the pathparameters does not have userId', async () => {
+        event.pathParameters = {'recipeId': '1'};
+
+        const result = await getAllCalendar(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    it('should return status code 500 and Internal server error if dynamoDB.query fails', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamoDb.query = jest.fn().mockRejectedValueOnce({'error': 'Test Error'});
+        
+        const result = await getAllCalendar(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(dynamoDb.query).toBeCalled();
+    });
+
+    it('should return Not authorized and status code 401 if no prinicpalId', async () => {
+        event.pathParameters = {'userId': '1234'};
+        event.principalId = undefined;
+
+        const result = await getAllCalendar(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(401);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
+    });
+    it('should return', async () => {
+        event.pathParameters = {'userId': '1234'};
+        dynamodbLib.query = jest.fn().mockResolvedValueOnce({Items: [
+            {
+                id: 'recipeId1',
+                date: curDate,
+                notify: 'yes',
+                description: 'description'
+            }
+        ]});
+        const result = await getAllCalendar(createEvent(event), Context(), () => {return});
+        expect(result ? result.statusCode : false).toBe(200);
+        const calendarItems = result ? (<CalendarRequestBody[]>JSON.parse(result.body)) : [];
+        expect(calendarItems[0].id).toBe('recipeId1')
+        expect(calendarItems[0].notify).toBe('yes')
+        expect(calendarItems[0].description).toBe('description')
+    });
+
+
+});
 
 describe('getCalendar', () => {
     const CalendarTable = {
         Calendar: {
             'userId': '1234',
             'id': '1',
-            'time': 1,
+            'date': new Date(),
             'notify': 'test',
             'description': 'hi'
 
@@ -201,7 +300,7 @@ describe('update Calendar entry', () => {
 
     it('should return 200 and success message when putting a new Calendar', async () => {
         event.pathParameters = { 'userId': '1234', 'calendarId': '1' };
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes', 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes', 'description': 'desc'});
 
         const result = await updateCalendar(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(200);
@@ -214,19 +313,19 @@ describe('update Calendar entry', () => {
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
     });
 
-    it('should return status code 400 and Malformed event body: "Time not specified" if the event does not have a time field', async () => {
+    it('should return status code 400 and Malformed event body: "Date not specified" if the event does not have a time field', async () => {
         event.pathParameters = { 'userId': '1234', 'calendarId': '1' };
         event.body = JSON.stringify({'userId': '1234', 'notify': 'yes', 'description': 'desc'});
         
 
         const result = await updateCalendar(createEvent(event), Context(), () => {return});
         expect(result ? result.statusCode : false).toBe(400);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Time not specified")
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body: Date not specified")
     });
 
     it('should return status code 400 and Malformed event body: "Notify not specified" if the event does not have a notify field', async () => {
         event.pathParameters = { 'userId': '1234', 'calendarId': '1' };
-        event.body = JSON.stringify({'userId': '1234', 'time': 1, 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234', 'date': new Date(), 'description': 'desc'});
         
 
         const result = await updateCalendar(createEvent(event), Context(), () => {return});
@@ -235,7 +334,7 @@ describe('update Calendar entry', () => {
     });
     it('should return status code 400 and Malformed event body: "Description not specified" if the event does not have a description field', async () => {
         event.pathParameters = { 'userId': '1234', 'calendarId': '1' };
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes'});
         
 
         const result = await updateCalendar(createEvent(event), Context(), () => {return});
@@ -260,7 +359,7 @@ describe('update Calendar entry', () => {
 
     it('should return status code 500 and Internal server error if dynamoDB.update fails', async () => {
         event.pathParameters = { 'userId': '1234', 'calendarId': '1'};
-        event.body = JSON.stringify({'userId': '1234','time': 1, 'notify': 'yes', 'description': 'desc'});
+        event.body = JSON.stringify({'userId': '1234','date': new Date(), 'notify': 'yes', 'description': 'desc'});
         dynamoDb.update = jest.fn().mockRejectedValueOnce({ 'error': 'Test Error' });
 
         const result = await updateCalendar(createEvent(event), Context(), () => { return });

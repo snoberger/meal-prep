@@ -153,6 +153,15 @@ getCalendar:
             method: get
             cors: true
             authorizer: authenticateJWT
+
+getAllCalendarEntries:
+    handler: src/handlers/calendar.getAllCalendar
+    events:
+        - http:
+            path: api/calendar/{userId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
 updateCalendar:
     handler: src/handlers/calendar.updateCalendar
     events:
