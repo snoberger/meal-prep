@@ -35,12 +35,12 @@ function isPantryTableEntryArray(data: Record<string, unknown>[]): data is Pantr
 
 function ingredientMappingToString(recipeMap: IngredientMapping, pantryMap: IngredientMapping): string {
     let str = "";
-
     recipeMap.forEach((metricMap, name) => {
         metricMap.forEach((amount, metric) => {
             let ingredientsYouHave = "You have: ";
             if(pantryMap.has(name)) {
                 const pantryMetricMap: Map<IngredientMetric, IngredientAmount> | undefined = pantryMap.get(name);
+                /* istanbul ignore else */
                 if(pantryMetricMap) {
                     pantryMetricMap.forEach((amount, metric) => {
                         if(ingredientsYouHave == 'You have: ')
@@ -68,6 +68,9 @@ function fractionToDecimal(fraction: string): number {
 
     if (fraction.includes("/")) {
         const parts = fraction.split('/');
+        if(parts.length > 2) {
+            throw new Error("Not a valid fraction");
+        }
         let numerator = 0;
         let denominator = 0;
         if (!isNaN(+parts[0]) && !isNaN(parseFloat(parts[0]))) {
@@ -94,9 +97,13 @@ function buildCollatedIngredients(ingredients: Array<CollatedIngredientEntry>): 
     const collatedIngredients: IngredientMapping = new Map<IngredientName, Map<IngredientMetric, IngredientAmount>>();
     for (const ingredient of ingredients) {
         if (collatedIngredients.has(ingredient.name.toLowerCase())) {
-            const metricMap = collatedIngredients.get(ingredient.name);
+            const metricMap = collatedIngredients.get(ingredient.name.toLowerCase());
             if (metricMap?.has(ingredient.metric.toLowerCase())) {
                 let amount = metricMap.get(ingredient.metric);
+
+                // We should always have a map, metric, and amount if we get to this point, this is just to appease
+                // typescript
+                /* istanbul ignore next */
                 if (!amount) {
                     throw new Error('Illegal ingredient mapping');
                 }
@@ -157,7 +164,6 @@ function generateGetIngredientParameters(ingredientId: Uuid) {
 
 async function collateIngredientData(ingredient: RecipeIngredientData | PantryIngredientData): Promise<CollatedIngredientEntry> {
     const ingredientData = await dynamoLib.get(generateGetIngredientParameters(ingredient.id));
-
     if (!ingredientData.Item) {
         throw new Error('Could not lookup ingredient id');
     }
@@ -169,7 +175,6 @@ async function collateIngredientData(ingredient: RecipeIngredientData | PantryIn
         'metric': allIngredientData.metric,
         'amount': ingredient.amount
     }
-    
     return collatedIngredient;
 }
 
@@ -203,7 +208,7 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         }
     }
 
-    if (!isGroceryListRequestBody) {
+    if (!isGroceryListRequestBody(data)) {
         return {
             statusCode: 400,
             body: JSON.stringify({ message: `Malformed event body: request must contain a recipes array, containing recipeIds` })
@@ -211,6 +216,8 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
     }
 
     // Build the ingredient mapping of ingredients that we already have
+    // It is guaranteed that pathParameters are not null, appease TS
+    /* istanbul ignore next */
     event.pathParameters = event.pathParameters || {};
     event.pathParameters.userId = userId;
     let pantryItemsResponse: {statusCode: number, body: string};
@@ -220,6 +227,13 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         return {
             statusCode: 500,
             body: JSON.stringify({ message: 'Internal server error' })
+        }
+    }
+
+    if(pantryItemsResponse.statusCode != 200) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
         }
     }
     
@@ -246,14 +260,21 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
     const pantryIngredients: Array<CollatedIngredientEntry> = [];
     for(const pantry of pantryEntries) {
         for(const ingredient of pantry.ingredients) {
-            pantryIngredients.push(await collateIngredientData(ingredient));
+            try {
+                pantryIngredients.push(await collateIngredientData(ingredient));
+            } catch (e) {
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({message: 'Internal server error'})
+                }
+            }
         }
     }
 
     const pantryMapping: IngredientMapping = buildCollatedIngredients(pantryIngredients);
 
     // Get the ingredients that are necessary
-    const allRecipeIds: Array<RecipeId> = (<GroceryListRequestBody>data).recipes;
+    const allRecipeIds: Array<RecipeId> = data.recipes;
     const allIngredients: Array<CollatedIngredientEntry> = [];
     for (const id of allRecipeIds) {
         try {
@@ -263,7 +284,6 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
                 continue;
             }
 
-
             const asEntry = <RecipeTableEntry>result.Item;
             for (const ingredient of asEntry.ingredients) {
                 allIngredients.push(await collateIngredientData(ingredient));
@@ -272,22 +292,13 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         } catch (e) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({ message: `Malformed event body: could not find reicpe matching id ${id}` })
+                body: JSON.stringify({ message: `Malformed event body: could not find recipe matching id ${id}` })
             }
         }
     }
 
     const recipeMapping: IngredientMapping = buildCollatedIngredients(allIngredients);
-    let stringifiedIngredients = "";
-    try {
-        stringifiedIngredients = ingredientMappingToString(recipeMapping, pantryMapping);
-    } catch (e) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Internal server error' })
-        }
-    }
-
+    const stringifiedIngredients = ingredientMappingToString(recipeMapping, pantryMapping);
     return {
         statusCode: 200,
         body: JSON.stringify({ message: stringifiedIngredients })
