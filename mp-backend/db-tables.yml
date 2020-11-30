@@ -38,7 +38,7 @@ recipeTable:
     KeySchema:
       - AttributeName: userId
         KeyType: HASH
-      - AttributeName: id 
+      - AttributeName: id
         KeyType: RANGE
     ProvisionedThroughput:
       ReadCapacityUnits: 1
@@ -56,13 +56,13 @@ ingredientTable:
       - AttributeName: id
         KeyType: HASH
     GlobalSecondaryIndexes:
-    - IndexName: nameToId
-      KeySchema:
-        - AttributeName: name
-          KeyType: HASH
-      Projection:
-        ProjectionType: ALL
-      ProvisionedThroughput:
+      - IndexName: nameToId
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
     ProvisionedThroughput:
@@ -72,6 +72,23 @@ pantryTable:
   Type: AWS::DynamoDB::Table
   Properties:
     TableName: pantry
+    AttributeDefinitions:
+      - AttributeName: userId
+        AttributeType: S
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: userId
+        KeyType: HASH
+      - AttributeName: id
+        KeyType: RANGE
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+calendarTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: calendar
     AttributeDefinitions:
       - AttributeName: userId
         AttributeType: S

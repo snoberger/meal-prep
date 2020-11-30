@@ -1,0 +1,21 @@
+.calendar-entry-container {
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    width: 50vw;
+}
+.calendar-entry-date {
+    text-decoration-line: underline;
+}
+
+.calendar-entry-description {
+
+}
+
+.add-calendar-entry {
+    
+}
+
+.edit-calendar-entry {
+
+}
