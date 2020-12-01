@@ -189,7 +189,7 @@ getCalendarDateRanges:
     handler: src/handlers/calendar.calendarDateRange
     events:
         - http:
-            path: api/calendar/{userId}/{startDate}/{endDate}
+            path: api/calendarRange/{userId}/{startDate}/{endDate}
             method: get
             cors: true
             authorizer: authenticateJWT
