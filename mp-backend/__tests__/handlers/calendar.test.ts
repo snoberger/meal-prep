@@ -2,7 +2,7 @@ import { expect } from "@jest/globals";
 import { Event, createEvent } from "../utils/event.handler";
 import dynamoDb from "../../src/libs/dynamodb-lib";
 import Context from 'aws-lambda-mock-context';
-import { createCalendar, deleteCalendar, getAllCalendar, getCalendar, updateCalendar } from "../../src/handlers/calendar";
+import { createCalendar, deleteCalendar, getAllCalendar, getCalendar, updateCalendar, calendarDateRange } from "../../src/handlers/calendar";
 import dynamodbLib from "../../src/libs/dynamodb-lib";
 import { CalendarRequestBody } from "../../src/handlers/calendar.types";
 
@@ -450,5 +450,97 @@ describe('delete calendar entry', () => {
         const result = await deleteCalendar(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(404);
         expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Calendar not found");
+    });
+});
+
+describe('calendar date range', () => {
+    let event: Event;
+    beforeEach(() => {
+        jest.resetModules();
+        dynamoDb.delete = jest.fn();
+        event = {
+            principalId: "1234",
+        };
+    });
+
+    afterAll(() => {
+        jest.resetAllMocks();
+        jest.resetModules();
+    });
+
+    it('should return status code 200 and events within a date range', async() => {
+        event.pathParameters = { 'userId': '1234', 'startDate': '2020-12-02', 'endDate': '2020-12-03' };
+        dynamoDb.query = jest.fn().mockResolvedValueOnce({ 'Items': [{ 'description': 'event1' }]});
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(200);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)) : false).toEqual([{'description': 'event1'}]);
+        expect(dynamoDb.query).toBeCalled();
+    });
+
+
+    it('should return status code 400 and Malformed event body if the event does not have pathParameters', async () => {
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    it('should return status code 400 and Malformed event body if the pathparameters does not have userId', async () => {
+        event.pathParameters = { 'startDate': '1' };
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    it('should return status code 400 and Malformed event body if the pathparameters does not have startDate', async () => {
+        event.pathParameters = { 'userId': '1234' };
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    it('should return status code 400 and Malformed event body if the pathparameters does not have endDate', async () => {
+        event.pathParameters = { 'userId': '1234', 'startDate': '1' };
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Malformed event body")
+    });
+
+    it('should return Not authorized and status code 401 if no prinicpalId', async () => {
+        event.pathParameters = { 'userId': '1234', 'startDate': '2020-12-02', 'endDate': '2020-12-03' };
+        event.principalId = undefined;
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(401);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Not authorized");
+    });
+
+    it('should return 400 and Illegal date format if startDate is not well formatted', async () => {
+        event.pathParameters = { 'userId': '1234', 'startDate': '1', 'endDate': '2020-12-02' };
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Illegal date format");
+    });
+
+    it('should return 400 and Illegal date format if endDate is not well formatted', async () => {
+        event.pathParameters = { 'userId': '1234', 'startDate': '2020-12-02', 'endDate': '1' };
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(400);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Illegal date format");
+    });
+
+    it('should return 500 and Internal server error if dynamodb query fails', async () => {
+        event.pathParameters = { 'userId': '1234', 'startDate': '2020-12-02', 'endDate': '2020-12-03' };
+        dynamoDb.query = jest.fn().mockRejectedValueOnce({ 'error': 'Test Error' });
+
+        const result = await calendarDateRange(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toBe("Internal server error");
+        expect(dynamoDb.query).toBeCalled();
     });
 });
