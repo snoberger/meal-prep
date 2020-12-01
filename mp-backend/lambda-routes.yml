@@ -7,7 +7,6 @@ createUser:
             path: api/user
             method: post
             cors: true
-            authorizer: aws_iam
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
@@ -15,7 +14,6 @@ authenticateUser:
             path: api/auth
             method: post
             cors: true
-            authorized: aws_iam
 deleteUser:
     handler: src/handlers/user.deleteUser
     events:
@@ -23,7 +21,7 @@ deleteUser:
             path: api/user/{userId}
             method: delete
             cors: true
-            authorizer: aws_iam
+            authorizer: authenticateJWT
 
 authenticateToken:
     handler: src/handlers/auth.authenticateToken
