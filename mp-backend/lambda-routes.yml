@@ -185,3 +185,11 @@ deleteCalendar:
             method: delete
             cors: true
             authorizer: authenticateJWT
+getCalendarDateRanges:
+    handler: src/handlers/calendar.calendarDateRange
+    events:
+        - http:
+            path: api/calendar/{userId}/{startDate}/{endDate}
+            method: get
+            cors: true
+            authorizer: authenticateJWT

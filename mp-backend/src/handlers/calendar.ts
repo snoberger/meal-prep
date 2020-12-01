@@ -290,3 +290,60 @@ export const deleteCalendar: APIGatewayProxyHandler = async (event) => {
     }
     return {statusCode: 200, body: JSON.stringify(data)};
 }
+
+export const calendarDateRange: APIGatewayProxyHandler = async (event) => {
+
+    if(!event || !event.pathParameters || !event.pathParameters.userId || !event.pathParameters.startDate || !event.pathParameters.endDate) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Malformed event body'})
+        }
+    }
+
+    const startDate = new Date(event.pathParameters.startDate);
+    const endDate = new Date(event.pathParameters.endDate);
+
+    if(event.pathParameters.startDate !== startDate.toISOString().split('T')[0] 
+        || event.pathParameters.endDate !== endDate.toISOString().split('T')[0]) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({message: 'Illegal date format'})
+        }
+    }
+
+    let userId: string;
+    try {
+        userId = getPrincipleId(event);
+    } catch {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({message: 'Not authorized'})
+        }
+    }
+
+    const params: DynamoDB.DocumentClient.QueryInput = {
+        TableName: 'calendar',
+        IndexName: 'dateRange',
+        KeyConditionExpression: '#userId = :userId AND (#date BETWEEN :startDate AND :endDate)',
+        ExpressionAttributeNames: {
+            '#userId': 'userId',
+            '#date': 'date'
+        },
+        ExpressionAttributeValues: {
+            ':userId': userId,
+            ':startDate': startDate.toISOString(),
+            ':endDate': endDate.toISOString()
+        }
+    };
+
+    let data;
+    try {
+        data = await dynamoLib.query(params);
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: 'Internal server error'})
+        }
+    }
+    return { statusCode: 200, body: JSON.stringify(data.Items)};
+}

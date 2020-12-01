@@ -94,11 +94,25 @@ calendarTable:
         AttributeType: S
       - AttributeName: id
         AttributeType: S
+      - AttributeName: date
+        AttributeType: S
     KeySchema:
       - AttributeName: userId
         KeyType: HASH
       - AttributeName: id
         KeyType: RANGE
+    GlobalSecondaryIndexes:
+      - IndexName: dateRange
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: date
+            KeyType: RANGE
+        Projection:
+            ProjectionType: ALL
+        ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     ProvisionedThroughput:
       ReadCapacityUnits: 1
       WriteCapacityUnits: 1
