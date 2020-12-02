@@ -79,10 +79,8 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
 
     handleCheckBox(id: String) {
         const newList = this.props.checkedList.map((recipe) => {
-            console.log(id);
-            console.log(recipe.id);
             if(recipe.id === id) {
-                return {"id": recipe.id, "checked": !recipe.checked}
+                return {"id": recipe.id, "checked": !recipe.checked};
             }
             return recipe;
         });
