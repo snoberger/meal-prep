@@ -1,4 +1,4 @@
-import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME } from '../actionTypes';
+import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_CHECKED_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME } from '../actionTypes';
 import { State } from '../../rootReducer';
 import { Ingredient } from '../../pantry/reducers/pantry';
 
@@ -18,6 +18,11 @@ export type RecipeStep = {
     order: string
 }
 
+export type CheckedRecipe = {
+    id: string,
+    checked: boolean
+}
+
 const initialState = {
     // eslint-disable-next-line
     recipeList: [],
@@ -31,7 +36,8 @@ const initialState = {
     },
     componentState: '',
     addStepDialogue: false,
-    addIngredientDialogue: false
+    addIngredientDialogue: false,
+    checkedList: [],
 };
 
 const recipes = (state = initialState, action: any) => {
@@ -128,6 +134,11 @@ const recipes = (state = initialState, action: any) => {
                     steps: steps.slice()
                 }
             };
+        case UPDATE_CHECKED_LIST:
+            return {
+                ...state,
+                checkedList: action.checkedList,
+            };
         default:
             return {...state};
     }
@@ -152,6 +163,10 @@ export const getAddRecipeIngredientDialogue = (state: State): boolean => {
 
 export const getComponentState = (state: State): string => {
     return state.recipes.componentState;
+};
+
+export const getCheckedList = (state: State): Array<CheckedRecipe> => {
+    return state.recipes.checkedList;
 };
 
 export default recipes;
