@@ -17,6 +17,7 @@ custom:
       port: 3001
     webpack:
       webpackConfig: ./webpack.config.js
+      includeModules: true
     Resources:
       dev: ''
       local: 

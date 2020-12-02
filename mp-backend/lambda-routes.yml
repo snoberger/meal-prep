@@ -7,7 +7,6 @@ createUser:
             path: api/user
             method: post
             cors: true
-            authorizer: aws_iam
 authenticateUser:
     handler: src/handlers/auth.authenticate
     events:
@@ -15,7 +14,6 @@ authenticateUser:
             path: api/auth
             method: post
             cors: true
-            authorized: aws_iam
 deleteUser:
     handler: src/handlers/user.deleteUser
     events:
@@ -23,7 +21,7 @@ deleteUser:
             path: api/user/{userId}
             method: delete
             cors: true
-            authorizer: aws_iam
+            authorizer: authenticateJWT
 
 authenticateToken:
     handler: src/handlers/auth.authenticateToken
@@ -135,5 +133,61 @@ deletePantryEntry:
         - http:
             path: api/pantry/{userId}/{pantryId}
             method: delete
+            cors: true
+            authorizer: authenticateJWT
+generateGroceryList:
+    handler: src/handlers/grocery.generate
+    events:
+        - http:
+            path: api/grocery-list
+            method: post
+            cors: true
+createCalendar:
+    handler: src/handlers/calendar.createCalendar
+    events:
+        - http:
+            path: api/calendar
+            method: post
+            cors: true
+            authorizer: authenticateJWT
+getCalendar:
+    handler: src/handlers/calendar.getCalendar
+    events:
+        - http:
+            path: api/calendar/{userId}/{calendarId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+
+getAllCalendarEntries:
+    handler: src/handlers/calendar.getAllCalendar
+    events:
+        - http:
+            path: api/calendar/{userId}
+            method: get
+            cors: true
+            authorizer: authenticateJWT
+updateCalendar:
+    handler: src/handlers/calendar.updateCalendar
+    events:
+        - http:
+            path: api/calendar/{userId}/{calendarId}
+            method: put
+            cors: true
+            authorizer: authenticateJWT
+deleteCalendar:
+    handler: src/handlers/calendar.deleteCalendar
+    events:
+        - http:
+            path: api/calendar/{userId}/{calendarId}
+            method: delete
+            cors: true
+            authorizer: authenticateJWT
+getCalendarDateRanges:
+    handler: src/handlers/calendar.calendarDateRange
+    events:
+        - http:
+            path: api/calendarRange/{userId}/{startDate}/{endDate}
+            method: get
             cors: true
             authorizer: authenticateJWT
