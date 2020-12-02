@@ -1,7 +1,7 @@
-import {ENDPOINT} from '../const';
+import { ENDPOINT } from '../const';
 import axios from 'axios';
 import { getConfig } from '../middleware';
-import { FetchRecipeListResponse, PostRecipeListResponse } from './types';
+import { FetchRecipeListResponse, PostRecipeListResponse, DeleteRecipeListResponse } from './types';
 import { Recipe } from '../../store/recipes/reducers/recipes';
 export * from './types';
 
@@ -19,4 +19,7 @@ export async function editRecipe(userId: string, recipeId: string, recipe: Recip
 }
 export async function createRecipe(recipe: Recipe): Promise<PostRecipeListResponse> {
     return await axios.post(RECIPE_ENDPOINT, recipe, getConfig());
+}
+export async function deleteRecipe(userId: string, recipe: Recipe): Promise<DeleteRecipeListResponse> {
+    return await axios.delete(RECIPE_ENDPOINT + `${userId}`, { headers: getConfig(), data: recipe, });
 }
