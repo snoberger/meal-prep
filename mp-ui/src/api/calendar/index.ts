@@ -17,3 +17,11 @@ export async function fetchCalendarEntry(userId: string, calendarId: string): Pr
 export async function createCalendar(calendar: CalendarEntry): Promise<PostCalendarListResponse> {
     return await axios.post(CALENDAR_ENDPOINT, calendar, getConfig());
 }
+
+export async function editCalendar(calendar: CalendarEntry, userId: string): Promise<PostCalendarListResponse> {
+    return await axios.put(CALENDAR_ENDPOINT + `${userId}/${calendar.id}`, calendar, getConfig());
+}
+
+export async function deleteCalendar(calendar: CalendarEntry, userId: string): Promise<PostCalendarListResponse> {
+    return await axios.delete(CALENDAR_ENDPOINT + `${userId}/${calendar.id}`, getConfig());
+}

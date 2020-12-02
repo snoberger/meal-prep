@@ -217,7 +217,7 @@ export const updateCalendar: APIGatewayProxyHandler = async (event) => {
 
     let updatedData;
     const params: DynamoDB.DocumentClient.UpdateItemInput = {
-        TableName: 'pantry',
+        TableName: 'calendar',
         Key: {
             'userId': userId,
             'id': event.pathParameters.calendarId

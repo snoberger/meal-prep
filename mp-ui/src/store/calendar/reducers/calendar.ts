@@ -1,4 +1,4 @@
-import {POST_CALENDAR, POST_CALENDAR_ERROR, FETCH_CALENDAR_ERROR, FETCH_CALENDAR_LIST_ERROR, SET_CALENDAR_ENTRY_LIST, SET_CALENDAR_ENTRY, TOGGLE_ADDDIALOGUE} from '../actionTypes';
+import {POST_CALENDAR, POST_CALENDAR_ERROR, FETCH_CALENDAR_ERROR, FETCH_CALENDAR_LIST_ERROR, SET_CALENDAR_ENTRY_LIST, SET_CALENDAR_ENTRY, TOGGLE_ADDDIALOGUE, TOGGLE_EDITDIALOGUE, DELETE_CALENDAR_ENTRY, DELETE_CALENDAR_ENTRY_ERROR} from '../actionTypes';
 import { State } from '../../rootReducer';
 
 export type CalendarEntry = {
@@ -14,7 +14,7 @@ const initialState = {
     // eslint-disable-next-line
     calendarEntry: {
         id: '',
-        date: Date.now(),
+        date: undefined,
         description: '',
         notify: ''
     },
@@ -42,6 +42,21 @@ const calendar = (state = initialState, action: any) => {
             return {
                 ...state,
                 displayAddcalendarEntryDialogue: !state.displayAddcalendarEntryDialogue
+            };
+            
+        case TOGGLE_EDITDIALOGUE:
+            return {
+                ...state,
+                calendarEntry: action.calendarEntry,
+                displayEditcalendarEntryDialogue: !state.displayEditcalendarEntryDialogue
+            };
+        case DELETE_CALENDAR_ENTRY:
+            return {
+                ...state
+            };
+        case DELETE_CALENDAR_ENTRY_ERROR:
+            return {
+                ...state
             };
         case SET_CALENDAR_ENTRY_LIST:
             return {
