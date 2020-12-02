@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { CreateUserItem } from '../api';
 import auth from './auth/reducers/auth';
 import user from './user/reducers/user';
-import recipes from './recipes/reducers/recipes';
+import recipes, { CheckedRecipe } from './recipes/reducers/recipes';
 import calendar from './calendar/reducers/calendar';
 import pantry, { Ingredient, PantryObject } from './pantry/reducers/pantry';
 import { InfoMessage } from '../Components/InfoComponent/InfoComponent';
@@ -31,7 +31,8 @@ export  interface State {
       displayRecipe: Recipe,
       addStepDialogue: boolean,
       addIngredientDialogue: boolean,
-      componentState: string
+      componentState: string,
+      checkedList: Array<CheckedRecipe>
     },
     calendar: {
       calendarEntryList: Array<CalendarEntry>,
