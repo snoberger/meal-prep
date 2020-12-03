@@ -1,4 +1,4 @@
-import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, DELETE_RECIPE } from '../actionTypes';
+import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, REMOVE_RECIPE_AT_INDEX } from '../actionTypes';
 import { State } from '../../rootReducer';
 import { Ingredient } from '../../pantry/reducers/pantry';
 
@@ -37,6 +37,7 @@ const initialState = {
 const recipes = (state = initialState, action: any) => {
     let ingredients: Ingredient[];
     let steps: RecipeStep[];
+    let recipeList: Recipe[];
     switch (action.type) {
         case SET_RECIPE_LIST:
             return {
@@ -128,8 +129,9 @@ const recipes = (state = initialState, action: any) => {
                     steps: steps.slice()
                 }
             };
-        case DELETE_RECIPE:
-            state.recipeList.splice(action.index, 1);
+        case REMOVE_RECIPE_AT_INDEX:
+            recipeList = state.recipeList;
+            recipeList.splice(action.index, 1);
             return {
                 ...state,
             };

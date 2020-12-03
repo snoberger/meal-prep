@@ -22,13 +22,3 @@ export interface PostRecipeListResponse {
     status: number,
     statusText: string
 }
-export interface DeleteRecipeListResponse {
-    config: {},
-    data: {
-        message: string
-    },
-    headers: {},
-    request: XMLHttpRequest,
-    status: number,
-    statusText: string
-}

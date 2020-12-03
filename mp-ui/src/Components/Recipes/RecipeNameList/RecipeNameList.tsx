@@ -1,19 +1,20 @@
-import { List, ListItem, ListItemIcon, ListItemText, Paper } from "@material-ui/core";
+import { Hidden, IconButton, List, ListItem, ListItemIcon, ListItemText, Paper } from "@material-ui/core";
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from "../../../store/rootReducer";
 import { Recipe } from "../../../store/recipes/reducers/recipes";
-import { Add } from "@material-ui/icons";
+import { Add, Delete } from "@material-ui/icons";
 import './RecipeNameList.css';
-import { handleFetchRecipe, setComponentState } from "../../../store/recipes/actions/recipes";
+import { removeRecipeAtIndex, handleFetchRecipe, setComponentState } from "../../../store/recipes/actions/recipes";
 
-interface IRecipeNameListProps  {
+interface IRecipeNameListProps {
     recipeList: Array<Recipe>,
     userId: string
 }
 
 interface IRecipeNameListState {
     selectedIndex: null | number;
+    setIsShown: boolean;
 }
 // this function will not run in test
 /* istanbul ignore next */
@@ -28,6 +29,7 @@ const mapStateToProps = (state: State, ownProps: any) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         displayRecipe: (userId: string, recipeId: string) => (dispatch(handleFetchRecipe(userId, recipeId))),
+        removeRecipeAtIndex: (index: number) => (dispatch(removeRecipeAtIndex(index))),
         setComponentState: (componentState: string) => (dispatch(setComponentState(componentState)))
     };
 };
@@ -35,38 +37,49 @@ const mapDispatchToProps = (dispatch: any) => {
 const connector = connect(
     mapStateToProps,
     mapDispatchToProps
-  );
+);
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 type RecipeNameListCombinedProps = PropsFromRedux & IRecipeNameListProps;
 
-export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,IRecipeNameListState> {
+export class RecipeNameList extends React.Component<RecipeNameListCombinedProps, IRecipeNameListState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            selectedIndex: null
+            selectedIndex: null,
+            setIsShown: true
         };
+        this.handleRemoveRecipeAtIndex = this.handleRemoveRecipeAtIndex.bind(this);
     }
-    handleClickListItem (index: number | null, id: string) {
-            this.setState({selectedIndex: index});
-            if(index !== null && id !== ''){
-                this.props.setComponentState('view');
-                this.props.displayRecipe(this.props.ownProps.userId, id);
-            } else {
-                this.props.setComponentState('add');
-            }
-            
+    handleClickListItem(index: number | null, id: string) {
+        this.setState({ selectedIndex: index });
+        if (index !== null && id !== '') {
+            this.props.setComponentState('view');
+            this.props.displayRecipe(this.props.ownProps.userId, id);
+        } else {
+            this.props.setComponentState('add');
+        }
+
+    }
+    handleRemoveRecipeAtIndex(index: number) {
+        this.props.setComponentState('view');
+        this.props.removeRecipeAtIndex(index);
     }
     render() {
-        let recipeListElements:Array<any> = [];
+        let recipeListElements: Array<any> = [];
         this.props.recipeList.forEach((recipe, index) => {
             recipeListElements.push(
                 <ListItem
                     key={`list${index}`}
                     button
                     selected={this.state.selectedIndex === index}
-                    onClick={() => this.handleClickListItem(index, recipe.id)}>
-                    <ListItemText primary={recipe.name} secondary={recipe.description}/>
+                    onMouseEnter={() => this.setState({ setIsShown: false })}
+                    onMouseLeave={() => this.setState({ setIsShown: true })}>
+                    <ListItemText primary={recipe.name} secondary={recipe.description}
+                        onClick={() => this.handleClickListItem(index, recipe.id)} />
+                    <Hidden xsUp={this.state.setIsShown}>
+                        <IconButton onClick={() => (this.handleRemoveRecipeAtIndex(index))}><Delete /></IconButton>
+                    </Hidden>
                 </ListItem>
             );
         });

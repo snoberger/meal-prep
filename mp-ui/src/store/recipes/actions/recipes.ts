@@ -1,5 +1,5 @@
 import { createRecipe, editRecipe, fetchRecipe, fetchRecipeList } from '../../../api/recipes';
-import { FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, DELETE_RECIPE } from '../actionTypes';
+import { FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, REMOVE_RECIPE_AT_INDEX } from '../actionTypes';
 import { Recipe, RecipeStep } from '../reducers/recipes';
 
 export const setDisplayRecipe = (recipe: Recipe) => {
@@ -140,6 +140,13 @@ export const postRecipeError = () => {
   };
 };
 
+export const removeRecipeAtIndex = (index: number) => {
+  return {
+    type: REMOVE_RECIPE_AT_INDEX,
+    index
+  };
+};
+
 export function handleCreateRecipe(recipe: Recipe) {
   return async (dispatch: any) => {
     try {
@@ -175,40 +182,4 @@ export function handleEditRecipe(userId: string, recipe: Recipe) {
   };
 }
 
-// export const deletedRecipe = () => {
-//   return {
-//     type: DELETE_RECIPE,
-//   };
-// };
 
-// export const deleteRecipeError = () => {
-//   return {
-//     type: DELETE_RECIPE_ERROR,
-//   };
-// };
-
-// export function handleDeleteRecipe(userId: string, recipe: Recipe) {
-//   return async (dispatch: any) => {
-//     try {
-//       if (!recipe.id) {
-//         throw new Error('missing recipeId');
-//       }
-//       return await deleteRecipe(userId, recipe).then((response: any) => {
-//         if (response.status === 200 && response.data.message) {
-//           //todo cast and validate this
-//           return dispatch(deletedRecipe());
-//         }
-//         return dispatch(deleteRecipeError());
-//       });
-//     } catch (e) {
-//       return dispatch(deleteRecipeError());
-//     }
-//   };
-// }
-
-export function handleDeleteRecipe(index: number) {
-  return {
-    type: DELETE_RECIPE,
-    index
-  };
-}
