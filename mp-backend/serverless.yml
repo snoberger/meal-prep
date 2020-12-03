@@ -36,6 +36,7 @@ provider:
   # These environment variables are made available to our functions
   # under process.env.
   environment:
+    EMAIL: snoberger@wisc.edu
     authTable: auth
     hiveTable: hive
     CONFIG_AUTH_TABLE: ${self:custom.tableNames.authTable}

@@ -11,9 +11,10 @@ type SecureRandomString = string;
 type Timestamp = number;
 type Uuid = string;
 
-interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
+export interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     id: Uuid,
     userpass: string,
+    username: string,
     salt: SecureRandomString,
     pantryId: Uuid,
     createTs: Timestamp,
