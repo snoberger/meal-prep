@@ -1,6 +1,6 @@
 import { createRecipe, editRecipe, fetchRecipe, fetchRecipeList } from '../../../api/recipes';
-import { FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, REMOVE_RECIPE_AT_INDEX } from '../actionTypes';
-import { Recipe, RecipeStep } from '../reducers/recipes';
+import { FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, REMOVE_RECIPE_AT_INDEX, UPDATE_CHECKED_LIST } from '../actionTypes';
+import { CheckedRecipe, Recipe, RecipeStep } from '../reducers/recipes';
 
 export const setDisplayRecipe = (recipe: Recipe) => {
   return {
@@ -182,4 +182,9 @@ export function handleEditRecipe(userId: string, recipe: Recipe) {
   };
 }
 
-
+export const updateCheckedList = (checkedList: Array<CheckedRecipe>) => {
+  return {
+    type: UPDATE_CHECKED_LIST,
+    checkedList
+  };
+};

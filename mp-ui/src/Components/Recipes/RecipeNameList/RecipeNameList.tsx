@@ -1,11 +1,11 @@
-import { Hidden, IconButton, List, ListItem, ListItemIcon, ListItemText, Paper } from "@material-ui/core";
+import { Checkbox, IconButton, Hidden, List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Paper } from "@material-ui/core";
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from "../../../store/rootReducer";
-import { Recipe } from "../../../store/recipes/reducers/recipes";
+import { CheckedRecipe, getCheckedList, Recipe } from "../../../store/recipes/reducers/recipes";
 import { Add, Delete } from "@material-ui/icons";
 import './RecipeNameList.css';
-import { removeRecipeAtIndex, handleFetchRecipe, setComponentState } from "../../../store/recipes/actions/recipes";
+import { handleFetchRecipe, setComponentState, updateCheckedList, removeRecipeAtIndex } from "../../../store/recipes/actions/recipes";
 
 interface IRecipeNameListProps {
     recipeList: Array<Recipe>,
@@ -13,14 +13,16 @@ interface IRecipeNameListProps {
 }
 
 interface IRecipeNameListState {
-    selectedIndex: null | number;
-    setIsShown: boolean;
+    selectedIndex: null | number,
+    setIsShown: boolean,
+    loadCheckedList: boolean,
 }
 // this function will not run in test
 /* istanbul ignore next */
 const mapStateToProps = (state: State, ownProps: any) => {
     return {
         ...state,
+        checkedList: getCheckedList(state),
         ownProps: ownProps
     };
 };
@@ -30,7 +32,8 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         displayRecipe: (userId: string, recipeId: string) => (dispatch(handleFetchRecipe(userId, recipeId))),
         removeRecipeAtIndex: (index: number) => (dispatch(removeRecipeAtIndex(index))),
-        setComponentState: (componentState: string) => (dispatch(setComponentState(componentState)))
+        setComponentState: (componentState: string) => (dispatch(setComponentState(componentState))),
+        updateCheckedList: (checkedList: Array<CheckedRecipe>) => (dispatch(updateCheckedList(checkedList)))
     };
 };
 
@@ -47,7 +50,8 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
         super(props);
         this.state = {
             selectedIndex: null,
-            setIsShown: true
+            setIsShown: true,
+            loadCheckedList: false
         };
         this.handleRemoveRecipeAtIndex = this.handleRemoveRecipeAtIndex.bind(this);
     }
@@ -64,8 +68,34 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
     handleRemoveRecipeAtIndex(index: number) {
         this.props.setComponentState('view');
         this.props.removeRecipeAtIndex(index);
+
+    }
+
+    componentDidUpdate(prevProps: IRecipeNameListProps) {
+        if (prevProps.recipeList !== this.props.recipeList) {
+            let newList = [];
+            for (const r of this.props.recipeList) {
+                const newChecked = { "id": r.id, "checked": false };
+                newList.push(newChecked);
+            }
+            this.props.updateCheckedList(newList);
+            this.setState({ loadCheckedList: true });
+        }
+
+    }
+
+
+    handleCheckBox(id: String) {
+        const newList = this.props.checkedList.map((recipe) => {
+            if (recipe.id === id) {
+                return { "id": recipe.id, "checked": !recipe.checked };
+            }
+            return recipe;
+        });
+        this.props.updateCheckedList(newList);
     }
     render() {
+
         let recipeListElements: Array<any> = [];
         this.props.recipeList.forEach((recipe, index) => {
             recipeListElements.push(
@@ -80,6 +110,17 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
                     <Hidden xsUp={this.state.setIsShown}>
                         <IconButton onClick={() => (this.handleRemoveRecipeAtIndex(index))}><Delete /></IconButton>
                     </Hidden>
+                    <ListItemSecondaryAction>
+                        <Hidden>
+                            <Checkbox
+                                edge="end"
+                                color="primary"
+                                onChange={() => this.handleCheckBox(recipe.id)}
+                                checked={this.props.checkedList[index] ? this.props.checkedList[index].checked : false}
+                            // inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                        </Hidden>
+                    </ListItemSecondaryAction>
                 </ListItem>
             );
         });
@@ -96,7 +137,9 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
                         <ListItemText primary="Add a Recipe" />
                     </ListItem>
                 </List>
+
             </Paper>
+
         );
     }
 }

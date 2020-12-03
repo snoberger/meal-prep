@@ -51,7 +51,7 @@ class Navbar extends React.Component<INavbarProps,INavbarState> {
            displayButtons = false;
         }
         buttonList = ( <div id="button-list">
-            <Button id="home-button" component={NavLink} to={AppScreens.HOME} activeClassName="active-button" className="menu-button" color="inherit">
+            <Button id="home-button" component={NavLink} to={AppScreens.HOME} activeClassName="active-button" exact={true} className="menu-button" color="inherit">
                 Home
             </Button>
             <Button id="cook-button" component={NavLink} to={AppScreens.COOK} activeClassName="active-button" className="menu-button" color="inherit">
