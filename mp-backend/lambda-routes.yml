@@ -142,6 +142,7 @@ generateGroceryList:
             path: api/grocery-list
             method: post
             cors: true
+            authorizer: authenticateJWT
 createCalendar:
     handler: src/handlers/calendar.createCalendar
     events:
