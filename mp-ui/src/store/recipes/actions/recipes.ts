@@ -1,5 +1,6 @@
 import { createRecipe, editRecipe, fetchRecipe, fetchRecipeList } from '../../../api/recipes';
-import {FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, UPDATE_CHECKED_LIST} from '../actionTypes';
+import { generateGroceryList } from '../../../api/grocery';
+import {FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, UPDATE_CHECKED_LIST, GENERATE_GROCERY_LIST_ERROR, TOGGLE_GROCERY_DIALOG} from '../actionTypes';
 import { CheckedRecipe, Recipe, RecipeStep } from '../reducers/recipes';
 
 export const setDisplayRecipe = (recipe: Recipe) => {
@@ -83,9 +84,22 @@ export const setRecipeList = (recipeList: any) => {
   };
 };
 
+export const toggleGroceryDialog = () => {
+  return {
+    type: TOGGLE_GROCERY_DIALOG,
+  };
+};
+
+
 export const fetchRecipeListError = () => {
   return {
     type: FETCH_RECIPE_LIST_ERROR,
+  };
+};
+
+export const generateGroceryListError = () => {
+  return {
+    type: GENERATE_GROCERY_LIST_ERROR,
   };
 };
 
@@ -124,6 +138,21 @@ export function handleFetchRecipe(userId: string, recipeId: string) {
       });
     } catch(e) {
       return dispatch(fetchRecipeError());
+    }
+  };
+}
+
+export function handleGenereateGroceryList(recipeIds: Array<string>) {
+  return async (dispatch: any) => {
+    try{
+      return await generateGroceryList(recipeIds).then((response: any) => {
+        if(response.status === 200 && response.data) {
+          return dispatch(toggleGroceryDialog());
+        }
+        return dispatch(generateGroceryListError());
+      });
+    } catch(e) {
+      return dispatch(generateGroceryListError());
     }
   };
 }

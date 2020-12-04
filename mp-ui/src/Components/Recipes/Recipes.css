@@ -45,5 +45,10 @@
     position: absolute !important;
     bottom: 2%;
     left: 5%;
-    background-color: paleturquoise;
+}
+
+.grocery-list {
+    position: absolute !important;
+    bottom: 2%;
+    left: 47%;
 }
