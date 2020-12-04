@@ -5,7 +5,7 @@ import { FetchCalendarListResponse, FetchCalendarResponse, PostCalendarListRespo
 import { CalendarEntry } from '../../store/calendar/reducers/calendar';
 export * from './types';
 
-export const CALENDAR_ENDPOINT = `${ENDPOINT}/calendar/`;
+export const CALENDAR_ENDPOINT = `${ENDPOINT()}/calendar/`;
 
 export async function fetchAllCalendarEntries(userId: string): Promise<FetchCalendarListResponse> {
     return await axios.get(CALENDAR_ENDPOINT + `${userId}`, getConfig());
