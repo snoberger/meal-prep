@@ -166,6 +166,10 @@ export const authenticate: APIGatewayProxyHandler = async (event) => {
 
     return {
         statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        },
         body: JSON.stringify({authToken: JWTToken, userId: userId, pantryId: pantryId})
     }
 };
@@ -199,6 +203,10 @@ export const authenticateToken: APIGatewayProxyHandler = async (event) => {
     if(data.Item) {
         return Promise.resolve({
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+            },
             body: JSON.stringify({userId: userId, pantryId: data.Item.pantryId })
         });
     }
