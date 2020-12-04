@@ -5,7 +5,7 @@ import { FetchRecipeListResponse, PostRecipeListResponse } from './types';
 import { Recipe } from '../../store/recipes/reducers/recipes';
 export * from './types';
 
-export const RECIPE_ENDPOINT = `${ENDPOINT}/recipe/`;
+export const RECIPE_ENDPOINT = `${ENDPOINT()}/recipe/`;
 
 export async function fetchRecipeList(userId: string): Promise<FetchRecipeListResponse> {
     return await axios.get(RECIPE_ENDPOINT + `${userId}`, getConfig());
