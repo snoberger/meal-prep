@@ -16,6 +16,8 @@ interface ICalendarProps extends RouteComponentProps<any> {}
 
 interface ICalendarState {
   filteredEntries: CalendarEntry[];
+  entryList: CalendarEntry[];
+  selectedDay?: Date;
 }
 
 export interface CalendarEvent {
@@ -47,30 +49,48 @@ export class CalendarPage extends React.Component<
   CalendarCombinedProps,
   ICalendarState
 > {
-    constructor(props: CalendarCombinedProps) {
-        super(props);
+  constructor(props: CalendarCombinedProps) {
+    super(props);
 
-        this.state = {
-            filteredEntries: []
-        };
-    }
+    this.state = {
+      filteredEntries: [],
+      entryList: this.props.calendarEntryList,
+    };
+  }
   async componentDidMount() {
     await this.props.fetchCalendarList(this.props.userId);
     const today = new Date();
     this.setState({
       filteredEntries: this.props.calendarEntryList.filter(
         (calendarEntry: CalendarEntry) => {
-            let entryDate = new Date(calendarEntry.date);
+          let entryDate = new Date(calendarEntry.date);
           return entryDate.getDate() === today.getDate();
         }
       ),
     });
   }
+  componentDidUpdate() {
+    if (this.props.calendarEntryList !== this.state.entryList) {
+      this.setState({
+        entryList: this.props.calendarEntryList,
+        filteredEntries: this.props.calendarEntryList.filter(
+          (calendarEntry: CalendarEntry) => {
+            let entryDate = new Date(calendarEntry.date);
+            return (
+              entryDate.getDate() ===
+              (this.state.selectedDay || new Date()).getDate()
+            );
+          }
+        ),
+      });
+    }
+  }
   handleClickDay = (day: Date) => {
     this.setState({
-      filteredEntries: this.props.calendarEntryList.filter(
+      selectedDay: day,
+      filteredEntries: this.state.entryList.filter(
         (calendarEntry: CalendarEntry) => {
-            let entryDate = new Date(calendarEntry.date);
+          let entryDate = new Date(calendarEntry.date);
           return entryDate.getDate() === day.getDate();
         }
       ),
@@ -81,7 +101,9 @@ export class CalendarPage extends React.Component<
     return (
       <div className="calendar-container">
         <Calendar className="react-calendar" onClickDay={this.handleClickDay} />
-        <CalendarEntryListDisplayComponent calendarEntries={this.state.filteredEntries} />
+        <CalendarEntryListDisplayComponent
+          calendarEntries={this.state.filteredEntries}
+        />
       </div>
     );
   }

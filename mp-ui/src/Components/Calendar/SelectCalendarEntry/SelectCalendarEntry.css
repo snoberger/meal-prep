@@ -1,0 +1,14 @@
+.calendar-edit-entry-container {
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    width: 80%;
+    align-self: center;
+}
+.calendar-edit-entry-date {
+    text-decoration-line: underline;
+}
+
+.calendar-edit-entry-description {
+
+}

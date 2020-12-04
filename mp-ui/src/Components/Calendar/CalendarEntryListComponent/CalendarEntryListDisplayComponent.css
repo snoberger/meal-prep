@@ -2,7 +2,9 @@
     border-color: black;
     border-width: 1px;
     border-style: solid;
-    width: 50vw;
+    width: 100%;
+    flex-direction: row;
+    display: inline-flex;
 }
 .calendar-entry-date {
     text-decoration-line: underline;
@@ -13,7 +15,7 @@
 }
 
 .add-calendar-entry {
-    
+
 }
 
 .edit-calendar-entry {
