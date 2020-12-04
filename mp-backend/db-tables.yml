@@ -4,9 +4,9 @@ GatewayResponseDefault4XX:
     ResponseParameters:
       gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
       gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-      ResponseType: DEFAULT_4XX
-      RestApiId:
-        Ref: 'ApiGatewayRestApi'
+    ResponseType: DEFAULT_4XX
+    RestApiId:
+      Ref: 'ApiGatewayRestApi'
 authTable:
   Type: AWS::DynamoDB::Table
   Properties:
