@@ -129,7 +129,13 @@ export const getAllCalendar: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Items)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data.Items)};
 }
 
 export const getCalendar: APIGatewayProxyHandler = async (event) => {
@@ -168,7 +174,15 @@ export const getCalendar: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Item)};
+    return {
+        
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        
+        body: JSON.stringify(data.Item)};
     
 }    
 
@@ -244,7 +258,13 @@ export const updateCalendar: APIGatewayProxyHandler = async (event) => {
         }
     }
     
-    return {statusCode: 200, body: JSON.stringify(updatedData)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(updatedData)};
 }
 
 
@@ -288,7 +308,13 @@ export const deleteCalendar: APIGatewayProxyHandler = async (event) => {
     if(data.ConsumedCapacity) {
         return {statusCode: 404, body: JSON.stringify({message: 'Calendar not found'})};
     }
-    return {statusCode: 200, body: JSON.stringify(data)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data)};
 }
 
 export const calendarDateRange: APIGatewayProxyHandler = async (event) => {
@@ -345,5 +371,11 @@ export const calendarDateRange: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return { statusCode: 200, body: JSON.stringify(data.Items)};
+    return { 
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data.Items)};
 }

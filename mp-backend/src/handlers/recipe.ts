@@ -207,7 +207,13 @@ export const getAllRecipes: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data)};
 }
 
 export const getRecipe: APIGatewayProxyHandler = async (event) => {
@@ -310,7 +316,13 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
         }
     }
     
-    return {statusCode: 200, body: JSON.stringify(outputRecipe)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(outputRecipe)};
 }    
 
 export const updateRecipe: APIGatewayProxyHandler = async (event) => {
@@ -392,7 +404,13 @@ export const updateRecipe: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(updatedData)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(updatedData)};
 }
 
 export const deleteRecipe: APIGatewayProxyHandler = async (event) => {
@@ -435,7 +453,13 @@ export const deleteRecipe: APIGatewayProxyHandler = async (event) => {
     if(data.ConsumedCapacity) {
         return {statusCode: 404, body: JSON.stringify({message: 'Recipe not found'})};
     }
-    return {statusCode: 200, body: JSON.stringify(data)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data)};
 }
 
 

@@ -363,6 +363,10 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         await ses.sendEmail(emailParams).promise()
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+            },
             body: JSON.stringify({ message: stringifiedIngredients })
         }
     } catch (err) {
