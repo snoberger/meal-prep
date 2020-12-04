@@ -175,7 +175,6 @@ export const getCalendar: APIGatewayProxyHandler = async (event) => {
         }
     }
     return {
-        
         statusCode: 200,
         headers: {
             'Access-Control-Allow-Origin': '*',
