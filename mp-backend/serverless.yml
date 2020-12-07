@@ -59,6 +59,7 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:BatchGetItem
         - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
