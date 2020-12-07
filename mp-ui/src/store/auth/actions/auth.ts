@@ -49,7 +49,9 @@ export const handleCheckAuthToken = () => {
           if(response.status === 200 && response.data.userId && response.data.pantryId && authToken) {
               return dispatch(setAuth({authToken: authToken, userId: response.data.userId, pantryId: response.data.pantryId}));
           }
-          return dispatch(invalidToken("Failed to authenticate", "Invalid Token"));
+          if(authToken){
+            return dispatch(invalidToken("Failed to authenticate", "Invalid Token"));
+          }
       });
     } catch(e) {
       return dispatch(invalidToken("Failed to authenticate","Invalid Token"));

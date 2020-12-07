@@ -255,6 +255,20 @@ export const getPantry: APIGatewayProxyHandler = async (event) => {
     if(pantryItem) {
         const ingredients = pantryItem.ingredients
         let ingredientData: IngredientTableEntry[] = []
+        if(pantryItem.ingredients && pantryItem.ingredients.length === 0){
+            outputPantry = {
+                ...pantryItem,
+                ingredients: []
+            }
+            return {
+                statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                }, 
+                body: JSON.stringify(outputPantry)
+            };
+        }
         try {
             const params: DynamoDB.DocumentClient.BatchGetItemInput = {
                 RequestItems:  {

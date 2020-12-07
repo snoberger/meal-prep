@@ -313,8 +313,7 @@ describe('get pantry', () => {
         const result = await getPantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(200);
         const ingredients = result ? (<PantryTableEntry<PantryIngredient>>JSON.parse(result.body)).ingredients : []
-        expect(ingredients.length).toBe(1)
-        expect(dynamoDb.batchGet).toBeCalled();
+        expect(ingredients.length).toBe(0)
     });
     it('should return error on malformed pantry, pantry empty', async () => {
         event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
@@ -368,8 +367,7 @@ describe('get pantry', () => {
             ingredient: {}
         } });
         const result = await getPantry(createEvent(event), Context(), () => { return });
-        expect(result ? result.statusCode : false).toBe(500);
-        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Malformed Ingredient in database")
+        expect(result ? result.statusCode : false).toBe(200);
         expect(dynamoDb.get).toBeCalled();
     });
     it('should return error on malformed pantry request id', async () => {
@@ -436,8 +434,6 @@ describe('get pantry', () => {
         const result = await getPantry(createEvent(event), Context(), () => { return });
         expect(result ? result.statusCode : false).toBe(200);
         expect(dynamoDb.get).toBeCalled();
-        expect(dynamoDb.batchGet).toBeCalled();
-
     });
 
     it('should return a 500 if batchGet fails', async () => {

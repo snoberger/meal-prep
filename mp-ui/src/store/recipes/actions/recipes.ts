@@ -143,8 +143,8 @@ export const postRecipeError = () => {
 export function handleCreateRecipe(recipe: Recipe) {
   return async (dispatch: any) => {
     try{
-      return await createRecipe(recipe).then((response: any) => {
-        if(response.status === 200 && response.data.message) {
+      return createRecipe(recipe).then((response: any) => {
+        if(response.status === 201 && response.data.message) {
           //todo cast and validate this
           return dispatch(postedRecipe());
         }

@@ -63,6 +63,7 @@ export class AddRecipeStep extends React.Component<AddRecipeStepCombinedProps,IA
         this.setResources = this.setResources.bind(this);
         this.setTime = this.setTime.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClose = this.handleClose.bind(this);
         this.state = initialState;   
     }
 
