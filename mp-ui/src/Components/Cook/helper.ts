@@ -13,9 +13,9 @@ export interface OutputMergedRecipeIngredient {
 export function mergeIngredientLists(ingredientsList: MergedRecipeIngredient[]) {
     let mergedList: Ingredient[] = [];
 
-    ingredientsList.forEach((ingredientList) => {
+    ingredientsList?.forEach((ingredientList) => {
         let recipeName = ingredientList.recipeName;
-        ingredientList.ingredients.forEach((ingredientItem) => {
+        ingredientList.ingredients?.forEach((ingredientItem) => {
             if(!mergedList.some((ingredient) => {
                 if(ingredient.id === ingredientItem.id) {
                     ingredient.amount += `\n${recipeName}: ${ingredientItem.amount}`;
@@ -47,7 +47,7 @@ export function mergeStepsLists(stepsList: MergedRecipeStep[]) {
     while(!noMore) {
         noMore = true;
         for (let stepList of stepsList) {
-            if(stepList.steps[appendIndex] && stepList) {
+            if(stepList && stepList.steps && stepList.steps[appendIndex]) {
                 mergedList = mergedList.concat({
                     step: stepList.steps[appendIndex],
                     recipeName: stepList.recipeName
