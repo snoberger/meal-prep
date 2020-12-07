@@ -21,7 +21,9 @@ deleteUser:
             path: api/user/{userId}
             method: delete
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 
 authenticateToken:
     handler: src/handlers/auth.authenticateToken
@@ -30,7 +32,9 @@ authenticateToken:
             path: api/auth
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 createRecipe:
     handler: src/handlers/recipe.createRecipe
     events:
@@ -38,7 +42,9 @@ createRecipe:
             path: api/recipe
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getAllRecipes:
     handler: src/handlers/recipe.getAllRecipes
     events:
@@ -46,7 +52,9 @@ getAllRecipes:
             path: api/recipe/{userId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getRecipe:
     handler: src/handlers/recipe.getRecipe
     events:
@@ -54,7 +62,9 @@ getRecipe:
             path: api/recipe/{userId}/{recipeId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 updateRecipe:
     handler: src/handlers/recipe.updateRecipe
     events:
@@ -62,7 +72,9 @@ updateRecipe:
             path: api/recipe/{userId}/{recipeId}
             method: put
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 deleteRecipe:
     handler: src/handlers/recipe.deleteRecipe
     events:
@@ -70,7 +82,9 @@ deleteRecipe:
             path: api/recipe/{userId}/{recipeId}
             method: delete
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 createIngredient:
     handler: src/handlers/ingredient.createIngredient
     events:
@@ -78,7 +92,9 @@ createIngredient:
             path: api/ingredient
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getIngredient:
     handler: src/handlers/ingredient.getIngredient
     events:
@@ -86,7 +102,9 @@ getIngredient:
             path: api/ingredient/{ingredientId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 deleteIngredient:
     handler: src/handlers/ingredient.deleteIngredient
     events:
@@ -94,7 +112,9 @@ deleteIngredient:
             path: api/ingredient/{ingredientId}
             method: delete
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 createPantryEntry:
     handler: src/handlers/pantry.createPantry
     events:
@@ -102,7 +122,9 @@ createPantryEntry:
             path: api/pantry
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getAllPantryEntries:
     handler: src/handlers/pantry.getAllPantry
     events:
@@ -110,7 +132,9 @@ getAllPantryEntries:
             path: api/pantry/{userId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getPantryEntry:
     handler: src/handlers/pantry.getPantry
     events:
@@ -118,7 +142,9 @@ getPantryEntry:
             path: api/pantry/{userId}/{pantryId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 updatePantryEntry:
     handler: src/handlers/pantry.updatePantry
     events:
@@ -126,7 +152,9 @@ updatePantryEntry:
             path: api/pantry/{userId}/{pantryId}
             method: put
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 deletePantryEntry:
     handler: src/handlers/pantry.deletePantry
     events:
@@ -134,7 +162,9 @@ deletePantryEntry:
             path: api/pantry/{userId}/{pantryId}
             method: delete
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 generateGroceryList:
     handler: src/handlers/grocery.generate
     events:
@@ -142,7 +172,9 @@ generateGroceryList:
             path: api/grocery-list
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 createCalendar:
     handler: src/handlers/calendar.createCalendar
     events:
@@ -150,7 +182,9 @@ createCalendar:
             path: api/calendar
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getCalendar:
     handler: src/handlers/calendar.getCalendar
     events:
@@ -158,7 +192,9 @@ getCalendar:
             path: api/calendar/{userId}/{calendarId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 
 getAllCalendarEntries:
     handler: src/handlers/calendar.getAllCalendar
@@ -167,7 +203,9 @@ getAllCalendarEntries:
             path: api/calendar/{userId}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 updateCalendar:
     handler: src/handlers/calendar.updateCalendar
     events:
@@ -175,7 +213,9 @@ updateCalendar:
             path: api/calendar/{userId}/{calendarId}
             method: put
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 deleteCalendar:
     handler: src/handlers/calendar.deleteCalendar
     events:
@@ -183,7 +223,9 @@ deleteCalendar:
             path: api/calendar/{userId}/{calendarId}
             method: delete
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 getCalendarDateRanges:
     handler: src/handlers/calendar.calendarDateRange
     events:
@@ -191,7 +233,9 @@ getCalendarDateRanges:
             path: api/calendarRange/{userId}/{startDate}/{endDate}
             method: get
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
 generateMasterRecipe:
     handler: src/handlers/recipe.masterRecipe
     events:
@@ -199,4 +243,6 @@ generateMasterRecipe:
             path: api/masterRecipe
             method: post
             cors: true
-            authorizer: authenticateJWT
+            authorizer:
+                name: authenticateJWT
+                resultTtlInSeconds: 0
