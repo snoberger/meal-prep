@@ -212,7 +212,13 @@ export const getIngredient: APIGatewayProxyHandler = async (event) => {
             body: JSON.stringify({message: 'Internal server error'})
         }
     }
-    return {statusCode: 200, body: JSON.stringify(data.Item)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data.Item)};
 }    
 
 export const deleteIngredient: APIGatewayProxyHandler = async (event) => {
@@ -257,6 +263,12 @@ export const deleteIngredient: APIGatewayProxyHandler = async (event) => {
     if(data.ConsumedCapacity) {
         return {statusCode: 404, body: JSON.stringify({message: 'Ingredient not found'})};
     }
-    return {statusCode: 200, body: JSON.stringify(data)};
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        }, 
+        body: JSON.stringify(data)};
 }
 

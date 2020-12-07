@@ -19,7 +19,17 @@ custom:
       webpackConfig: ./webpack.config.js
       includeModules: true
     Resources:
-      dev: ''
+      dev: 
+        Resources:
+          GatewayResponseDefault4XX:
+            Type: 'AWS::ApiGateway::GatewayResponse'
+            Properties:
+              ResponseParameters:
+                gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+                gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+              ResponseType: DEFAULT_4XX
+              RestApiId:
+                Ref: 'ApiGatewayRestApi'
       local: 
         Resources: ${file(./db-tables.yml)}
     dynamodb:
@@ -36,6 +46,7 @@ provider:
   # These environment variables are made available to our functions
   # under process.env.
   environment:
+    EMAIL: snoberger@wisc.edu
     authTable: auth
     hiveTable: hive
     CONFIG_AUTH_TABLE: ${self:custom.tableNames.authTable}

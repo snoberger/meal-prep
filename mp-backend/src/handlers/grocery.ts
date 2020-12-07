@@ -6,6 +6,10 @@ import { RecipeTableEntry, RecipeIngredientData } from './recipe.types';
 import { getAllPantry } from "../handlers/pantry";
 import { PantryIngredientData, PantryTableEntry } from "./pantry.types";
 import { Ingredient } from "./ingredient.types";
+import aws  from 'aws-sdk';
+import { generateTemplate } from '../libs/email';
+import { UserTableEntry } from './user';
+const ses = new aws.SES()
 
 type Uuid = string;
 type RecipeId = Uuid;
@@ -19,6 +23,7 @@ interface CollatedIngredientEntry {
     amount: string,
     metric: string
 }
+// const myDomain = process.env.DOMAIN
 
 export interface GroceryListRequestBody extends Record<string, unknown> {
     recipes: RecipeId[]
@@ -29,11 +34,17 @@ export function isRecipeListRequestBody(data: Record<string, unknown>): data is 
 }
 // TOOD: this type guard could use somework
 function isPantryTableEntryArray(data: Record<string, unknown>[]): data is PantryTableEntry[] {
-    return data.length > 0 && 'ingredients' in data[0];
+    let isValid = true;
+    for(const i of data){
+        if(!('ingredients' in i)) {
+            isValid = false
+        }
+    }
+    return isValid;
 }
 
 function ingredientMappingToString(recipeMap: IngredientMapping, pantryMap: IngredientMapping): string {
-    let str = "";
+    let str = "<ul>";
     recipeMap.forEach((metricMap, name) => {
         metricMap.forEach((amount, metric) => {
             let ingredientsYouHave = "You have: ";
@@ -50,13 +61,13 @@ function ingredientMappingToString(recipeMap: IngredientMapping, pantryMap: Ingr
                 }
             }
             if(ingredientsYouHave != 'You have: ')
-                str += `${name} - ${amount} ${metric} (${ingredientsYouHave})\n`;
+                str += `<li>${name} - ${amount} ${metric} (${ingredientsYouHave})</li>`;
             else
-                str += `${name} - ${amount} ${metric}\n`;
+                str += `<li>${name} - ${amount} ${metric}</li>`;
         });
     });
 
-    return str;
+    return str + "</ul>";
 }
 
 function fractionToDecimal(fraction: string): number {
@@ -151,6 +162,17 @@ export function generateGetRecipeParameters(userId: Uuid, recipeId: RecipeId): D
     return params;
 }
 
+function generateGetUserParameters(userId: Uuid) {
+    const params: DynamoDB.DocumentClient.GetItemInput = {
+        TableName: 'user',
+        Key: {
+            'id': userId,
+        }
+    }
+
+    return params;
+}
+
 function generateGetIngredientParameters(ingredientId: Uuid) {
     const params: DynamoDB.DocumentClient.GetItemInput = {
         TableName: 'ingredient',
@@ -175,6 +197,29 @@ async function collateIngredientData(ingredient: RecipeIngredientData | PantryIn
         'amount': ingredient.amount
     }
     return collatedIngredient;
+}
+
+function generateEmailParams (ingredients: string, email: string): aws.SES.SendEmailRequest {
+
+    if(process.env.EMAIL) {
+        return {
+            Source: process.env.EMAIL,
+            Destination: { ToAddresses: [email] },
+            Message: {
+                Body: {
+                    Html: {
+                        Charset: 'UTF-8',
+                        Data: generateTemplate('grocery-list', ingredients)
+                    }
+                },
+                Subject: {
+                    Charset: 'UTF-8',
+                    Data: `Grocey List from Pre-Prep Meal-Prep!`
+                }
+            }
+        }
+    }
+    throw new Error('Missing Email')
 }
 
 export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
@@ -241,21 +286,19 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         const temp: Record<string, unknown>[] = JSON.parse(pantryItemsResponse.body) as Record<string, unknown>[];
         if(isPantryTableEntryArray(temp)) {
             pantryEntries = temp;
+        } else {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: 'Internal server error' })
+            }
         }
+
     } catch (e) {
         return {
             statusCode: 500,
             body: JSON.stringify({ message: 'Internal server error' })
         }
     }
-
-    if(!pantryEntries) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Internal server error' })
-        }
-    }
-
     const pantryIngredients: Array<CollatedIngredientEntry> = [];
     for(const pantry of pantryEntries) {
         for(const ingredient of pantry.ingredients) {
@@ -298,8 +341,37 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
 
     const recipeMapping: IngredientMapping = buildCollatedIngredients(allIngredients);
     const stringifiedIngredients = ingredientMappingToString(recipeMapping, pantryMapping);
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ message: stringifiedIngredients })
+    let emailRecipient = ""
+    try {
+        const result = await dynamoLib.get(generateGetUserParameters(userId));
+        if (!result.Item) {
+            throw new Error('missing user')
+        }
+        const asEntry = <UserTableEntry>result.Item;
+        emailRecipient = asEntry.username;
+    } catch (e) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ message: `Malformed event body: could not find user id ${userId}` })
+        }
+    }
+
+    try {
+        const emailParams = generateEmailParams(stringifiedIngredients, emailRecipient)
+        
+        await ses.sendEmail(emailParams).promise()
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+            },
+            body: JSON.stringify({ message: stringifiedIngredients })
+        }
+    } catch (err) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: `email fail` })
+        }
     }
 }

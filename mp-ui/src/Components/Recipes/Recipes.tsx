@@ -1,15 +1,16 @@
-import { Grid, Paper, Typography } from "@material-ui/core";
-import { RouteComponentProps } from 'react-router-dom';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Typography } from "@material-ui/core";
+import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import "./Recipes.css";
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { State } from "../../store/rootReducer";
-import { getComponentState, getRecipeList } from "../../store/recipes/reducers/recipes";
-import { handleFetchRecipeList } from "../../store/recipes/actions/recipes";
+import { getCheckedList, getComponentState, getGroceryDialog, getRecipeList } from "../../store/recipes/reducers/recipes";
+import { handleFetchRecipeList, handleGenereateGroceryList, toggleGroceryDialog } from "../../store/recipes/actions/recipes";
 import { getUserId } from "../../store/auth/reducers/auth";
 import RecipeNameList from "./RecipeNameList/RecipeNameList";
 import DisplayRecipe from "./DisplayRecipe/DisplayRecipe";
+import { AppScreens } from "../../Routes";
 
 interface IRecipesProps extends RouteComponentProps<any> {
 
@@ -23,13 +24,17 @@ const mapStateToProps = (state: State /*, ownProps*/) => {
         ...state,
         recipeList: getRecipeList(state),
         userId: getUserId(state),
-        componentState: getComponentState(state)
+        componentState: getComponentState(state),
+        checkedList: getCheckedList(state),
+        groceryDialog: getGroceryDialog(state)
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        fetchRecipeList: (userId: string)=> (dispatch(handleFetchRecipeList(userId)))
+        fetchRecipeList: (userId: string)=> (dispatch(handleFetchRecipeList(userId))),
+        genereateGroceryList: (recipeIds: Array<string>)=>(dispatch(handleGenereateGroceryList(recipeIds))),
+        toggleGroceryDialog: ()=>(dispatch(toggleGroceryDialog()))
     };
 };
 
@@ -45,6 +50,7 @@ export class Recipes extends React.Component<RecipesCombinedProps,IRecipesState>
     async componentDidMount () {
         await this.props.fetchRecipeList(this.props.userId);
     }
+
     render() {
         return (
             <Grid container justify="center" alignItems="center">
@@ -65,7 +71,29 @@ export class Recipes extends React.Component<RecipesCombinedProps,IRecipesState>
                                 <Paper className="recipe-container recipe-background"> 
                                     <div className="recipe-list recipe-background MuiPaper-rounded">
                                         <RecipeNameList recipeList={this.props.recipeList} userId={this.props.userId}/>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            className="start-cook"
+                                            component={NavLink}
+                                             to={AppScreens.COOK}
+                                        >
+                                            Send To Cook
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            className="grocery-list"
+                                            onClick={()=> {
+                                                this.props.genereateGroceryList(this.props.checkedList.map((checked)=>{
+                                                    return checked.id;
+                                                }));
+                                            }}
+                                        >
+                                            Build Grocery List
+                                        </Button>
                                     </div>
+                                    
                                     <Paper className="recipe-display recipe-background" elevation={0}>
                                         <DisplayRecipe/>
                                     </Paper>
@@ -73,6 +101,25 @@ export class Recipes extends React.Component<RecipesCombinedProps,IRecipesState>
                                
                         </Grid>
                 </Grid>
+                <Dialog
+                    open={this.props.groceryDialog}
+                    onClose={this.props.toggleGroceryDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Grocery List built!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            An message was sent to the email registered to your account containing a list of 
+                            groceries that you will need to make the recipes you selelected.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.props.toggleGroceryDialog} color="primary" autoFocus>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Grid>      
         );
     }

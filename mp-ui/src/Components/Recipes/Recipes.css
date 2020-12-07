@@ -30,7 +30,8 @@
 }
 
 .recipe-list {
-    width: 30%
+    width: 30%;
+    position: relative;
 }
 
 .step-description {
@@ -38,4 +39,16 @@
 }
 .main-container {
     margin-bottom: 10vh !important;
+}
+
+.start-cook {
+    position: absolute !important;
+    bottom: 2%;
+    left: 5%;
+}
+
+.grocery-list {
+    position: absolute !important;
+    bottom: 2%;
+    left: 47%;
 }

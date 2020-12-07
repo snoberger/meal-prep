@@ -11,9 +11,10 @@ type SecureRandomString = string;
 type Timestamp = number;
 type Uuid = string;
 
-interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
+export interface UserTableEntry extends DynamoDB.DocumentClient.PutItemInputAttributeMap {
     id: Uuid,
     userpass: string,
+    username: string,
     salt: SecureRandomString,
     pantryId: Uuid,
     createTs: Timestamp,
@@ -198,6 +199,10 @@ export const deleteUser: APIGatewayProxyHandler = async (event) => {
     
     return {
         statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        },
         body: JSON.stringify({ message: 'success' }),
     };
 }
