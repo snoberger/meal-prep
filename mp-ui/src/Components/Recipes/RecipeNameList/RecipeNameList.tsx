@@ -1,6 +1,7 @@
 import {
   Checkbox,
   Hidden,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
@@ -16,9 +17,10 @@ import {
   getCheckedList,
   Recipe,
 } from "../../../store/recipes/reducers/recipes";
-import { Add } from "@material-ui/icons";
+import { Add, Delete } from "@material-ui/icons";
 import "./RecipeNameList.css";
 import {
+  handleDeleteRecipe,
   handleFetchRecipe,
   setComponentState,
   updateCheckedList,
@@ -32,6 +34,7 @@ interface IRecipeNameListProps {
 
 interface IRecipeNameListState {
   selectedIndex: null | number;
+  setIsShown: boolean;
   loadCheckedList: boolean;
 }
 // this function will not run in test
@@ -49,6 +52,8 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     displayRecipe: (userId: string, recipeId: string) =>
       dispatch(handleFetchRecipe(userId, recipeId)),
+    removeRecipe: (userId: string, recipeId: string) =>
+      dispatch(handleDeleteRecipe(userId, recipeId)),
     setComponentState: (componentState: string) =>
       dispatch(setComponentState(componentState)),
     updateCheckedList: (checkedList: Array<CheckedRecipe>) =>
@@ -69,8 +74,23 @@ export class RecipeNameList extends React.Component<
     super(props);
     this.state = {
       selectedIndex: null,
+      setIsShown: true,
       loadCheckedList: false,
     };
+    this.handleRemoveRecipeAtIndex = this.handleRemoveRecipeAtIndex.bind(this);
+  }
+  handleClickListItem(index: number | null, id: string) {
+    this.setState({ selectedIndex: index });
+    if (index !== null && id !== "") {
+      this.props.setComponentState("view");
+      this.props.displayRecipe(this.props.ownProps.userId, id);
+    } else {
+      this.props.setComponentState("add");
+    }
+  }
+  handleRemoveRecipeAtIndex(index: number) {
+    this.props.setComponentState("view");
+    this.props.removeRecipe(this.props.userId, this.props.recipeList[index].id);
   }
 
   componentDidUpdate(prevProps: IRecipeNameListProps) {
@@ -96,15 +116,6 @@ export class RecipeNameList extends React.Component<
     });
     this.props.updateCheckedList(newCheckList);
   }
-  handleClickListItem(index: number | null, id: string) {
-    this.setState({ selectedIndex: index });
-    if (index !== null && id !== "") {
-      this.props.setComponentState("view");
-      this.props.displayRecipe(this.props.ownProps.userId, id);
-    } else {
-      this.props.setComponentState("add");
-    }
-  }
 
   handleCheckBox(id: String) {
     const newList = this.props.checkedList.map((recipe) => {
@@ -122,10 +133,17 @@ export class RecipeNameList extends React.Component<
         <ListItem
           key={`list${index}`}
           button
+          onMouseEnter={() => this.setState({ setIsShown: false })}
+          onMouseLeave={() => this.setState({ setIsShown: true })}
           selected={this.state.selectedIndex === index}
           onClick={() => this.handleClickListItem(index, recipe.id)}
         >
           <ListItemText primary={recipe.name} secondary={recipe.description} />
+          <Hidden xsUp={this.state.setIsShown}>
+            <IconButton onClick={() => this.handleRemoveRecipeAtIndex(index)}>
+              <Delete />
+            </IconButton>
+          </Hidden>
           <ListItemSecondaryAction>
             <Hidden>
               <Checkbox

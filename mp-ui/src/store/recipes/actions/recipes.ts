@@ -1,6 +1,6 @@
-import { createRecipe, editRecipe, fetchRecipe, fetchRecipeList } from '../../../api/recipes';
+import { createRecipe, deleteRecipe, editRecipe, fetchRecipe, fetchRecipeList } from '../../../api/recipes';
+import { FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, UPDATE_CHECKED_LIST, DELETE_RECIPE, DELETE_RECIPE_ERROR, TOGGLE_GROCERY_DIALOG, GENERATE_GROCERY_LIST_ERROR } from '../actionTypes';
 import { generateGroceryList } from '../../../api/grocery';
-import {FETCH_RECIPE_ERROR, FETCH_RECIPE_LIST_ERROR, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, TOGGLE_ADDDIALOGUE, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, POST_RECIPE, POST_RECIPE_ERROR, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, UPDATE_CHECKED_LIST, GENERATE_GROCERY_LIST_ERROR, TOGGLE_GROCERY_DIALOG} from '../actionTypes';
 import { CheckedRecipe, Recipe, RecipeStep } from '../reducers/recipes';
 
 export const setDisplayRecipe = (recipe: Recipe) => {
@@ -10,24 +10,24 @@ export const setDisplayRecipe = (recipe: Recipe) => {
   };
 };
 
-export const editDisplayName = (name:string) => {
+export const editDisplayName = (name: string) => {
   return {
     type: UPDATE_DISPLAY_NAME,
     name
   };
 };
 
-export const editDisplayDescription = (description:string) => {
+export const editDisplayDescription = (description: string) => {
   return {
     type: UPDATE_DISPLAY_DESCRIPTION,
     description
   };
 };
 
-export const addIngredientDisplay = (name:string, amount: string, metric: string) => {
+export const addIngredientDisplay = (name: string, amount: string, metric: string) => {
   return {
     type: ADD_DISPLAY_INGREDIENT,
-    ingredient: {name, amount, metric}
+    ingredient: { name, amount, metric }
   };
 };
 
@@ -44,7 +44,7 @@ export const toggleAddRecipeIngredientDialogue = () => {
 };
 
 export const setComponentState = (componentState: string) => {
-  if(componentState === 'add'){
+  if (componentState === 'add') {
     return {
       type: SET_COMPONENT_STATE_ADD,
       componentState
@@ -112,15 +112,15 @@ export const fetchRecipeError = () => {
 
 export function handleFetchRecipeList(userId: string) {
   return async (dispatch: any) => {
-    try{
+    try {
       return await fetchRecipeList(userId).then((response: any) => {
-        if(response.status === 200 && response.data) {
+        if (response.status === 200 && response.data) {
           //todo cast and validate this
           return dispatch(setRecipeList(response.data));
         }
         return dispatch(fetchRecipeListError());
       });
-    } catch(e) {
+    } catch (e) {
       return dispatch(fetchRecipeListError());
     }
   };
@@ -128,15 +128,15 @@ export function handleFetchRecipeList(userId: string) {
 
 export function handleFetchRecipe(userId: string, recipeId: string) {
   return async (dispatch: any) => {
-    try{
+    try {
       return await fetchRecipe(userId, recipeId).then((response: any) => {
-        if(response.status === 200 && response.data) {
+        if (response.status === 200 && response.data) {
           //todo cast and validate this
           return dispatch(setDisplayRecipe(response.data));
         }
         return dispatch(fetchRecipeError());
       });
-    } catch(e) {
+    } catch (e) {
       return dispatch(fetchRecipeError());
     }
   };
@@ -187,36 +187,65 @@ export const postRecipeError = () => {
   };
 };
 
+
 export function handleCreateRecipe(recipe: Recipe) {
   return async (dispatch: any) => {
-    try{
-      return createRecipe(recipe).then((response: any) => {
-        if(response.status === 201 && response.data.message) {
+    try {
+      return await createRecipe(recipe).then((response: any) => {
+        if (response.status === 200 && response.data.message) {
           //todo cast and validate this
           return dispatch(postedRecipe());
         }
         return dispatch(postRecipeError());
       });
-    } catch(e) {
+    } catch (e) {
       return dispatch(postRecipeError());
+    }
+  };
+}
+
+export const deletedRecipe = (recipeId: string) => {
+  return {
+    type: DELETE_RECIPE,
+    recipeId
+  };
+};
+
+export const deleteRecipeError = () => {
+  return {
+    type: DELETE_RECIPE_ERROR,
+  };
+};
+export function handleDeleteRecipe(userId: string, recipeId: string) {
+  return async (dispatch: any) => {
+    try {
+      return await deleteRecipe(userId, recipeId).then((response: any) => {
+        if (response.status === 200) {
+          //todo cast and validate this
+          return dispatch(deletedRecipe(recipeId));
+        }
+        return dispatch(deleteRecipeError());
+      });
+    } catch (e) {
+      return dispatch(deleteRecipeError());
     }
   };
 }
 
 export function handleEditRecipe(userId: string, recipe: Recipe) {
   return async (dispatch: any) => {
-    try{
-      if(!recipe.id){
+    try {
+      if (!recipe.id) {
         throw new Error('missing recipeId');
       }
       return await editRecipe(userId, recipe.id, recipe).then((response: any) => {
-        if(response.status === 200 && response.data.message) {
+        if (response.status === 200 && response.data.message) {
           //todo cast and validate this
           return dispatch(postedRecipe());
         }
         return dispatch(postRecipeError());
       });
-    } catch(e) {
+    } catch (e) {
       return dispatch(postRecipeError());
     }
   };

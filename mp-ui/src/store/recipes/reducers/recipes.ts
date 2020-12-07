@@ -1,4 +1,4 @@
-import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, TOGGLE_GROCERY_DIALOG, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_CHECKED_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME } from '../actionTypes';
+import { ADD_DISPLAY_INGREDIENT, ADD_DISPLAY_STEP, REMOVE_INGREDIENT_AT_INDEX, REMOVE_STEP_AT_INDEX, SET_COMPONENT_STATE, SET_COMPONENT_STATE_ADD, SET_DISPLAY_RECIPE, SET_RECIPE_LIST, TOGGLE_ADDDIALOGUE, TOGGLE_ADD_RECIPE_INGREDIENT_DIALOGUE, UPDATE_CHECKED_LIST, UPDATE_DISPLAY_DESCRIPTION, UPDATE_DISPLAY_NAME, DELETE_RECIPE, TOGGLE_GROCERY_DIALOG } from '../actionTypes';
 import { State } from '../../rootReducer';
 import { Ingredient } from '../../pantry/reducers/pantry';
 
@@ -45,6 +45,8 @@ const initialState = {
 const recipes = (state = initialState, action: any) => {
     let ingredients: Ingredient[];
     let steps: RecipeStep[];
+    let recipeList: Recipe[];
+    let recipeIndex = -1;
     switch (action.type) {
         case SET_RECIPE_LIST:
             return {
@@ -74,11 +76,7 @@ const recipes = (state = initialState, action: any) => {
         case SET_COMPONENT_STATE_ADD:
             return {
                 ...state,
-                displayRecipe: {
-                    ...initialState.displayRecipe,
-                    ingredients: [],
-                    steps: []
-                },
+                displayRecipe: { ...initialState.displayRecipe },
                 componentState: action.componentState
             };
         case UPDATE_DISPLAY_NAME:
@@ -130,7 +128,7 @@ const recipes = (state = initialState, action: any) => {
         case REMOVE_STEP_AT_INDEX:
             steps = state.displayRecipe.steps;
             steps.splice(action.index, 1);
-            steps.forEach((step: any, index:number)=>{
+            steps.forEach((step: any, index: number) => {
                 step.order = index;
             });
             return {
@@ -139,6 +137,16 @@ const recipes = (state = initialState, action: any) => {
                     ...state.displayRecipe,
                     steps: steps.slice()
                 }
+            };
+        case DELETE_RECIPE:
+            recipeList = state.recipeList;
+            recipeIndex = recipeList.findIndex((value) => {
+                return value.id === action.recipeId;
+            });
+            recipeList.splice(recipeIndex, 1);
+            return {
+                ...state,
+                displayRecipe: initialState.displayRecipe
             };
         case UPDATE_CHECKED_LIST:
             return {
@@ -151,7 +159,7 @@ const recipes = (state = initialState, action: any) => {
                 groceryDialog: !state.groceryDialog,
             };
         default:
-            return {...state};
+            return { ...state };
     }
 };
 

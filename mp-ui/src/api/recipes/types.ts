@@ -3,7 +3,7 @@ import { Recipe } from "../../store/recipes/reducers/recipes";
 
 export interface FetchRecipeListResponse {
     config: {},
-    data:  {
+    data: {
         message: Array<Recipe>
     },
     headers: {},
@@ -14,7 +14,7 @@ export interface FetchRecipeListResponse {
 
 export interface PostRecipeListResponse {
     config: {},
-    data:  {
+    data: {
         message: string
     },
     headers: {},
