@@ -317,9 +317,11 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
         }
 
     } catch (e) {
+        // eslint-disable-next-line
+        console.log('this is it', e)
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Internal server error' })
+            body: JSON.stringify({ message: 'Internal server error 3' })
         }
     }
     
