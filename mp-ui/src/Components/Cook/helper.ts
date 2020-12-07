@@ -46,7 +46,7 @@ export function mergeStepsLists(stepsList: MergedRecipeStep[]) {
     let noMore = false;
     while(!noMore) {
         noMore = true;
-        stepsList.forEach((stepList) => {
+        for (let stepList of stepsList) {
             if(stepList.steps[appendIndex] && stepList) {
                 mergedList = mergedList.concat({
                     step: stepList.steps[appendIndex],
@@ -54,7 +54,7 @@ export function mergeStepsLists(stepsList: MergedRecipeStep[]) {
                 });
                 noMore = false;
             }
-        });
+        }
         appendIndex += 1;
     }
     return mergedList;

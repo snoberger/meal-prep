@@ -116,6 +116,7 @@ export class Recipes extends React.Component<
         });
         return true;
       }
+      return false
     });
     this.setState({
       curRecipeList: recipes,
