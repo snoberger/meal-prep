@@ -74,7 +74,11 @@ const recipes = (state = initialState, action: any) => {
         case SET_COMPONENT_STATE_ADD:
             return {
                 ...state,
-                displayRecipe: {...initialState.displayRecipe},
+                displayRecipe: {
+                    ...initialState.displayRecipe,
+                    ingredients: [],
+                    steps: []
+                },
                 componentState: action.componentState
             };
         case UPDATE_DISPLAY_NAME:
