@@ -69,7 +69,9 @@ provider:
         - dynamodb:DeleteItem
         - ses:SendEmail
         - ses:SendRawEmail
-      Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
+      Resource: 
+        - "arn:aws:dynamodb:us-east-1:*:table/*"
+        - "arn:aws:ses:us-east-1:*:identity/*"
 resources: ${self:custom.Resources.${opt:stage, self:provider.stage}}
 functions:
   ${file(./lambda-routes.yml)}
