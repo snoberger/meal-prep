@@ -29,10 +29,9 @@ export interface GroceryListRequestBody extends Record<string, unknown> {
     recipes: RecipeId[]
 }
 
-function isGroceryListRequestBody(data: Record<string, unknown>): data is GroceryListRequestBody {
+export function isRecipeListRequestBody(data: Record<string, unknown>): data is GroceryListRequestBody {
     return 'recipes' in data && data.recipes instanceof Array;
 }
-
 // TOOD: this type guard could use somework
 function isPantryTableEntryArray(data: Record<string, unknown>[]): data is PantryTableEntry[] {
     let isValid = true;
@@ -146,12 +145,12 @@ function buildCollatedIngredients(ingredients: Array<CollatedIngredientEntry>): 
             }
             insertMetricMap.set(ingredient.metric.toLowerCase(), amnt);
             collatedIngredients.set(ingredient.name.toLowerCase(), insertMetricMap);
-        }
+        }   
     }
     return collatedIngredients;
 }
 
-function generateGetRecipeParameters(userId: Uuid, recipeId: RecipeId) {
+export function generateGetRecipeParameters(userId: Uuid, recipeId: RecipeId): DynamoDB.GetItemInput {
     const params: DynamoDB.DocumentClient.GetItemInput = {
         TableName: 'recipe',
         Key: {
@@ -253,7 +252,7 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         }
     }
 
-    if (!isGroceryListRequestBody(data)) {
+    if (!isRecipeListRequestBody(data)) {
         return {
             statusCode: 400,
             body: JSON.stringify({ message: `Malformed event body: request must contain a recipes array, containing recipeIds` })
@@ -363,6 +362,10 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         await ses.sendEmail(emailParams).promise()
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+            },
             body: JSON.stringify({ message: stringifiedIngredients })
         }
     } catch (err) {

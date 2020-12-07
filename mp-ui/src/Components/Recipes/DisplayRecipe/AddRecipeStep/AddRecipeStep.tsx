@@ -63,6 +63,7 @@ export class AddRecipeStep extends React.Component<AddRecipeStepCombinedProps,IA
         this.setResources = this.setResources.bind(this);
         this.setTime = this.setTime.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClose = this.handleClose.bind(this);
         this.state = initialState;   
     }
 
@@ -124,7 +125,7 @@ export class AddRecipeStep extends React.Component<AddRecipeStepCombinedProps,IA
     render() {
         return (
             <Dialog className="addingredient-dialog" aria-labelledby="addIngredient-dialog-title" open={this.props.open}>
-              <DialogTitle className="dialog-title" id="addIngredient-dialog-title">Add Ingredient  
+              <DialogTitle className="dialog-title" id="addIngredient-dialog-title">Add Step 
                 <IconButton className="close-icon" aria-label="close" onClick={this.handleClose}>
                   <CloseIcon />
                 </IconButton>
