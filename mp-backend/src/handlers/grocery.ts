@@ -369,6 +369,8 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
             body: JSON.stringify({ message: stringifiedIngredients })
         }
     } catch (err) {
+        // eslint-disable-next-line
+        console.log(err)
         return {
             statusCode: 500,
             body: JSON.stringify({ message: `email fail` })
