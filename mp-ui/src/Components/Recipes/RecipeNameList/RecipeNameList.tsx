@@ -5,7 +5,7 @@ import { State } from "../../../store/rootReducer";
 import { CheckedRecipe, getCheckedList, Recipe } from "../../../store/recipes/reducers/recipes";
 import { Add, Delete } from "@material-ui/icons";
 import './RecipeNameList.css';
-import { handleFetchRecipe, setComponentState, updateCheckedList, removeRecipeAtIndex } from "../../../store/recipes/actions/recipes";
+import { handleFetchRecipe, setComponentState, updateCheckedList, handleDeleteRecipe } from "../../../store/recipes/actions/recipes";
 
 interface IRecipeNameListProps {
     recipeList: Array<Recipe>,
@@ -31,7 +31,7 @@ const mapStateToProps = (state: State, ownProps: any) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         displayRecipe: (userId: string, recipeId: string) => (dispatch(handleFetchRecipe(userId, recipeId))),
-        removeRecipeAtIndex: (index: number) => (dispatch(removeRecipeAtIndex(index))),
+        removeRecipe: (userId: string, recipeId: string) => (dispatch(handleDeleteRecipe(userId, recipeId))),
         setComponentState: (componentState: string) => (dispatch(setComponentState(componentState))),
         updateCheckedList: (checkedList: Array<CheckedRecipe>) => (dispatch(updateCheckedList(checkedList)))
     };
@@ -67,7 +67,7 @@ export class RecipeNameList extends React.Component<RecipeNameListCombinedProps,
     }
     handleRemoveRecipeAtIndex(index: number) {
         this.props.setComponentState('view');
-        this.props.removeRecipeAtIndex(index);
+        this.props.removeRecipe(this.props.userId, this.props.recipeList[index].id);
 
     }
 

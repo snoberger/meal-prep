@@ -20,3 +20,6 @@ export async function editRecipe(userId: string, recipeId: string, recipe: Recip
 export async function createRecipe(recipe: Recipe): Promise<PostRecipeListResponse> {
     return await axios.post(RECIPE_ENDPOINT, recipe, getConfig());
 }
+export async function deleteRecipe(userId: string, recipeId: string,): Promise<PostRecipeListResponse> {
+    return await axios.delete(RECIPE_ENDPOINT + `${userId}/${recipeId}`, getConfig());
+}
