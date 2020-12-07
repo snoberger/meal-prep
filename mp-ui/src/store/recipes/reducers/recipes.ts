@@ -146,7 +146,8 @@ const recipes = (state = initialState, action: any) => {
             recipeList.splice(recipeIndex, 1);
             return {
                 ...state,
-                displayRecipe: initialState.displayRecipe
+                displayRecipe: initialState.displayRecipe,
+                componentState: initialState.componentState
             };
         case UPDATE_CHECKED_LIST:
             return {
