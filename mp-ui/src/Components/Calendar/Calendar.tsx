@@ -69,8 +69,9 @@ export class CalendarPage extends React.Component<
       ),
     });
   }
-  componentDidUpdate() {
+  async componentDidUpdate() {
     if (this.props.calendarEntryList !== this.state.entryList) {
+      await this.props.fetchCalendarList(this.props.userId);
       this.setState({
         entryList: this.props.calendarEntryList,
         filteredEntries: this.props.calendarEntryList.filter(
