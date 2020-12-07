@@ -24,10 +24,9 @@ export interface GroceryListRequestBody extends Record<string, unknown> {
     recipes: RecipeId[]
 }
 
-function isGroceryListRequestBody(data: Record<string, unknown>): data is GroceryListRequestBody {
+export function isRecipeListRequestBody(data: Record<string, unknown>): data is GroceryListRequestBody {
     return 'recipes' in data && data.recipes instanceof Array;
 }
-
 // TOOD: this type guard could use somework
 function isPantryTableEntryArray(data: Record<string, unknown>[]): data is PantryTableEntry[] {
     return data.length > 0 && 'ingredients' in data[0];
@@ -135,12 +134,12 @@ function buildCollatedIngredients(ingredients: Array<CollatedIngredientEntry>): 
             }
             insertMetricMap.set(ingredient.metric.toLowerCase(), amnt);
             collatedIngredients.set(ingredient.name.toLowerCase(), insertMetricMap);
-        }
+        }   
     }
     return collatedIngredients;
 }
 
-function generateGetRecipeParameters(userId: Uuid, recipeId: RecipeId) {
+export function generateGetRecipeParameters(userId: Uuid, recipeId: RecipeId): DynamoDB.GetItemInput {
     const params: DynamoDB.DocumentClient.GetItemInput = {
         TableName: 'recipe',
         Key: {
@@ -208,7 +207,7 @@ export const generate: APIGatewayProxyHandler = async (event, context, cb) => {
         }
     }
 
-    if (!isGroceryListRequestBody(data)) {
+    if (!isRecipeListRequestBody(data)) {
         return {
             statusCode: 400,
             body: JSON.stringify({ message: `Malformed event body: request must contain a recipes array, containing recipeIds` })

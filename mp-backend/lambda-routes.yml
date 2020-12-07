@@ -193,3 +193,11 @@ getCalendarDateRanges:
             method: get
             cors: true
             authorizer: authenticateJWT
+generateMasterRecipe:
+    handler: src/handlers/recipe.masterRecipe
+    events:
+        - http:
+            path: api/masterRecipe
+            method: post
+            cors: true
+            authorizer: authenticateJWT
