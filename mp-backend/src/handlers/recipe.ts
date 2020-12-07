@@ -249,8 +249,11 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
     let outputRecipe: RecipeTableEntry<RecipeIngredient> | undefined = undefined;
     try {
         const resp = await dynamoLib.get(params);
-
+        // eslint-disable-next-line
+        console.log(resp)
         if (resp.Item) {
+            
+
             if (!isRecipeResponseBody(resp.Item)) {
                 return {
                     statusCode: 500,
@@ -259,6 +262,8 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
             }
             recipeItem = resp.Item
         }  else {
+            // eslint-disable-next-line
+            console.log('this is it')
             return {
                 statusCode: 500,
                 body: JSON.stringify({ message: 'Internal server error' })
@@ -266,8 +271,6 @@ export const getRecipe: APIGatewayProxyHandler = async (event) => {
         }
 
     } catch (e) {
-        // eslint-disable-next-line
-        console.log(e)
         return {
             statusCode: 500,
             body: JSON.stringify({ message: 'Internal server error 2' })
