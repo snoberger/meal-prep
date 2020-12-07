@@ -32,7 +32,8 @@ export  interface State {
       addStepDialogue: boolean,
       addIngredientDialogue: boolean,
       componentState: string,
-      checkedList: Array<CheckedRecipe>
+      checkedList: Array<CheckedRecipe>,
+      groceryDialog: boolean
     },
     calendar: {
       calendarEntryList: Array<CalendarEntry>,
