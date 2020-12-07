@@ -5,7 +5,7 @@ import "./Recipes.css";
 import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { State } from "../../store/rootReducer";
-import { getComponentState, getRecipeList } from "../../store/recipes/reducers/recipes";
+import { getCheckedList, getComponentState, getRecipeList } from "../../store/recipes/reducers/recipes";
 import { handleFetchRecipeList } from "../../store/recipes/actions/recipes";
 import { getUserId } from "../../store/auth/reducers/auth";
 import RecipeNameList from "./RecipeNameList/RecipeNameList";
@@ -24,7 +24,8 @@ const mapStateToProps = (state: State /*, ownProps*/) => {
         ...state,
         recipeList: getRecipeList(state),
         userId: getUserId(state),
-        componentState: getComponentState(state)
+        componentState: getComponentState(state),
+        checkedList: getCheckedList(state),
     };
 };
 
@@ -46,7 +47,6 @@ export class Recipes extends React.Component<RecipesCombinedProps,IRecipesState>
     async componentDidMount () {
         await this.props.fetchRecipeList(this.props.userId);
     }
-
     render() {
         return (
             <Grid container justify="center" alignItems="center">

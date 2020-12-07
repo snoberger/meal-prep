@@ -1,0 +1,19 @@
+.ingredient-list-item {
+    padding: 0px !important;
+    margin: 0px !important;
+    border-bottom: 1px #9c9c9c dashed;
+}
+
+.primary-list-text {
+    float: left;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.secondary-list-text {
+    max-width: 80%;
+    float: right;
+}
+
+.display-recipe-card {
+    background-color: #c7c7c7;
+}

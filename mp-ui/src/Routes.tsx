@@ -8,6 +8,7 @@ import Pantry from "./Components/Pantry/Pantry";
 import SignUp from "./Components/SignUp/SignUp";
 import Recipes from "./Components/Recipes/Recipes";
 import Calendar from './Components/Calendar/Calendar';
+import Cook from './Components/Cook/Cook';
 
 export enum AppScreens {
   HOME = '/',
@@ -51,6 +52,11 @@ class Routes extends React.Component<IRouteProps,IRouteState> {
             component={Recipes}
         />
         
+        <PrivateRoute
+            exact={true}
+            path={AppScreens.COOK}
+            component={Cook}
+        />
         <PrivateRoute
             exact={true}
             path={AppScreens.CALENDAR}
