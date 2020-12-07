@@ -37,6 +37,11 @@
 .step-description {
     width: 30%
 }
+
+.step-description-header {
+    width: 30%;
+    font-weight: bold;
+}
 .main-container {
     margin-bottom: 10vh !important;
 }
@@ -45,10 +50,5 @@
     position: absolute !important;
     bottom: 2%;
     left: 5%;
-}
-
-.grocery-list {
-    position: absolute !important;
-    bottom: 2%;
-    left: 47%;
+    background-color: paleturquoise;
 }
