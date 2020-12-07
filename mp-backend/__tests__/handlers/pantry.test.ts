@@ -250,6 +250,10 @@ describe('get pantry', () => {
                 {
                     "id": "2d314782-26ba-461f-b091-74b39cd628cb",
                     "amount": "4"
+                },
+                {
+                    "id": "1d314782-26ba-461f-b091-74b39cd628cb",
+                    "amount": false
                 }
             ],
             "createTs": 1604946468481,
@@ -288,6 +292,10 @@ describe('get pantry', () => {
                 name: "test",
                 metric: 'stuff',
                 id: "2d314782-26ba-461f-b091-74b39cd628cb"
+            },{
+                name: "test",
+                metric: 'stuff',
+                id: "1d314782-26ba-461f-b091-74b39cd628cb"
             }]
         } });
         const result = await getPantry(createEvent(event), Context(), () => { return });
@@ -297,6 +305,22 @@ describe('get pantry', () => {
         expect(ingredients[0].name).toBe('test')
         expect(dynamoDb.batchGet).toBeCalled();
     });
+
+    it('should return a 500 ', async () => {
+        event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
+        dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: PantryTable.pantry });
+        dynamoDb.batchGet = jest.fn().mockResolvedValueOnce({ Responses:{
+            ingredient: {
+                name: "test",
+                metric: 'stuff',
+                id: "2d314782-26ba-461f-b091-74b39cd628cb"
+            }
+        } });
+        const result = await getPantry(createEvent(event), Context(), () => { return });
+        expect(result ? result.statusCode : false).toBe(500);
+        expect(result ? (<LambdaBody>JSON.parse(result.body)).message : false).toContain("Malformed Ingredient in database")
+    });
+
     it('should return a pantry with ingredients from request if ingredient not found from pantry based on its ID', async () => {
         event.pathParameters = { 'userId': '1234', 'pantryId': '1' };
         dynamoDb.get = jest.fn().mockResolvedValueOnce({ Item: {
