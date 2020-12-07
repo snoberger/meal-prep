@@ -7,14 +7,12 @@ import { connect, ConnectedProps } from "react-redux";
 import { State } from "../../../store/rootReducer";
 import {
   getComponentState,
-  getDisplayRecipe,
   Recipe,
 } from "../../../store/recipes/reducers/recipes";
 import RecipeIngredientsList from "./RecipeIngredientsList";
 import RecipeSteps from "./RecipeSteps";
 import {
-  handleFetchRecipeList,
-  setComponentState,
+  handleFetchRecipeList
 } from "../../../store/recipes/actions/recipes";
 import { Ingredient } from "../../../store/pantry/reducers/pantry";
 import { OutputMergedRecipedStep } from "../helper";
@@ -30,10 +28,10 @@ interface IDisplayRecipeState {
 }
 // this function will not run in test
 /* istanbul ignore next */
-const mapStateToProps = (state: State /*ownProps: any*/) => {
+ const mapStateToProps = (state: State, ownProps: any) => {
   return {
     ...state,
-    recipe: getDisplayRecipe(state),
+    ...ownProps,
     componentState: getComponentState(state),
   };
 };
@@ -41,8 +39,6 @@ const mapStateToProps = (state: State /*ownProps: any*/) => {
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setComponentState: (componentState: string) =>
-      dispatch(setComponentState(componentState)),
     fetchRecipeList: (userId: string) =>
       dispatch(handleFetchRecipeList(userId)),
   };
