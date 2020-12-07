@@ -11,7 +11,8 @@ export type Ingredient = {
     index: number,
     name: string,
     amount: string,
-    metric: string
+    metric: string,
+    id?: string
 }
 
 export type PantryObject = {

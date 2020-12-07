@@ -50,7 +50,6 @@ export class Recipes extends React.Component<RecipesCombinedProps,IRecipesState>
     async componentDidMount () {
         await this.props.fetchRecipeList(this.props.userId);
     }
-
     render() {
         return (
             <Grid container justify="center" alignItems="center">

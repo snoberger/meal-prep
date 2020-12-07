@@ -1,0 +1,16 @@
+.display-recipe-title-text {
+    text-align: initial;
+}
+
+.display-recipe-card {
+    background-color: #d6d3d6 !important;
+}
+
+.name-field {
+    width: 100%;
+    margin-bottom:10px !important;
+}
+
+.description-field {
+    width: 100%;
+}

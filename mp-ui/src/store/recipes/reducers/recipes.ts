@@ -15,7 +15,8 @@ export type RecipeStep = {
     type: string,
     resources: string[],
     time: string,
-    order: string
+    order: string,
+    id?: string
 }
 
 export type CheckedRecipe = {

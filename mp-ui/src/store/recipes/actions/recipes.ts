@@ -142,6 +142,24 @@ export function handleFetchRecipe(userId: string, recipeId: string) {
   };
 }
 
+export function handleFetchRecipeBatch(userId: string, recipeIds: string[]) {
+  return async (dispatch: any) => {
+    try{
+      let promises = recipeIds.map(async (recipeId) => {
+        return await fetchRecipe(userId, recipeId).then((response: any) => {
+          if(response.status === 200 && response.data) {
+            //todo cast and validate this
+            return response.data;
+          }
+          return dispatch(fetchRecipeError());
+        });
+      });
+      return dispatch(setRecipeList(await Promise.all(promises)));
+    } catch(e) {
+      return dispatch(fetchRecipeError());
+    }
+  };
+}
 export function handleGenereateGroceryList(recipeIds: Array<string>) {
   return async (dispatch: any) => {
     try{
